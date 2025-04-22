@@ -85,6 +85,8 @@ app.UseHttpsRedirection();
 // });
 
 app.UseAuthorization();
+// Add this line to redirect from root to Swagger UI
+app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.MapControllers();
 
