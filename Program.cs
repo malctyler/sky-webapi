@@ -20,10 +20,11 @@ builder.Services.AddCors(options =>
         policy => policy
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .WithOrigins(
-                "http://localhost:3000",  // Keep original CRA port
-                "http://localhost:3001"   // Add Vite development port
-            ));
+            .AllowAnyOrigin());
+            // .WithOrigins(
+            //     "http://localhost:3000",  // Keep original CRA port
+            //     "http://localhost:3001"   // Add Vite development port
+            // ));
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -62,12 +63,16 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-    app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "sky-webapi v1"));
-}
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseDeveloperExceptionPage();
+//     app.UseSwagger();
+//     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "sky-webapi v1"));
+// }
+
+app.UseDeveloperExceptionPage();
+app.UseSwagger();
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "sky-webapi v1"));
 
 app.UseHttpsRedirection();
 
