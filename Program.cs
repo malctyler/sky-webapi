@@ -70,6 +70,14 @@ app.UseCors("AllowReactApp");
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
+// Configure serving files from SecureFiles directory
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "SecureFiles")),
+    RequestPath = "/SecureFiles"
+});
+
 app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.MapControllers();
