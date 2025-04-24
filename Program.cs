@@ -76,7 +76,7 @@ app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "sky-webapi 
 
 app.UseHttpsRedirection();
 
-// app.UseCors("AllowReactApp");
+app.UseCors("AllowReactApp");
 
 // app.UseStaticFiles(new StaticFileOptions
 // {
