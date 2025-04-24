@@ -19,7 +19,7 @@ namespace sky_webapi.Controllers
         {
             try
             {
-                var signaturePath = Path.Combine(_environment.ContentRootPath, "Signatures", $"{inspectorName.ToLower().Replace(" ", "_")}.jpg");
+                var signaturePath = Path.Combine(_environment.ContentRootPath, "SecureFiles", "Signatures", $"{inspectorName.ToLower().Replace(" ", "_")}.jpg");
 
                 if (!System.IO.File.Exists(signaturePath))
                 {

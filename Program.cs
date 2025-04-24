@@ -21,10 +21,6 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowAnyOrigin());
-            // .WithOrigins(
-            //     "http://localhost:3000",  // Keep original CRA port
-            //     "http://localhost:3001"   // Add Vite development port
-            // ));
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -62,14 +58,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseDeveloperExceptionPage();
-//     app.UseSwagger();
-//     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "sky-webapi v1"));
-// }
-
 app.UseDeveloperExceptionPage();
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "sky-webapi v1"));
@@ -78,14 +66,10 @@ app.UseHttpsRedirection();
 
 app.UseCors("AllowReactApp");
 
-// app.UseStaticFiles(new StaticFileOptions
-// {
-//     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "..", "frontend", "dist")),
-//     RequestPath = ""
-// });
+// Enable serving static files and set default files
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
-app.UseAuthorization();
-// Add this line to redirect from root to Swagger UI
 app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.MapControllers();
