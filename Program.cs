@@ -111,11 +111,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
         policy => policy
-            .WithOrigins(
-                "https://witty-plant-0550d6403.6.azurestaticapps.net",
-                "http://localhost:3000", // For local development
-                "https://localhost:3000"  // For local development with HTTPS
-            )
+            .SetIsOriginAllowed(origin => 
+                origin == "https://witty-plant-0550d6403.6.azurestaticapps.net" ||
+                origin == "http://localhost:3000" ||
+                origin == "https://localhost:3000")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
@@ -196,11 +195,12 @@ app.UseSwaggerUI(c =>
 
 app.UseHttpsRedirection();
 
+// Apply CORS before authentication
+app.UseCors("AllowReactApp");
+
 // Add authentication middleware
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseCors("AllowReactApp");
 
 // Enable serving static files and set default files
 app.UseDefaultFiles();
