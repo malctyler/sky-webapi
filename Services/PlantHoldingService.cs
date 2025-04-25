@@ -13,31 +13,25 @@ namespace sky_webapi.Services
             _repository = repository;
         }
 
-        public async Task<IEnumerable<PlantHoldingReadDto>> GetAllHoldingsAsync()
+        public async Task<IEnumerable<PlantHoldingReadDto>> GetAllPlantHoldingsAsync()
         {
             var holdings = await _repository.GetAllAsync();
             return holdings.Select(MapToReadDto);
         }
 
-        public async Task<PlantHoldingReadDto?> GetHoldingByIdAsync(int id)
+        public async Task<PlantHoldingReadDto?> GetPlantHoldingByIdAsync(int id)
         {
             var holding = await _repository.GetByIdAsync(id);
             return holding != null ? MapToReadDto(holding) : null;
         }
 
-        public async Task<IEnumerable<PlantHoldingReadDto>> GetHoldingsByCustomerAsync(int customerId)
+        public async Task<IEnumerable<PlantHoldingReadDto>> GetPlantHoldingsByCustomerIdAsync(int customerId)
         {
             var holdings = await _repository.GetByCustomerAsync(customerId);
             return holdings.Select(MapToReadDto);
         }
 
-        public async Task<IEnumerable<PlantHoldingReadDto>> GetHoldingsByStatusAsync(int statusId)
-        {
-            var holdings = await _repository.GetByStatusAsync(statusId);
-            return holdings.Select(MapToReadDto);
-        }
-
-        public async Task<PlantHoldingReadDto> CreateHoldingAsync(PlantHoldingDto holdingDto)
+        public async Task<PlantHoldingReadDto> CreatePlantHoldingAsync(PlantHoldingDto holdingDto)
         {
             var holding = new PlantHolding
             {
@@ -54,7 +48,7 @@ namespace sky_webapi.Services
             return MapToReadDto(createdHolding!);
         }
 
-        public async Task<PlantHoldingReadDto> UpdateHoldingAsync(int id, PlantHoldingDto holdingDto)
+        public async Task<PlantHoldingReadDto> UpdatePlantHoldingAsync(int id, PlantHoldingDto holdingDto)
         {
             var holding = new PlantHolding
             {
@@ -67,12 +61,12 @@ namespace sky_webapi.Services
             };
 
             await _repository.UpdateAsync(holding);
-            // Reload the entity with navigation properties to get updated descriptions
+            // Reload the entity with navigation properties
             var updatedHolding = await _repository.GetByIdAsync(id);
             return MapToReadDto(updatedHolding!);
         }
 
-        public async Task DeleteHoldingAsync(int id)
+        public async Task DeletePlantHoldingAsync(int id)
         {
             await _repository.DeleteAsync(id);
         }
@@ -89,7 +83,6 @@ namespace sky_webapi.Services
                 SWL = holding.SWL,
                 PlantDescription = holding.Plant?.PlantDescription,
                 StatusDescription = holding.Status?.StatusDescription,
-                // Map customer data
                 CustomerCompanyName = holding.Customer?.CompanyName,
                 CustomerContactTitle = holding.Customer?.ContactTitle,
                 CustomerContactFirstNames = holding.Customer?.ContactFirstNames,

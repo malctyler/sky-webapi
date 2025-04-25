@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using sky_webapi.Data.Entities;
 
@@ -5,6 +6,14 @@ namespace sky_webapi.Data
 {
     public static class DatabaseSeeder
     {
+        private const string AdminRoleId = "d4b74547-1385-4c44-88ab-1b3dd647be9c";
+        private const string AdminUserId = "6aa33e39-8591-4bff-9001-bc58c0313c89";
+        private const string AdminRoleConcurrencyStamp = "79202516-5691-4c00-8fdc-5c472cc112a1";
+        private const string AdminUserConcurrencyStamp = "42a75722-9d32-4242-9eac-0d0c5a80e63a";
+        private const string AdminUserSecurityStamp = "JIRVGNRNQ7Z3TPFRS4YPFN5QVMPXQY2K";
+        // Pre-hashed password for "Admin123!"
+        private const string AdminPasswordHash = "AQAAAAIAAYagAAAAEE3S7J6n1bqSJs/HKhD1Rz0ZvAQbUviOqRHNnRlVUyKIE4wUkJqr3xxUzNAJ9JjO2Q==";
+
         public static void SeedData(ModelBuilder modelBuilder)
         {
             // Seed Summaries
@@ -105,6 +114,56 @@ namespace sky_webapi.Data
 
             modelBuilder.Entity<CustomerEntity>().HasData(customers);
             modelBuilder.Entity<NoteEntity>().HasData(notes);
+
+            // Seed initial admin role with static GUID
+            modelBuilder.Entity<IdentityRole>().HasData(
+                new IdentityRole
+                {
+                    Id = AdminRoleId,
+                    Name = "Staff",
+                    NormalizedName = "STAFF",
+                    ConcurrencyStamp = AdminRoleConcurrencyStamp
+                }
+            );
+
+            // Seed initial admin user with static values
+            var adminUser = new ApplicationUser
+            {
+                Id = AdminUserId,
+                UserName = "admin@example.com",
+                NormalizedUserName = "ADMIN@EXAMPLE.COM",
+                Email = "admin@example.com",
+                NormalizedEmail = "ADMIN@EXAMPLE.COM",
+                EmailConfirmed = true,
+                PasswordHash = AdminPasswordHash,
+                SecurityStamp = AdminUserSecurityStamp,
+                ConcurrencyStamp = AdminUserConcurrencyStamp,
+                FirstName = "Admin",
+                LastName = "User",
+                IsCustomer = false
+            };
+
+            modelBuilder.Entity<ApplicationUser>().HasData(adminUser);
+
+            // Assign admin role to admin user
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+                new IdentityUserRole<string>
+                {
+                    UserId = AdminUserId,
+                    RoleId = AdminRoleId
+                }
+            );
+
+            // Add admin user claims
+            modelBuilder.Entity<IdentityUserClaim<string>>().HasData(
+                new IdentityUserClaim<string>
+                {
+                    Id = 1,
+                    UserId = AdminUserId,
+                    ClaimType = "IsCustomer",
+                    ClaimValue = "False"
+                }
+            );
         }
     }
 }

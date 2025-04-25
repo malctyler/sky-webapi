@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using sky_webapi.DTOs;
 using sky_webapi.Services;
 
 namespace sky_webapi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CustomersController : ControllerBase
@@ -30,6 +32,17 @@ namespace sky_webapi.Controllers
             {
                 return NotFound();
             }
+
+            // If user is a customer, they can only access their own data
+            if (User.HasClaim("IsCustomer", "True"))
+            {
+                var customerIdClaim = User.Claims.FirstOrDefault(c => c.Type == "CustomerId");
+                if (customerIdClaim == null || int.Parse(customerIdClaim.Value) != id)
+                {
+                    return Forbid();
+                }
+            }
+
             return Ok(customer);
         }
 

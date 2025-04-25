@@ -1,9 +1,10 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using sky_webapi.Data.Entities;
 
 namespace sky_webapi.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<ApplicationUser>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -17,7 +18,9 @@ namespace sky_webapi.Data
         public DbSet<Status> Status { get; set; }
         public DbSet<PlantHolding> PlantHoldings { get; set; }
         public DbSet<Inspection> Inspections { get; set; }
-        public DbSet<InspectorEntity> Inspectors { get; set; }        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public DbSet<InspectorEntity> Inspectors { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 

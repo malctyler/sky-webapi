@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using sky_webapi.DTOs;
 using sky_webapi.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace sky_webapi.Controllers
 {
-    [ApiController]
+    [Authorize]  // Requires authentication for all endpoints
     [Route("api/[controller]")]
+    [ApiController]
     public class PlantHoldingController : ControllerBase
     {
         private readonly IPlantHoldingService _service;
@@ -17,57 +19,82 @@ namespace sky_webapi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PlantHoldingReadDto>>> GetAllHoldings()
+        public async Task<ActionResult<IEnumerable<PlantHoldingReadDto>>> GetAllPlantHoldings()
         {
-            var holdings = await _service.GetAllHoldingsAsync();
-            return Ok(holdings);
+            // If user is a customer, only return their plant holdings
+            if (User.HasClaim("IsCustomer", "True"))
+            {
+                var customerIdClaim = User.Claims.FirstOrDefault(c => c.Type == "CustomerId");
+                if (customerIdClaim == null)
+                {
+                    return Forbid();
+                }
+
+                var customerId = int.Parse(customerIdClaim.Value);
+                var customerPlantHoldings = await _service.GetPlantHoldingsByCustomerIdAsync(customerId);
+                return Ok(customerPlantHoldings);
+            }
+
+            // Staff can see all plant holdings
+            var plantHoldings = await _service.GetAllPlantHoldingsAsync();
+            return Ok(plantHoldings);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<PlantHoldingReadDto>> GetHolding(int id)
+        public async Task<ActionResult<PlantHoldingReadDto>> GetPlantHolding(int id)
         {
-            var holding = await _service.GetHoldingByIdAsync(id);
-            if (holding == null)
+            var plantHolding = await _service.GetPlantHoldingByIdAsync(id);
+            if (plantHolding == null)
             {
                 return NotFound();
             }
-            return Ok(holding);
-        }
 
-        [HttpGet("customer/{customerId}")]
-        public async Task<ActionResult<IEnumerable<PlantHoldingReadDto>>> GetByCustomer(int customerId)
-        {
-            var holdings = await _service.GetHoldingsByCustomerAsync(customerId);
-            return Ok(holdings);
-        }
+            // If user is a customer, verify they own this plant holding
+            if (User.HasClaim("IsCustomer", "True"))
+            {
+                var customerIdClaim = User.Claims.FirstOrDefault(c => c.Type == "CustomerId");
+                if (customerIdClaim == null || plantHolding.CustID != int.Parse(customerIdClaim.Value))
+                {
+                    return Forbid();
+                }
+            }
 
-        [HttpGet("status/{statusId}")]
-        public async Task<ActionResult<IEnumerable<PlantHoldingReadDto>>> GetByStatus(int statusId)
-        {
-            var holdings = await _service.GetHoldingsByStatusAsync(statusId);
-            return Ok(holdings);
+            return Ok(plantHolding);
         }
 
         [HttpPost]
-        public async Task<ActionResult<PlantHoldingReadDto>> CreateHolding(PlantHoldingDto holdingDto)
+        [Authorize(Roles = "Staff")]  // Only staff can create plant holdings
+        public async Task<ActionResult<PlantHoldingReadDto>> CreatePlantHolding(PlantHoldingDto plantHoldingDto)
         {
-            var createdHolding = await _service.CreateHoldingAsync(holdingDto);
-            return CreatedAtAction(nameof(GetHolding), new { id = createdHolding.HoldingID }, createdHolding);
+            var createdPlantHolding = await _service.CreatePlantHoldingAsync(plantHoldingDto);
+            return CreatedAtAction(
+                nameof(GetPlantHolding),
+                new { id = createdPlantHolding.HoldingID },
+                createdPlantHolding);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<PlantHoldingReadDto>> UpdateHolding(int id, PlantHoldingDto holdingDto)
-        {
-            var updatedHolding = await _service.UpdateHoldingAsync(id, holdingDto);
-            return Ok(updatedHolding);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteHolding(int id)
+        [Authorize(Roles = "Staff")]  // Only staff can update plant holdings
+        public async Task<ActionResult<PlantHoldingReadDto>> UpdatePlantHolding(int id, PlantHoldingDto plantHoldingDto)
         {
             try
             {
-                await _service.DeleteHoldingAsync(id);
+                var updatedPlantHolding = await _service.UpdatePlantHoldingAsync(id, plantHoldingDto);
+                return Ok(updatedPlantHolding);
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Staff")]  // Only staff can delete plant holdings
+        public async Task<IActionResult> DeletePlantHolding(int id)
+        {
+            try
+            {
+                await _service.DeletePlantHoldingAsync(id);
                 return NoContent();
             }
             catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("FK_Inspections_PlantHoldings_HoldingID") == true)
