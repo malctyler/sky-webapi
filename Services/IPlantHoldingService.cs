@@ -4,12 +4,11 @@ namespace sky_webapi.Services
 {
     public interface IPlantHoldingService
     {
-        Task<IEnumerable<PlantHoldingReadDto>> GetAllHoldingsAsync();
-        Task<PlantHoldingReadDto?> GetHoldingByIdAsync(int id);
-        Task<IEnumerable<PlantHoldingReadDto>> GetHoldingsByCustomerAsync(int customerId);
-        Task<IEnumerable<PlantHoldingReadDto>> GetHoldingsByStatusAsync(int statusId);
-        Task<PlantHoldingReadDto> CreateHoldingAsync(PlantHoldingDto holdingDto);
-        Task<PlantHoldingReadDto> UpdateHoldingAsync(int id, PlantHoldingDto holdingDto);
-        Task DeleteHoldingAsync(int id);
+        Task<IEnumerable<PlantHoldingReadDto>> GetAllPlantHoldingsAsync();
+        Task<PlantHoldingReadDto?> GetPlantHoldingByIdAsync(int id);
+        Task<IEnumerable<PlantHoldingReadDto>> GetPlantHoldingsByCustomerIdAsync(int customerId);
+        Task<PlantHoldingReadDto> CreatePlantHoldingAsync(PlantHoldingDto holdingDto);
+        Task<PlantHoldingReadDto> UpdatePlantHoldingAsync(int id, PlantHoldingDto holdingDto);
+        Task DeletePlantHoldingAsync(int id);
     }
 }

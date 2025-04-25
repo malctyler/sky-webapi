@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using sky_webapi.DTOs;
 using sky_webapi.Services;
 
 namespace sky_webapi.Controllers
 {
+    [Authorize(Roles = "Staff")]  // Only staff members can access inspector endpoints
     [ApiController]
     [Route("api/[controller]")]
     public class InspectorsController : ControllerBase
