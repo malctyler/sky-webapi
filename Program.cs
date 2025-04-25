@@ -111,9 +111,14 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
         policy => policy
+            .WithOrigins(
+                "https://witty-plant-0550d6403.6.azurestaticapps.net",
+                "http://localhost:3000", // For local development
+                "https://localhost:3000"  // For local development with HTTPS
+            )
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .AllowAnyOrigin());
+            .AllowCredentials());
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
