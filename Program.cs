@@ -114,7 +114,8 @@ builder.Services.AddCors(options =>
             .SetIsOriginAllowed(origin => 
                 origin == "https://witty-plant-0550d6403.6.azurestaticapps.net" ||
                 origin == "http://localhost:3000" ||
-                origin == "https://localhost:3000")
+                origin == "https://localhost:3000" ||
+                origin == "https://sky-webapi-hna3fdbegqcqhuf9.uksouth-01.azurewebsites.net")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
