@@ -47,62 +47,8 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
         ValidAudience = builder.Configuration["JwtSettings:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!))
-    };
-
-    // Enhanced debugging events
-    options.Events = new JwtBearerEvents
-    {
-        OnAuthenticationFailed = context =>
-        {
-            Console.WriteLine($"Authentication failed: {context.Exception.Message}");
-            Console.WriteLine($"Exception type: {context.Exception.GetType().Name}");
-            Console.WriteLine($"Stack trace: {context.Exception.StackTrace}");
-            if (context.Exception.InnerException != null)
-            {
-                Console.WriteLine($"Inner exception: {context.Exception.InnerException.Message}");
-            }
-            return Task.CompletedTask;
-        },
-        OnMessageReceived = context =>
-        {
-            var auth = context.Request.Headers["Authorization"].ToString();
-            Console.WriteLine($"Raw Authorization header: {auth}");
-            if (auth.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-            {
-                Console.WriteLine("Bearer prefix found in header");
-            }
-            else
-            {
-                Console.WriteLine("No Bearer prefix found in header");
-            }
-            return Task.CompletedTask;
-        },
-        OnTokenValidated = context =>
-        {
-            Console.WriteLine("Token validated successfully");
-            var identity = context.Principal?.Identity;
-            Console.WriteLine($"Identity authenticated: {identity?.IsAuthenticated}");
-            Console.WriteLine($"Identity name: {identity?.Name}");
-            
-            var claims = context.Principal?.Claims;
-            if (claims != null)
-            {
-                Console.WriteLine("Claims found in token:");
-                foreach (var claim in claims)
-                {
-                    Console.WriteLine($"{claim.Type}: {claim.Value}");
-                }
-            }
-            return Task.CompletedTask;
-        },
-        OnChallenge = context =>
-        {
-            Console.WriteLine("Challenge event triggered");
-            Console.WriteLine($"Error: {context.Error}");
-            Console.WriteLine($"Error description: {context.ErrorDescription}");
-            return Task.CompletedTask;
-        }
+            Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!)),
+        ClockSkew = TimeSpan.Zero // Remove clock skew to make token expiration exact
     };
 });
 
@@ -111,14 +57,14 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
         policy => policy
-            .SetIsOriginAllowed(origin => 
-                origin == "https://witty-plant-0550d6403.6.azurestaticapps.net" ||
-                origin == "http://localhost:3000" ||
-                origin == "https://localhost:3000" ||
-                origin == "https://sky-webapi-hna3fdbegqcqhuf9.uksouth-01.azurewebsites.net")
+            .WithOrigins(
+                "https://witty-plant-0550d6403.6.azurestaticapps.net",
+                "http://localhost:3000",
+                "https://localhost:3000")
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .AllowCredentials());
+            .AllowCredentials()
+            .SetIsOriginAllowed(_ => true)); // Allow any origin temporarily for debugging
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
