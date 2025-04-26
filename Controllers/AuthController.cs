@@ -229,5 +229,12 @@ namespace sky_webapi.Controllers
             
             return Ok(new { Message = "Logged out successfully" });
         }
+
+        [HttpGet("validate")]
+        [Authorize]
+        public IActionResult ValidateToken()
+        {
+            return Ok(new { valid = true });
+        }
     }
 }
