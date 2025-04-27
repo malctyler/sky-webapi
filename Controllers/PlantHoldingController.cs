@@ -19,7 +19,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PlantHoldingReadDto>>> GetAllPlantHoldings()
+        public async Task<ActionResult<IEnumerable<PlantHoldingReadDto>>> GetAllHoldings()
         {
             // If user is a customer, only return their plant holdings
             if (User.HasClaim("IsCustomer", "True"))
@@ -41,7 +41,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<PlantHoldingReadDto>> GetPlantHolding(int id)
+        public async Task<ActionResult<PlantHoldingReadDto>> GetHolding(int id)
         {
             var plantHolding = await _service.GetPlantHoldingByIdAsync(id);
             if (plantHolding == null)
@@ -62,13 +62,49 @@ namespace sky_webapi.Controllers
             return Ok(plantHolding);
         }
 
+        [HttpGet("customer/{customerId}")]
+        public async Task<ActionResult<IEnumerable<PlantHoldingReadDto>>> GetByCustomer(int customerId)
+        {
+            // Customers can only access their own holdings
+            if (User.HasClaim("IsCustomer", "True"))
+            {
+                var customerIdClaim = User.Claims.FirstOrDefault(c => c.Type == "CustomerId");
+                if (customerIdClaim == null || customerId != int.Parse(customerIdClaim.Value))
+                {
+                    return Forbid();
+                }
+            }
+            var holdings = await _service.GetPlantHoldingsByCustomerIdAsync(customerId);
+            return Ok(holdings);
+        }
+
+        [HttpGet("status/{statusId}")]
+        public async Task<ActionResult<IEnumerable<PlantHoldingReadDto>>> GetByStatus(int statusId)
+        {
+            // If user is a customer, only return their own holdings with this status
+            if (User.HasClaim("IsCustomer", "True"))
+            {
+                var customerIdClaim = User.Claims.FirstOrDefault(c => c.Type == "CustomerId");
+                if (customerIdClaim == null)
+                {
+                    return Forbid();
+                }
+                var customerId = int.Parse(customerIdClaim.Value);
+                var holdings = await _service.GetPlantHoldingsByCustomerAndStatusAsync(customerId, statusId);
+                return Ok(holdings);
+            }
+            // Staff can see all plant holdings with this status
+            var allHoldings = await _service.GetPlantHoldingsByStatusAsync(statusId);
+            return Ok(allHoldings);
+        }
+
         [HttpPost]
         [Authorize(Roles = "Staff")]  // Only staff can create plant holdings
         public async Task<ActionResult<PlantHoldingReadDto>> CreatePlantHolding(PlantHoldingDto plantHoldingDto)
         {
             var createdPlantHolding = await _service.CreatePlantHoldingAsync(plantHoldingDto);
             return CreatedAtAction(
-                nameof(GetPlantHolding),
+                nameof(GetHolding),
                 new { id = createdPlantHolding.HoldingID },
                 createdPlantHolding);
         }
