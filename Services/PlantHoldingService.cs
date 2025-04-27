@@ -31,6 +31,18 @@ namespace sky_webapi.Services
             return holdings.Select(MapToReadDto);
         }
 
+        public async Task<IEnumerable<PlantHoldingReadDto>> GetPlantHoldingsByStatusAsync(int statusId)
+        {
+            var holdings = await _repository.GetByStatusAsync(statusId);
+            return holdings.Select(MapToReadDto);
+        }
+
+        public async Task<IEnumerable<PlantHoldingReadDto>> GetPlantHoldingsByCustomerAndStatusAsync(int customerId, int statusId)
+        {
+            var holdings = await _repository.GetByCustomerAndStatusAsync(customerId, statusId);
+            return holdings.Select(MapToReadDto);
+        }
+
         public async Task<PlantHoldingReadDto> CreatePlantHoldingAsync(PlantHoldingDto holdingDto)
         {
             var holding = new PlantHolding

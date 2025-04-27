@@ -8,6 +8,7 @@ namespace sky_webapi.Repositories
         Task<PlantHolding?> GetByIdAsync(int id);
         Task<IEnumerable<PlantHolding>> GetByCustomerAsync(int customerId);
         Task<IEnumerable<PlantHolding>> GetByStatusAsync(int statusId);
+        Task<IEnumerable<PlantHolding>> GetByCustomerAndStatusAsync(int customerId, int statusId);
         Task<PlantHolding> AddAsync(PlantHolding plantHolding);
         Task UpdateAsync(PlantHolding plantHolding);
         Task DeleteAsync(int id);

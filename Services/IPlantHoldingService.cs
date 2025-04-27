@@ -10,5 +10,7 @@ namespace sky_webapi.Services
         Task<PlantHoldingReadDto> CreatePlantHoldingAsync(PlantHoldingDto holdingDto);
         Task<PlantHoldingReadDto> UpdatePlantHoldingAsync(int id, PlantHoldingDto holdingDto);
         Task DeletePlantHoldingAsync(int id);
+        Task<IEnumerable<PlantHoldingReadDto>> GetPlantHoldingsByStatusAsync(int statusId);
+        Task<IEnumerable<PlantHoldingReadDto>> GetPlantHoldingsByCustomerAndStatusAsync(int customerId, int statusId);
     }
 }

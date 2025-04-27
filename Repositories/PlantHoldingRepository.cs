@@ -51,6 +51,16 @@ namespace sky_webapi.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<PlantHolding>> GetByCustomerAndStatusAsync(int customerId, int statusId)
+        {
+            return await _context.PlantHoldings
+                .Include(p => p.Customer)
+                .Include(p => p.Plant)
+                .Include(p => p.Status)
+                .Where(p => p.CustID == customerId && p.StatusID == statusId)
+                .ToListAsync();
+        }
+
         public async Task<PlantHolding> AddAsync(PlantHolding plantHolding)
         {
             await _context.PlantHoldings.AddAsync(plantHolding);
