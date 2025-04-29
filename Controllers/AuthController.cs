@@ -114,6 +114,13 @@ namespace sky_webapi.Controllers
                     return Unauthorized(new { Message = "Invalid email or password" });
                 }
 
+                // Prevent login if email is not confirmed
+                if (!user.EmailConfirmed)
+                {
+                    _logger.LogWarning("Login attempt with unconfirmed email: {Email}", model.Email);
+                    return Unauthorized(new { Message = "Please confirm your email before logging in." });
+                }
+
                 var isPasswordValid = await _userManager.CheckPasswordAsync(user, model.Password);
                 if (!isPasswordValid)
                 {
