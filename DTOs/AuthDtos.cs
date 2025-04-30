@@ -38,6 +38,7 @@ namespace sky_webapi.DTOs
         public string LastName { get; set; }
         public bool IsCustomer { get; set; }
         public int? CustomerId { get; set; }
+        public bool EmailConfirmed { get; set; }
     }
 
     public class RoleDto

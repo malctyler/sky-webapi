@@ -31,7 +31,8 @@ namespace sky_webapi.Controllers
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     IsCustomer = user.IsCustomer,
-                    CustomerId = user.CustomerId
+                    CustomerId = user.CustomerId,
+                    EmailConfirmed = user.EmailConfirmed // Added
                 });
             }
             return Ok(result);
@@ -49,7 +50,8 @@ namespace sky_webapi.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 IsCustomer = user.IsCustomer,
-                CustomerId = user.CustomerId
+                CustomerId = user.CustomerId,
+                EmailConfirmed = user.EmailConfirmed // Added
             });
         }
 
@@ -75,7 +77,8 @@ namespace sky_webapi.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 IsCustomer = user.IsCustomer,
-                CustomerId = user.CustomerId
+                CustomerId = user.CustomerId,
+                EmailConfirmed = user.EmailConfirmed // Added
             });
         }
 
@@ -89,6 +92,7 @@ namespace sky_webapi.Controllers
             user.IsCustomer = model.IsCustomer;
             user.CustomerId = model.CustomerId;
             // Email and username update omitted for safety
+            // EmailConfirmed is not settable from here for security
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
@@ -104,6 +108,16 @@ namespace sky_webapi.Controllers
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
             return NoContent();
+        }
+
+        // Add endpoint to get user roles
+        [HttpGet("{id}/roles")]
+        public async Task<ActionResult<IEnumerable<string>>> GetUserRoles(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+            var roles = await _userManager.GetRolesAsync(user);
+            return Ok(roles);
         }
     }
 }
