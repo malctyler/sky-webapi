@@ -4,11 +4,13 @@ using sky_webapi.Data.Entities;
 using sky_webapi.DTOs;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace sky_webapi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Staff")] // Only staff can manage users
     public class UsersController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -118,6 +120,38 @@ namespace sky_webapi.Controllers
             if (user == null) return NotFound();
             var roles = await _userManager.GetRolesAsync(user);
             return Ok(roles);
+        }
+
+        [HttpPost("{id}/roles")]
+        public async Task<IActionResult> AddUserToRole(string id, [FromBody] RoleAssignmentDto model)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound("User not found");
+
+            if (string.IsNullOrWhiteSpace(model.RoleName))
+                return BadRequest("Role name must be provided");
+
+            var result = await _userManager.AddToRoleAsync(user, model.RoleName);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}/roles/{roleName}")]
+        public async Task<IActionResult> RemoveUserFromRole(string id, string roleName)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound("User not found");
+
+            if (string.IsNullOrWhiteSpace(roleName))
+                return BadRequest("Role name must be provided");
+
+            var result = await _userManager.RemoveFromRoleAsync(user, roleName);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            return NoContent();
         }
     }
 }

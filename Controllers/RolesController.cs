@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using sky_webapi.DTOs;
@@ -8,6 +9,7 @@ namespace sky_webapi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Staff")] // Only staff should manage roles
     public class RolesController : ControllerBase
     {
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -39,10 +41,17 @@ namespace sky_webapi.Controllers
         [HttpPost]
         public async Task<ActionResult<RoleDto>> CreateRole([FromBody] RoleDto model)
         {
+            if (string.IsNullOrWhiteSpace(model.Name))
+                return BadRequest("Role name cannot be empty");
+
+            // Normalize the role name
+            model.Name = model.Name.Trim();
+
             var role = new IdentityRole(model.Name);
             var result = await _roleManager.CreateAsync(role);
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
+            
             return CreatedAtAction(nameof(GetRole), new { id = role.Id }, new RoleDto { Id = role.Id, Name = role.Name });
         }
 

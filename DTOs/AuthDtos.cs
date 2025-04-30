@@ -41,6 +41,11 @@ namespace sky_webapi.DTOs
         public bool EmailConfirmed { get; set; }
     }
 
+    public class RoleAssignmentDto
+    {
+        public string RoleName { get; set; }
+    }
+
     public class RoleDto
     {
         public string Id { get; set; }
