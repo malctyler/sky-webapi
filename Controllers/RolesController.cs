@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 using sky_webapi.DTOs;
 
 namespace sky_webapi.Controllers
@@ -13,9 +16,12 @@ namespace sky_webapi.Controllers
     public class RolesController : ControllerBase
     {
         private readonly RoleManager<IdentityRole> _roleManager;
-        public RolesController(RoleManager<IdentityRole> roleManager)
+        private readonly ILogger<RolesController> _logger;
+
+        public RolesController(RoleManager<IdentityRole> roleManager, ILogger<RolesController> logger)
         {
             _roleManager = roleManager;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -41,18 +47,43 @@ namespace sky_webapi.Controllers
         [HttpPost]
         public async Task<ActionResult<RoleDto>> CreateRole([FromBody] RoleDto model)
         {
-            if (string.IsNullOrWhiteSpace(model.Name))
-                return BadRequest("Role name cannot be empty");
+            try
+            {
+                if (string.IsNullOrWhiteSpace(model.Name))
+                {
+                    _logger.LogWarning("Attempted to create role with empty name");
+                    return BadRequest("Role name cannot be empty");
+                }
 
-            // Normalize the role name
-            model.Name = model.Name.Trim();
+                // Normalize the role name
+                model.Name = model.Name.Trim();
 
-            var role = new IdentityRole(model.Name);
-            var result = await _roleManager.CreateAsync(role);
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
-            
-            return CreatedAtAction(nameof(GetRole), new { id = role.Id }, new RoleDto { Id = role.Id, Name = role.Name });
+                // Check if role already exists
+                if (await _roleManager.RoleExistsAsync(model.Name))
+                {
+                    _logger.LogWarning("Attempted to create duplicate role: {RoleName}", model.Name);
+                    return BadRequest($"Role '{model.Name}' already exists");
+                }
+
+                var role = new IdentityRole(model.Name);
+                var result = await _roleManager.CreateAsync(role);
+                
+                if (!result.Succeeded)
+                {
+                    _logger.LogError("Failed to create role {RoleName}. Errors: {Errors}", 
+                        model.Name, string.Join(", ", result.Errors.Select(e => e.Description)));
+                    return BadRequest(result.Errors);
+                }
+
+                _logger.LogInformation("Successfully created role: {RoleName}", model.Name);
+                return CreatedAtAction(nameof(GetRole), new { id = role.Id }, 
+                    new RoleDto { Id = role.Id, Name = role.Name });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating role {RoleName}", model?.Name ?? "unknown");
+                return StatusCode(500, "An error occurred while creating the role");
+            }
         }
 
         [HttpPut("{id}")]
