@@ -245,5 +245,72 @@ namespace sky_webapi.Controllers
         {
             return Ok(new { valid = true });
         }
+
+        [HttpGet("check-email-confirmation/{email}")]
+        public async Task<IActionResult> CheckEmailConfirmation(string email)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    return NotFound(new { Message = "User not found" });
+                }
+
+                if (user.EmailConfirmed)
+                {
+                    // If email is confirmed, generate a new token with updated status
+                    var userRoles = await _userManager.GetRolesAsync(user);
+                    var userClaims = await _userManager.GetClaimsAsync(user);
+
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, user.Id),
+                        new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
+                        new Claim("EmailConfirmed", user.EmailConfirmed.ToString())
+                    };
+
+                    // Add roles as claims
+                    foreach (var role in userRoles)
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, role));
+                    }
+
+                    claims.AddRange(userClaims.Where(c => 
+                        !claims.Any(existingClaim => 
+                            existingClaim.Type == c.Type && 
+                            existingClaim.Value == c.Value)));
+
+                    var key = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"] ?? 
+                            throw new InvalidOperationException("JWT SecretKey is not configured")));
+                    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                    var token = new JwtSecurityToken(
+                        issuer: _configuration["JwtSettings:Issuer"],
+                        audience: _configuration["JwtSettings:Audience"],
+                        claims: claims,
+                        expires: DateTime.Now.AddMinutes(
+                            Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"])),
+                        signingCredentials: creds
+                    );
+
+                    return Ok(new AuthResponseDto
+                    {
+                        Token = new JwtSecurityTokenHandler().WriteToken(token),
+                        Email = user.Email ?? string.Empty,
+                        IsCustomer = user.IsCustomer,
+                        EmailConfirmed = true
+                    });
+                }
+
+                return Ok(new { EmailConfirmed = false });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error checking email confirmation status for {Email}", email);
+                return StatusCode(500, new { Message = "An error occurred while checking email confirmation status." });
+            }
+        }
     }
 }
