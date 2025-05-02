@@ -134,7 +134,8 @@ namespace sky_webapi.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim(ClaimTypes.Email, user.Email ?? string.Empty)
+                    new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
+                    new Claim("EmailConfirmed", user.EmailConfirmed.ToString())
                 };
 
                 // Add roles as claims
@@ -168,7 +169,8 @@ namespace sky_webapi.Controllers
                 {
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
                     Email = user.Email ?? string.Empty,
-                    IsCustomer = user.IsCustomer
+                    IsCustomer = user.IsCustomer,
+                    EmailConfirmed = user.EmailConfirmed
                 });
             }
             catch (Exception ex)
