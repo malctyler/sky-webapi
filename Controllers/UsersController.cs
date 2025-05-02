@@ -73,11 +73,16 @@ namespace sky_webapi.Controllers
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 IsCustomer = model.IsCustomer,
-                CustomerId = model.CustomerId
+                CustomerId = model.CustomerId,
+                EmailConfirmed = model.EmailConfirmed // Set the email confirmed status
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
+
+            // Add IsCustomer claim
+            await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim("IsCustomer", model.IsCustomer.ToString()));
+
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, new UserDto
             {
                 Id = user.Id,
@@ -86,7 +91,7 @@ namespace sky_webapi.Controllers
                 LastName = user.LastName,
                 IsCustomer = user.IsCustomer,
                 CustomerId = user.CustomerId,
-                EmailConfirmed = user.EmailConfirmed // Added
+                EmailConfirmed = user.EmailConfirmed
             });
         }
 
