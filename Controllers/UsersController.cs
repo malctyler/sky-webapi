@@ -80,8 +80,8 @@ namespace sky_webapi.Controllers
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            // Add IsCustomer claim
-            await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim("IsCustomer", model.IsCustomer.ToString()));
+            // Add IsCustomer claim with lowercase boolean value to ensure consistency
+            await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim("IsCustomer", model.IsCustomer.ToString().ToLower()));
 
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, new UserDto
             {
