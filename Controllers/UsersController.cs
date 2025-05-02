@@ -5,6 +5,7 @@ using sky_webapi.DTOs;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace sky_webapi.Controllers
 {
@@ -14,9 +15,14 @@ namespace sky_webapi.Controllers
     public class UsersController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        public UsersController(UserManager<ApplicationUser> userManager)
+        private readonly ILogger<UsersController> _logger;
+
+        public UsersController(
+            UserManager<ApplicationUser> userManager,
+            ILogger<UsersController> logger)
         {
             _userManager = userManager;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -93,8 +99,16 @@ namespace sky_webapi.Controllers
             user.LastName = model.LastName;
             user.IsCustomer = model.IsCustomer;
             user.CustomerId = model.CustomerId;
+            
+            // Only allow staff to update email confirmation status
+            if (User.IsInRole("Staff") && user.EmailConfirmed != model.EmailConfirmed)
+            {
+                user.EmailConfirmed = model.EmailConfirmed;
+                _logger.LogInformation("Email confirmation status updated for user {Email} to {Status} by staff member", 
+                    user.Email, model.EmailConfirmed);
+            }
+
             // Email and username update omitted for safety
-            // EmailConfirmed is not settable from here for security
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
