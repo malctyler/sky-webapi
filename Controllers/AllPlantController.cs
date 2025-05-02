@@ -7,7 +7,7 @@ namespace sky_webapi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")] // Only admin can manage plant data
+    [Authorize] // Base authorization for the controller
     public class AllPlantController : ControllerBase
     {
         private readonly IAllPlantService _service;
@@ -18,6 +18,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Staff")] // Allow both Admin and Staff to read
         public async Task<ActionResult<IEnumerable<AllPlantDto>>> GetAllPlants()
         {
             var plants = await _service.GetAllPlantsAsync();
@@ -25,6 +26,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin,Staff")] // Allow both Admin and Staff to read
         public async Task<ActionResult<AllPlantDto>> GetPlant(int id)
         {
             var plant = await _service.GetPlantByIdAsync(id);
@@ -36,6 +38,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpGet("category/{categoryId}")]
+        [Authorize(Roles = "Admin,Staff")] // Allow both Admin and Staff to read
         public async Task<ActionResult<IEnumerable<AllPlantDto>>> GetPlantsByCategory(int categoryId)
         {
             var plants = await _service.GetPlantsByCategoryAsync(categoryId);
@@ -43,6 +46,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")] // Only Admin can create
         public async Task<ActionResult<AllPlantDto>> CreatePlant(AllPlantDto plantDto)
         {
             var result = await _service.CreatePlantAsync(plantDto);
@@ -50,6 +54,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")] // Only Admin can update
         public async Task<IActionResult> UpdatePlant(int id, AllPlantDto plantDto)
         {
             await _service.UpdatePlantAsync(id, plantDto);
@@ -57,6 +62,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")] // Only Admin can delete
         public async Task<IActionResult> DeletePlant(int id)
         {
             await _service.DeletePlantAsync(id);
