@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using sky_webapi.DTOs;
 using sky_webapi.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace sky_webapi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")] // Only admin can manage plant data
     public class AllPlantController : ControllerBase
     {
         private readonly IAllPlantService _service;

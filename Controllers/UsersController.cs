@@ -11,7 +11,7 @@ namespace sky_webapi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Staff")] // Only staff can manage users
+    [Authorize(Roles = "Admin")] // Only admin can manage users
     public class UsersController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
