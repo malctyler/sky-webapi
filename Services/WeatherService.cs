@@ -6,6 +6,7 @@ namespace sky_webapi.Services
     public interface IWeatherService
     {
         Task<WeatherForecastDto> GetCurrentWeatherAsync();
+        Task<WeatherForecastDetailDto> GetFiveDayForecastAsync();
     }
 
     public class WeatherService : IWeatherService
@@ -42,6 +43,69 @@ namespace sky_webapi.Services
                 Icon = weatherData.GetProperty("weather")[0].GetProperty("icon").GetString(),
                 WindSpeed = weatherData.GetProperty("wind").GetProperty("speed").GetDouble()
             };
+        }
+
+        public async Task<WeatherForecastDetailDto> GetFiveDayForecastAsync()
+        {
+            var url = $"https://api.openweathermap.org/data/2.5/forecast?lat={MAYFIELD_LAT}&lon={MAYFIELD_LON}&appid={_apiKey}&units=metric";
+            
+            var response = await _httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            
+            var content = await response.Content.ReadAsStringAsync();
+            var forecastData = JsonSerializer.Deserialize<JsonElement>(content);
+
+            var forecast = new WeatherForecastDetailDto
+            {
+                Items = new List<ForecastItem>(),
+                City = new CityInfo
+                {
+                    Name = forecastData.GetProperty("city").GetProperty("name").GetString(),
+                    Country = forecastData.GetProperty("city").GetProperty("country").GetString(),
+                    Sunrise = forecastData.GetProperty("city").GetProperty("sunrise").GetInt64(),
+                    Sunset = forecastData.GetProperty("city").GetProperty("sunset").GetInt64(),
+                    Coord = new Coordinates
+                    {
+                        Lat = forecastData.GetProperty("city").GetProperty("coord").GetProperty("lat").GetDouble(),
+                        Lon = forecastData.GetProperty("city").GetProperty("coord").GetProperty("lon").GetDouble()
+                    }
+                }
+            };
+
+            var list = forecastData.GetProperty("list");
+            foreach (var item in list.EnumerateArray())
+            {
+                forecast.Items.Add(new ForecastItem
+                {
+                    DateTime = item.GetProperty("dt").GetInt64(),
+                    DtTxt = item.GetProperty("dt_txt").GetString(),
+                    Pop = item.GetProperty("pop").GetDouble(),
+                    Main = new MainWeather
+                    {
+                        Temp = item.GetProperty("main").GetProperty("temp").GetDouble(),
+                        FeelsLike = item.GetProperty("main").GetProperty("feels_like").GetDouble(),
+                        TempMin = item.GetProperty("main").GetProperty("temp_min").GetDouble(),
+                        TempMax = item.GetProperty("main").GetProperty("temp_max").GetDouble(),
+                        Pressure = item.GetProperty("main").GetProperty("pressure").GetInt32(),
+                        Humidity = item.GetProperty("main").GetProperty("humidity").GetInt32()
+                    },
+                    Weather = item.GetProperty("weather").EnumerateArray().Select(w => new Weather
+                    {
+                        Id = w.GetProperty("id").GetInt32(),
+                        Main = w.GetProperty("main").GetString(),
+                        Description = w.GetProperty("description").GetString(),
+                        Icon = w.GetProperty("icon").GetString()
+                    }).ToList(),
+                    Wind = new Wind
+                    {
+                        Speed = item.GetProperty("wind").GetProperty("speed").GetDouble(),
+                        Deg = item.GetProperty("wind").GetProperty("deg").GetInt32(),
+                        Gust = item.GetProperty("wind").TryGetProperty("gust", out var gust) ? gust.GetDouble() : 0
+                    }
+                });
+            }
+
+            return forecast;
         }
     }
 }

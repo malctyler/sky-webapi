@@ -28,5 +28,19 @@ namespace sky_webapi.Controllers
                 return StatusCode(500, "Error fetching weather data: " + ex.Message);
             }
         }
+
+        [HttpGet("forecast")]
+        public async Task<ActionResult<WeatherForecastDetailDto>> GetFiveDayForecast()
+        {
+            try
+            {
+                var forecast = await _weatherService.GetFiveDayForecastAsync();
+                return Ok(forecast);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error fetching forecast data: " + ex.Message);
+            }
+        }
     }
 }
