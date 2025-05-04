@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using sky_webapi.DTOs;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using sky_webapi.Data;
 
 namespace sky_webapi.Controllers
 {
@@ -19,11 +21,16 @@ namespace sky_webapi.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<ClaimsController> _logger;
+        private readonly AppDbContext _context;
 
-        public ClaimsController(UserManager<ApplicationUser> userManager, ILogger<ClaimsController> logger)
+        public ClaimsController(
+            UserManager<ApplicationUser> userManager,
+            ILogger<ClaimsController> logger,
+            AppDbContext context)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         [HttpGet("{userId}")]
@@ -94,14 +101,16 @@ namespace sky_webapi.Controllers
                     return BadRequest($"User already has a claim of type '{model.Type}'");
                 }
 
-                var result = await _userManager.AddClaimAsync(user, new Claim(model.Type, model.Value));
-                if (!result.Succeeded)
+                // Create the claim using EF Core context to handle ID generation
+                var identityUserClaim = new IdentityUserClaim<string>
                 {
-                    var errors = result.Errors.Select(e => e.Description);
-                    _logger.LogError("Failed to add claim {ClaimType} for user {UserId}. Errors: {Errors}", 
-                        model.Type, userId, string.Join(", ", errors));
-                    return BadRequest(result.Errors);
-                }
+                    UserId = userId,
+                    ClaimType = model.Type,
+                    ClaimValue = model.Value
+                };
+
+                _context.UserClaims.Add(identityUserClaim);
+                await _context.SaveChangesAsync();
 
                 _logger.LogInformation("Successfully added claim {ClaimType} for user {UserId}", model.Type, userId);
                 return Ok(new ClaimDto { Type = model.Type, Value = model.Value });
