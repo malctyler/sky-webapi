@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using sky_webapi.Data.Entities;
 using System.Threading.Tasks;
 using System.Security.Claims;
@@ -11,6 +12,7 @@ namespace sky_webapi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Staff")] // Only staff should manage claims
     public class ClaimsController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
