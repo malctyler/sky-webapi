@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using sky_webapi.Data.Entities;
+using System;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace sky_webapi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Staff")] // Only staff should manage claims
+    [Authorize(Roles = "Staff")]
     public class ClaimsController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -21,22 +22,34 @@ namespace sky_webapi.Controllers
 
         public ClaimsController(UserManager<ApplicationUser> userManager, ILogger<ClaimsController> logger)
         {
-            _userManager = userManager;
-            _logger = logger;
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet("{userId}")]
         public async Task<ActionResult<IEnumerable<ClaimDto>>> GetUserClaims(string userId)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null) return NotFound();
-            var claims = await _userManager.GetClaimsAsync(user);
-            var result = new List<ClaimDto>();
-            foreach (var claim in claims)
+            try
             {
-                result.Add(new ClaimDto { Type = claim.Type, Value = claim.Value });
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    _logger.LogWarning("Attempted to get claims for non-existent user {UserId}", userId);
+                    return NotFound("User not found");
+                }
+                var claims = await _userManager.GetClaimsAsync(user);
+                var result = claims.Select(claim => new ClaimDto 
+                { 
+                    Type = claim.Type, 
+                    Value = claim.Value 
+                }).ToList();
+                return Ok(result);
             }
-            return Ok(result);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving claims for user {UserId}", userId);
+                return StatusCode(500, "An error occurred while retrieving claims");
+            }
         }
 
         [HttpGet("{userId}/claims/{type}")]
@@ -55,6 +68,12 @@ namespace sky_webapi.Controllers
         {
             try
             {
+                if (model == null)
+                {
+                    _logger.LogWarning("Attempt to add null claim for user {UserId}", userId);
+                    return BadRequest("Claim data cannot be null");
+                }
+
                 if (string.IsNullOrWhiteSpace(model.Type) || string.IsNullOrWhiteSpace(model.Value))
                 {
                     _logger.LogWarning("Attempt to add claim with empty type or value for user {UserId}", userId);
@@ -68,7 +87,6 @@ namespace sky_webapi.Controllers
                     return NotFound("User not found");
                 }
 
-                // Check if claim already exists
                 var existingClaims = await _userManager.GetClaimsAsync(user);
                 if (existingClaims.Any(c => c.Type == model.Type))
                 {
@@ -86,44 +104,72 @@ namespace sky_webapi.Controllers
                 }
 
                 _logger.LogInformation("Successfully added claim {ClaimType} for user {UserId}", model.Type, userId);
-                return NoContent();
+                return Ok(new ClaimDto { Type = model.Type, Value = model.Value });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error adding claim {ClaimType} for user {UserId}", model?.Type ?? "unknown", userId);
-                return StatusCode(500, "An error occurred while adding the claim");
+                return StatusCode(500, new { message = "An error occurred while adding the claim", error = ex.Message });
             }
         }
 
         [HttpPut("{userId}/claims/{type}")]
         public async Task<IActionResult> UpdateClaim(string userId, string type, [FromBody] ClaimDto model)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null) return NotFound();
-            var claims = await _userManager.GetClaimsAsync(user);
-            var oldClaim = claims.FirstOrDefault(c => c.Type == type);
-            if (oldClaim == null) return NotFound();
-            var resultRemove = await _userManager.RemoveClaimAsync(user, oldClaim);
-            if (!resultRemove.Succeeded)
-                return BadRequest(resultRemove.Errors);
-            var resultAdd = await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim(model.Type, model.Value));
-            if (!resultAdd.Succeeded)
-                return BadRequest(resultAdd.Errors);
-            return NoContent();
+            try
+            {
+                if (model == null)
+                {
+                    return BadRequest("Claim data cannot be null");
+                }
+
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null) return NotFound("User not found");
+                
+                var claims = await _userManager.GetClaimsAsync(user);
+                var oldClaim = claims.FirstOrDefault(c => c.Type == type);
+                if (oldClaim == null) return NotFound($"Claim of type '{type}' not found");
+                
+                var resultRemove = await _userManager.RemoveClaimAsync(user, oldClaim);
+                if (!resultRemove.Succeeded)
+                    return BadRequest(resultRemove.Errors);
+                
+                var resultAdd = await _userManager.AddClaimAsync(user, new Claim(model.Type, model.Value));
+                if (!resultAdd.Succeeded)
+                    return BadRequest(resultAdd.Errors);
+                
+                return Ok(new ClaimDto { Type = model.Type, Value = model.Value });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating claim {ClaimType} for user {UserId}", type, userId);
+                return StatusCode(500, new { message = "An error occurred while updating the claim", error = ex.Message });
+            }
         }
 
         [HttpDelete("{userId}/claims/{type}")]
         public async Task<IActionResult> DeleteClaim(string userId, string type)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null) return NotFound();
-            var claims = await _userManager.GetClaimsAsync(user);
-            var claim = claims.FirstOrDefault(c => c.Type == type);
-            if (claim == null) return NotFound();
-            var result = await _userManager.RemoveClaimAsync(user, claim);
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
-            return NoContent();
+            try
+            {
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null) return NotFound("User not found");
+                
+                var claims = await _userManager.GetClaimsAsync(user);
+                var claim = claims.FirstOrDefault(c => c.Type == type);
+                if (claim == null) return NotFound($"Claim of type '{type}' not found");
+                
+                var result = await _userManager.RemoveClaimAsync(user, claim);
+                if (!result.Succeeded)
+                    return BadRequest(result.Errors);
+                
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting claim {ClaimType} for user {UserId}", type, userId);
+                return StatusCode(500, new { message = "An error occurred while deleting the claim", error = ex.Message });
+            }
         }
     }
 }
