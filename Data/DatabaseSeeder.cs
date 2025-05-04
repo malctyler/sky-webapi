@@ -169,6 +169,11 @@ namespace sky_webapi.Data
                 {
                     UserId = AdminUserId,
                     RoleId = AdminRoleId  // Note: Changed from Staff to Admin role
+                },
+                new IdentityUserRole<string>
+                {
+                    UserId = AdminUserId,
+                    RoleId = StaffRoleId
                 }
             );
 
