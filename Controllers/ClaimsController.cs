@@ -101,16 +101,14 @@ namespace sky_webapi.Controllers
                     return BadRequest($"User already has a claim of type '{model.Type}'");
                 }
 
-                // Create the claim using EF Core context to handle ID generation
-                var identityUserClaim = new IdentityUserClaim<string>
+                var result = await _userManager.AddClaimAsync(user, new Claim(model.Type, model.Value));
+                if (!result.Succeeded)
                 {
-                    UserId = userId,
-                    ClaimType = model.Type,
-                    ClaimValue = model.Value
-                };
-
-                _context.UserClaims.Add(identityUserClaim);
-                await _context.SaveChangesAsync();
+                    var errors = result.Errors.Select(e => e.Description);
+                    _logger.LogError("Failed to add claim {ClaimType} for user {UserId}. Errors: {Errors}", 
+                        model.Type, userId, string.Join(", ", errors));
+                    return BadRequest(result.Errors);
+                }
 
                 _logger.LogInformation("Successfully added claim {ClaimType} for user {UserId}", model.Type, userId);
                 return Ok(new ClaimDto { Type = model.Type, Value = model.Value });
