@@ -7,12 +7,16 @@ namespace sky_webapi.Data
     public static class DatabaseSeeder
     {
         private const string AdminRoleId = "d4b74547-1385-4c44-88ab-1b3dd647be9c";
+        private const string StaffRoleId = "64f2f5e1-e472-4e90-8158-9d60b5b7d0fe";
+        private const string CustomerRoleId = "7f3d65e1-e472-4e90-8158-9d60b5b7d123";
         private const string AdminUserId = "6aa33e39-8591-4bff-9001-bc58c0313c89";
         private const string AdminRoleConcurrencyStamp = "79202516-5691-4c00-8fdc-5c472cc112a1";
+        private const string StaffRoleConcurrencyStamp = "8920f4b6-7671-4c8b-9c5d-1f23fe76f236";
+        private const string CustomerRoleConcurrencyStamp = "55f53c36-8b15-4ef1-a7d2-94946c14c716";
         private const string AdminUserConcurrencyStamp = "42a75722-9d32-4242-9eac-0d0c5a80e63a";
         private const string AdminUserSecurityStamp = "JIRVGNRNQ7Z3TPFRS4YPFN5QVMPXQY2K";
-        // Pre-hashed password for "Admin123!"
-        private const string AdminPasswordHash = "AQAAAAIAAYagAAAAEE3S7J6n1bqSJs/HKhD1Rz0ZvAQbUviOqRHNnRlVUyKIE4wUkJqr3xxUzNAJ9JjO2Q==";
+        // Pre-hashed password for "Admin123!" - Compatible with ASP.NET Core Identity v9
+        private const string AdminPasswordHash = "AQAAAAIAAYagAAAAELPDyn6G7TKxOvThBltjPcf3ieDXUmVaZlKK3Q4Qf3jTIgyCFjPXDSOixax8c/UHVg==";
 
         public static void SeedData(ModelBuilder modelBuilder)
         {
@@ -115,14 +119,28 @@ namespace sky_webapi.Data
             modelBuilder.Entity<CustomerEntity>().HasData(customers);
             modelBuilder.Entity<NoteEntity>().HasData(notes);
 
-            // Seed initial admin role with static GUID
+            // Seed initial roles with static GUIDs
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole
                 {
                     Id = AdminRoleId,
+                    Name = "Admin",
+                    NormalizedName = "ADMIN",
+                    ConcurrencyStamp = AdminRoleConcurrencyStamp
+                },
+                new IdentityRole
+                {
+                    Id = StaffRoleId,
                     Name = "Staff",
                     NormalizedName = "STAFF",
-                    ConcurrencyStamp = AdminRoleConcurrencyStamp
+                    ConcurrencyStamp = StaffRoleConcurrencyStamp
+                },
+                new IdentityRole
+                {
+                    Id = CustomerRoleId,
+                    Name = "Customer",
+                    NormalizedName = "CUSTOMER",
+                    ConcurrencyStamp = CustomerRoleConcurrencyStamp
                 }
             );
 
@@ -145,12 +163,12 @@ namespace sky_webapi.Data
 
             modelBuilder.Entity<ApplicationUser>().HasData(adminUser);
 
-            // Assign admin role to admin user
+            // Assign admin role to admin user (now using AdminRoleId)
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(
                 new IdentityUserRole<string>
                 {
                     UserId = AdminUserId,
-                    RoleId = AdminRoleId
+                    RoleId = AdminRoleId  // Note: Changed from Staff to Admin role
                 }
             );
 

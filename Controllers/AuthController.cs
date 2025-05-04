@@ -312,5 +312,27 @@ namespace sky_webapi.Controllers
                 return StatusCode(500, new { Message = "An error occurred while checking email confirmation status." });
             }
         }
+
+        [HttpPost("dev/reset-admin")]
+        public async Task<IActionResult> ResetAdminPassword()
+        {
+            #if DEBUG
+            var admin = await _userManager.FindByEmailAsync("admin@example.com");
+            if (admin == null)
+                return NotFound(new { Message = "Admin user not found" });
+
+            string newPassword = "Admin123!";
+            string resetToken = await _userManager.GeneratePasswordResetTokenAsync(admin);
+            var result = await _userManager.ResetPasswordAsync(admin, resetToken, newPassword);
+
+            if (!result.Succeeded)
+                return BadRequest(new { Errors = result.Errors });
+
+            _logger.LogInformation("Admin password reset successfully");
+            return Ok(new { Message = "Admin password reset to: " + newPassword });
+            #else
+            return NotFound();
+            #endif
+        }
     }
 }
