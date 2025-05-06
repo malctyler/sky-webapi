@@ -13,6 +13,9 @@ namespace sky_webapi.Data.Entities
         public string? SerialNumber { get; set; }
         public int? StatusID { get; set; }
         public string? SWL { get; set; }
+        public string? InspectionFrequency { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal? InspectionFee { get; set; }
 
         // Navigation properties
         [ForeignKey("CustID")]

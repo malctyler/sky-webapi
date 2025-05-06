@@ -51,7 +51,9 @@ namespace sky_webapi.Services
                 PlantNameID = holdingDto.PlantNameID,
                 SerialNumber = holdingDto.SerialNumber,
                 StatusID = holdingDto.StatusID,
-                SWL = holdingDto.SWL
+                SWL = holdingDto.SWL,
+                InspectionFrequency = holdingDto.InspectionFrequency,
+                InspectionFee = holdingDto.InspectionFee
             };
 
             var result = await _repository.AddAsync(holding);
@@ -69,7 +71,9 @@ namespace sky_webapi.Services
                 PlantNameID = holdingDto.PlantNameID,
                 SerialNumber = holdingDto.SerialNumber,
                 StatusID = holdingDto.StatusID,
-                SWL = holdingDto.SWL
+                SWL = holdingDto.SWL,
+                InspectionFrequency = holdingDto.InspectionFrequency,
+                InspectionFee = holdingDto.InspectionFee
             };
 
             await _repository.UpdateAsync(holding);
@@ -93,6 +97,8 @@ namespace sky_webapi.Services
                 SerialNumber = holding.SerialNumber,
                 StatusID = holding.StatusID,
                 SWL = holding.SWL,
+                InspectionFrequency = holding.InspectionFrequency,
+                InspectionFee = holding.InspectionFee,
                 PlantDescription = holding.Plant?.PlantDescription,
                 StatusDescription = holding.Status?.StatusDescription,
                 CustomerCompanyName = holding.Customer?.CompanyName,
