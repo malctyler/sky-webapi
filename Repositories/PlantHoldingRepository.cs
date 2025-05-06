@@ -82,6 +82,8 @@ namespace sky_webapi.Repositories
                 existingHolding.SerialNumber = plantHolding.SerialNumber;
                 existingHolding.StatusID = plantHolding.StatusID;
                 existingHolding.SWL = plantHolding.SWL;
+                existingHolding.InspectionFrequency = plantHolding.InspectionFrequency;
+                existingHolding.InspectionFee = plantHolding.InspectionFee;
 
                 await _context.SaveChangesAsync();
             }
