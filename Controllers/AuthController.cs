@@ -114,6 +114,7 @@ namespace sky_webapi.Controllers
                     return Unauthorized(new { Message = "Invalid email or password" });
                 }
 
+                // Prevent login if email is not confirmed
                 if (!user.EmailConfirmed)
                 {
                     _logger.LogWarning("Login attempt with unconfirmed email: {Email}", model.Email);
@@ -134,14 +135,8 @@ namespace sky_webapi.Controllers
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id),
                     new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
-                    new Claim("EmailConfirmed", user.EmailConfirmed.ToString()),
-                    new Claim("IsCustomer", user.IsCustomer.ToString()),
+                    new Claim("EmailConfirmed", user.EmailConfirmed.ToString())
                 };
-
-                if (user.CustomerId.HasValue)
-                {
-                    claims.Add(new Claim("CustomerId", user.CustomerId.Value.ToString()));
-                }
 
                 // Add roles as claims
                 foreach (var role in userRoles)
@@ -149,7 +144,7 @@ namespace sky_webapi.Controllers
                     claims.Add(new Claim(ClaimTypes.Role, role));
                 }
 
-                // Add any additional claims from the user
+                // Add existing claims, excluding any that we're already adding
                 claims.AddRange(userClaims.Where(c => 
                     !claims.Any(existingClaim => 
                         existingClaim.Type == c.Type && 
@@ -170,13 +165,11 @@ namespace sky_webapi.Controllers
                 );
 
                 _logger.LogInformation("User logged in successfully: {Email}", model.Email);
-
                 return Ok(new AuthResponseDto
                 {
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
                     Email = user.Email ?? string.Empty,
                     IsCustomer = user.IsCustomer,
-                    CustomerId = user.CustomerId,
                     EmailConfirmed = user.EmailConfirmed
                 });
             }

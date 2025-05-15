@@ -25,7 +25,6 @@ namespace sky_webapi.DTOs
         public string Email { get; set; } = string.Empty;
         public bool IsCustomer { get; set; }
         public bool EmailConfirmed { get; set; }
-        public int? CustomerId { get; set; }
     }
 
     public class ChangePasswordDto

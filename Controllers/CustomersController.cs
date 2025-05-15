@@ -5,9 +5,9 @@ using sky_webapi.Services;
 
 namespace sky_webapi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class CustomersController : ControllerBase
     {
         private readonly ICustomerService _customerService;
@@ -17,10 +17,18 @@ namespace sky_webapi.Controllers
             _customerService = customerService;
         }
 
+        private bool IsCustomer()
+        {
+            return User.HasClaim("IsCustomer", "True");
+        }
+
         [HttpGet]
-        [Authorize(Roles = "Staff,Admin")]  // Only staff and admin can list all customers
         public async Task<ActionResult<IEnumerable<CustomerDto>>> GetCustomers()
         {
+            if (IsCustomer())
+            {
+                return Forbid();
+            }
             var customers = await _customerService.GetAllCustomersAsync();
             return Ok(customers);
         }
@@ -28,37 +36,36 @@ namespace sky_webapi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomerDto>> GetCustomer(int id)
         {
-            // If user is a customer, they can only view their own data
-            if (User.HasClaim("IsCustomer", "true") || User.HasClaim("IsCustomer", "True"))
+            if (IsCustomer())
             {
-                var customerIdClaim = User.Claims.FirstOrDefault(c => c.Type == "CustomerId");
-                if (customerIdClaim == null || int.Parse(customerIdClaim.Value) != id)
-                {
-                    return Forbid();
-                }
+                return Forbid();
             }
-
             var customer = await _customerService.GetCustomerByIdAsync(id);
             if (customer == null)
             {
                 return NotFound();
             }
-
             return Ok(customer);
         }
 
         [HttpPost]
-        [Authorize(Roles = "Staff,Admin")]  // Only staff and admin can create customers
         public async Task<ActionResult<CustomerDto>> CreateCustomer(CustomerDto customerDto)
         {
+            if (IsCustomer())
+            {
+                return Forbid();
+            }
             var createdCustomer = await _customerService.CreateCustomerAsync(customerDto);
             return CreatedAtAction(nameof(GetCustomer), new { id = createdCustomer.CustID }, createdCustomer);
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Staff,Admin")]  // Only staff and admin can update customers
         public async Task<IActionResult> UpdateCustomer(int id, CustomerDto customerDto)
         {
+            if (IsCustomer())
+            {
+                return Forbid();
+            }
             var updatedCustomer = await _customerService.UpdateCustomerAsync(id, customerDto);
             if (updatedCustomer == null)
             {
@@ -68,9 +75,12 @@ namespace sky_webapi.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Staff,Admin")]  // Only staff and admin can delete customers
         public async Task<IActionResult> DeleteCustomer(int id)
         {
+            if (IsCustomer())
+            {
+                return Forbid();
+            }
             await _customerService.DeleteCustomerAsync(id);
             return NoContent();
         }
