@@ -162,13 +162,13 @@ namespace sky_webapi.Controllers
                     expires: DateTime.Now.AddMinutes(
                         Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"])),
                     signingCredentials: creds
-                );
-
-                _logger.LogInformation("User logged in successfully: {Email}", model.Email);
+                );                _logger.LogInformation("User logged in successfully: {Email}", model.Email);
                 return Ok(new AuthResponseDto
                 {
+                    Id = user.Id,
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
                     Email = user.Email ?? string.Empty,
+                    Roles = userRoles.ToList(),
                     IsCustomer = user.IsCustomer,
                     EmailConfirmed = user.EmailConfirmed
                 });
