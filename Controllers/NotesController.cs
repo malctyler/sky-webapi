@@ -33,6 +33,13 @@ namespace sky_webapi.Controllers
             return Ok(note);
         }
 
+        [HttpGet("customer/{customerId}")]
+        public async Task<ActionResult<IEnumerable<NoteDto>>> GetNotesByCustomer(int customerId)
+        {
+            var notes = await _noteService.GetNotesByCustomerIdAsync(customerId);
+            return Ok(notes);
+        }
+
         [HttpPost]
         public async Task<ActionResult<NoteDto>> CreateNote(NoteDto noteDto)
         {

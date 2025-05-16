@@ -10,5 +10,6 @@ namespace sky_webapi.Repositories
         Task UpdateNoteAsync(NoteEntity note);
         Task DeleteNoteAsync(int id);
         Task<bool> NoteExistsAsync(int id);
+        Task<IEnumerable<NoteEntity>> GetNotesByCustomerIdAsync(int customerId);
     }
 }

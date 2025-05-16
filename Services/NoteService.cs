@@ -78,5 +78,17 @@ namespace sky_webapi.Services
         {
             await _noteRepository.DeleteNoteAsync(id);
         }
+
+        public async Task<IEnumerable<NoteDto>> GetNotesByCustomerIdAsync(int customerId)
+        {
+            var notes = await _noteRepository.GetNotesByCustomerIdAsync(customerId);
+            return notes.Select(n => new NoteDto
+            {
+                NoteID = n.NoteID,
+                CustID = n.CustID,
+                Date = n.Date,
+                Notes = n.Notes
+            });
+        }
     }
 }

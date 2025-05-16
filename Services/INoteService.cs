@@ -9,5 +9,6 @@ namespace sky_webapi.Services
         Task<NoteDto> CreateNoteAsync(NoteDto noteDto);
         Task<NoteDto?> UpdateNoteAsync(int id, NoteDto noteDto);
         Task DeleteNoteAsync(int id);
+        Task<IEnumerable<NoteDto>> GetNotesByCustomerIdAsync(int customerId);
     }
 }

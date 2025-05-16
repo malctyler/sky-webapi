@@ -49,5 +49,13 @@ namespace sky_webapi.Repositories
         {
             return await _context.Notes.AnyAsync(e => e.NoteID == id);
         }
+
+        public async Task<IEnumerable<NoteEntity>> GetNotesByCustomerIdAsync(int customerId)
+        {
+            return await _context.Notes
+                .Where(n => n.CustID == customerId)
+                .OrderByDescending(n => n.Date)
+                .ToListAsync();
+        }
     }
 }
