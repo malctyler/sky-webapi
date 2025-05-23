@@ -15,25 +15,25 @@ namespace sky_webapi.Repositories
 
         public async Task<IEnumerable<AllPlantEntity>> GetAllAsync()
         {
-            return await _context.AllPlants.ToListAsync();
+            return await _context.Allplant.ToListAsync();
         }
 
         public async Task<AllPlantEntity?> GetByIdAsync(int id)
         {
-            return await _context.AllPlants
+            return await _context.Allplant
                 .FirstOrDefaultAsync(p => p.PlantNameID == id);
         }
 
         public async Task<IEnumerable<AllPlantEntity>> GetByCategoryAsync(int categoryId)
         {
-            return await _context.AllPlants
+            return await _context.Allplant
                 .Where(p => p.PlantCategory == categoryId)
                 .ToListAsync();
         }
 
         public async Task<AllPlantEntity> AddAsync(AllPlantEntity plant)
         {
-            _context.AllPlants.Add(plant);
+            _context.Allplant.Add(plant);
             await _context.SaveChangesAsync();
             return plant;
         }
@@ -46,10 +46,10 @@ namespace sky_webapi.Repositories
 
         public async Task DeleteAsync(int id)
         {
-            var plant = await _context.AllPlants.FindAsync(id);
+            var plant = await _context.Allplant.FindAsync(id);
             if (plant != null)
             {
-                _context.AllPlants.Remove(plant);
+                _context.Allplant.Remove(plant);
                 await _context.SaveChangesAsync();
             }
         }

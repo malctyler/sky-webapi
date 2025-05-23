@@ -85,7 +85,7 @@ builder.Services.AddScoped<INoteService, NoteService>();
 builder.Services.AddScoped<IPlantCategoryRepository, PlantCategoryRepository>();
 builder.Services.AddScoped<IAllPlantRepository, AllPlantRepository>();
 builder.Services.AddScoped<IPlantCategoryService, PlantCategoryService>();
-builder.Services.AddScoped<IAllPlantService, AllPlantService>();
+builder.Services.AddScoped<IAllplantervice, Allplantervice>();
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 builder.Services.AddScoped<IStatusService, StatusService>();
 builder.Services.AddScoped<IPlantHoldingRepository, PlantHoldingRepository>();

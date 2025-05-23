@@ -98,7 +98,7 @@ namespace sky_webapi.Data
                 });
             }
 
-            // Add sample plants
+            // Add sample plant
             modelBuilder.Entity<AllPlantEntity>().HasData(
                 new AllPlantEntity { PlantNameID = 1, PlantDescription = "Excavator 2T", PlantCategory = 1, NormalPrice = "150.00" },
                 new AllPlantEntity { PlantNameID = 2, PlantDescription = "Scissor Lift", PlantCategory = 3, NormalPrice = "95.00" },

@@ -3330,7 +3330,7 @@ namespace sky_webapi.Migrations
             modelBuilder.Entity("sky_webapi.Data.Entities.AllPlantEntity", b =>
                 {
                     b.HasOne("sky_webapi.Data.Entities.PlantCategoryEntity", "Category")
-                        .WithMany("Plants")
+                        .WithMany("plant")
                         .HasForeignKey("PlantCategory")
                         .OnDelete(DeleteBehavior.Cascade);
 
@@ -3388,7 +3388,7 @@ namespace sky_webapi.Migrations
 
             modelBuilder.Entity("sky_webapi.Data.Entities.PlantCategoryEntity", b =>
                 {
-                    b.Navigation("Plants");
+                    b.Navigation("plant");
                 });
 
             modelBuilder.Entity("sky_webapi.Data.Entities.Status", b =>

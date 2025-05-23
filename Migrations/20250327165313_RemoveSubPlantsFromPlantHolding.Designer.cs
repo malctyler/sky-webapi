@@ -12,8 +12,8 @@ using sky_webapi.Data;
 namespace sky_webapi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250327165313_RemoveSubPlantsFromPlantHolding")]
-    partial class RemoveSubPlantsFromPlantHolding
+    [Migration("20250327165313_RemoveSubplantFromPlantHolding")]
+    partial class RemoveSubplantFromPlantHolding
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -3383,7 +3383,7 @@ namespace sky_webapi.Migrations
             modelBuilder.Entity("sky_webapi.Data.Entities.AllPlantEntity", b =>
                 {
                     b.HasOne("sky_webapi.Data.Entities.PlantCategoryEntity", "Category")
-                        .WithMany("Plants")
+                        .WithMany("plant")
                         .HasForeignKey("PlantCategory");
 
                     b.Navigation("Category");
@@ -3415,7 +3415,7 @@ namespace sky_webapi.Migrations
 
             modelBuilder.Entity("sky_webapi.Data.Entities.PlantCategoryEntity", b =>
                 {
-                    b.Navigation("Plants");
+                    b.Navigation("plant");
                 });
 
             modelBuilder.Entity("sky_webapi.Data.Entities.Status", b =>

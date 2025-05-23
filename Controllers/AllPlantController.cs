@@ -10,19 +10,19 @@ namespace sky_webapi.Controllers
     [Authorize] // Base authorization for the controller
     public class AllPlantController : ControllerBase
     {
-        private readonly IAllPlantService _service;
+        private readonly IAllplantervice _service;
 
-        public AllPlantController(IAllPlantService service)
+        public AllPlantController(IAllplantervice service)
         {
             _service = service;
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin,Staff")] // Allow both Admin and Staff to read
-        public async Task<ActionResult<IEnumerable<AllPlantDto>>> GetAllPlants()
+        public async Task<ActionResult<IEnumerable<AllPlantDto>>> GetAllplant()
         {
-            var plants = await _service.GetAllPlantsAsync();
-            return Ok(plants);
+            var plant = await _service.GetAllplantAsync();
+            return Ok(plant);
         }
 
         [HttpGet("{id}")]
@@ -39,10 +39,10 @@ namespace sky_webapi.Controllers
 
         [HttpGet("category/{categoryId}")]
         [Authorize(Roles = "Admin,Staff")] // Allow both Admin and Staff to read
-        public async Task<ActionResult<IEnumerable<AllPlantDto>>> GetPlantsByCategory(int categoryId)
+        public async Task<ActionResult<IEnumerable<AllPlantDto>>> GetplantByCategory(int categoryId)
         {
-            var plants = await _service.GetPlantsByCategoryAsync(categoryId);
-            return Ok(plants);
+            var plant = await _service.GetplantByCategoryAsync(categoryId);
+            return Ok(plant);
         }
 
         [HttpPost]

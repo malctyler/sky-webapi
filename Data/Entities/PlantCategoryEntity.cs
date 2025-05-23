@@ -13,6 +13,6 @@ namespace sky_webapi.Data.Entities
         public string? CategoryDescription { get; set; }
 
         // Navigation property
-        public virtual ICollection<AllPlantEntity>? Plants { get; set; }
+        public virtual ICollection<AllPlantEntity>? plant { get; set; }
     }
 }
