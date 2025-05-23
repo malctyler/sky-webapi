@@ -2,11 +2,11 @@ using sky_webapi.DTOs;
 
 namespace sky_webapi.Services
 {
-    public interface IAllPlantService
+    public interface IAllplantervice
     {
-        Task<IEnumerable<AllPlantDto>> GetAllPlantsAsync();
+        Task<IEnumerable<AllPlantDto>> GetAllplantAsync();
         Task<AllPlantDto?> GetPlantByIdAsync(int id);
-        Task<IEnumerable<AllPlantDto>> GetPlantsByCategoryAsync(int categoryId);
+        Task<IEnumerable<AllPlantDto>> GetplantByCategoryAsync(int categoryId);
         Task<AllPlantDto> CreatePlantAsync(AllPlantDto plantDto);
         Task UpdatePlantAsync(int id, AllPlantDto plantDto);
         Task DeletePlantAsync(int id);

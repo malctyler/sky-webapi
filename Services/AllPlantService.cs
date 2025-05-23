@@ -4,19 +4,19 @@ using sky_webapi.Repositories;
 
 namespace sky_webapi.Services
 {
-    public class AllPlantService : IAllPlantService
+    public class Allplantervice : IAllplantervice
     {
         private readonly IAllPlantRepository _repository;
 
-        public AllPlantService(IAllPlantRepository repository)
+        public Allplantervice(IAllPlantRepository repository)
         {
             _repository = repository;
         }
 
-        public async Task<IEnumerable<AllPlantDto>> GetAllPlantsAsync()
+        public async Task<IEnumerable<AllPlantDto>> GetAllplantAsync()
         {
-            var plants = await _repository.GetAllAsync();
-            return plants.Select(MapToDto);
+            var plant = await _repository.GetAllAsync();
+            return plant.Select(MapToDto);
         }
 
         public async Task<AllPlantDto?> GetPlantByIdAsync(int id)
@@ -25,10 +25,10 @@ namespace sky_webapi.Services
             return plant == null ? null : MapToDto(plant);
         }
 
-        public async Task<IEnumerable<AllPlantDto>> GetPlantsByCategoryAsync(int categoryId)
+        public async Task<IEnumerable<AllPlantDto>> GetplantByCategoryAsync(int categoryId)
         {
-            var plants = await _repository.GetByCategoryAsync(categoryId);
-            return plants.Select(MapToDto);
+            var plant = await _repository.GetByCategoryAsync(categoryId);
+            return plant.Select(MapToDto);
         }
 
         public async Task<AllPlantDto> CreatePlantAsync(AllPlantDto plantDto)

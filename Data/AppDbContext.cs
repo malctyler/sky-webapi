@@ -14,7 +14,7 @@ namespace sky_webapi.Data
         public DbSet<CustomerEntity> Customers { get; set; }
         public DbSet<NoteEntity> Notes { get; set; }
         public DbSet<PlantCategoryEntity> PlantCategories { get; set; }
-        public DbSet<AllPlantEntity> AllPlants { get; set; }
+        public DbSet<AllPlantEntity> Allplant { get; set; }
         public DbSet<Status> Status { get; set; }
         public DbSet<PlantHolding> PlantHoldings { get; set; }
         public DbSet<Inspection> Inspections { get; set; }
@@ -27,7 +27,7 @@ namespace sky_webapi.Data
             // Configure entity relationships
             modelBuilder.Entity<AllPlantEntity>()
                 .HasOne(p => p.Category)
-                .WithMany(c => c.Plants)
+                .WithMany(c => c.plant)
                 .HasForeignKey(p => p.PlantCategory)
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -72,7 +72,7 @@ namespace sky_webapi.Data
 
             modelBuilder.Entity<AllPlantEntity>()
                 .HasOne(p => p.Category)
-                .WithMany(c => c.Plants)
+                .WithMany(c => c.plant)
                 .HasForeignKey(p => p.PlantCategory)
                 .OnDelete(DeleteBehavior.Cascade);
 

@@ -16,14 +16,14 @@ namespace sky_webapi.Repositories
         public async Task<IEnumerable<PlantCategoryEntity>> GetAllAsync()
         {
             return await _context.PlantCategories
-                .Include(c => c.Plants)
+                .Include(c => c.plant)
                 .ToListAsync();
         }
 
         public async Task<PlantCategoryEntity?> GetByIdAsync(int id)
         {
             return await _context.PlantCategories
-                .Include(c => c.Plants)
+                .Include(c => c.plant)
                 .FirstOrDefaultAsync(c => c.CategoryID == id);
         }
 

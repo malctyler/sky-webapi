@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace sky_webapi.Migrations
 {
     /// <inheritdoc />
-    public partial class RemoveSubPlantsFromPlantHolding : Migration
+    public partial class RemoveSubplantFromPlantHolding : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
