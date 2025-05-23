@@ -37,9 +37,19 @@ namespace sky_webapi.Services
 
         public async Task<PlantCategoryDto> CreateCategoryAsync(PlantCategoryDto categoryDto)
         {
+            // Check for existing category with same description
+            var existingCategories = await _repository.GetAllAsync();
+            var existingCategory = existingCategories.FirstOrDefault(c => 
+                c.CategoryDescription?.Trim().ToLower() == categoryDto.CategoryDescription?.Trim().ToLower());
+            
+            if (existingCategory != null)
+            {
+                throw new InvalidOperationException($"A category with description '{categoryDto.CategoryDescription}' already exists.");
+            }
+
             var category = new PlantCategoryEntity
             {
-                CategoryDescription = categoryDto.CategoryDescription
+                CategoryDescription = categoryDto.CategoryDescription?.Trim()
             };
 
             var result = await _repository.AddAsync(category);
@@ -52,10 +62,21 @@ namespace sky_webapi.Services
 
         public async Task UpdateCategoryAsync(int id, PlantCategoryDto categoryDto)
         {
+            // Check for existing category with same description
+            var existingCategories = await _repository.GetAllAsync();
+            var existingCategory = existingCategories.FirstOrDefault(c => 
+                c.CategoryDescription?.Trim().ToLower() == categoryDto.CategoryDescription?.Trim().ToLower()
+                && c.CategoryID != id);
+            
+            if (existingCategory != null)
+            {
+                throw new InvalidOperationException($"A category with description '{categoryDto.CategoryDescription}' already exists.");
+            }
+
             var category = new PlantCategoryEntity
             {
                 CategoryID = id,
-                CategoryDescription = categoryDto.CategoryDescription
+                CategoryDescription = categoryDto.CategoryDescription?.Trim()
             };
 
             await _repository.UpdateAsync(category);
