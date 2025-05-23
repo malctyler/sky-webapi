@@ -17,7 +17,8 @@ namespace sky_webapi.DTOs
         public bool IsCustomer { get; set; }
         public int? CustomerId { get; set; }
         public bool EmailConfirmed { get; set; }
-    }    public class AuthResponseDto
+    }    
+    public class AuthResponseDto
     {
         public string Id { get; set; } = string.Empty;
         public string Token { get; set; } = string.Empty;
@@ -25,6 +26,7 @@ namespace sky_webapi.DTOs
         public List<string> Roles { get; set; } = new List<string>();
         public bool IsCustomer { get; set; }
         public bool EmailConfirmed { get; set; }
+        public int? CustomerId { get; set; }
     }
 
     public class ChangePasswordDto

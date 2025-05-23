@@ -135,8 +135,14 @@ namespace sky_webapi.Controllers
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id),
                     new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
-                    new Claim("EmailConfirmed", user.EmailConfirmed.ToString())
+                    new Claim("EmailConfirmed", user.EmailConfirmed.ToString()),
+                    new Claim("IsCustomer", user.IsCustomer.ToString())
                 };
+
+                if (user.CustomerId.HasValue)
+                {
+                    claims.Add(new Claim("CustomerId", user.CustomerId.Value.ToString()));
+                }
 
                 // Add roles as claims
                 foreach (var role in userRoles)
@@ -170,7 +176,8 @@ namespace sky_webapi.Controllers
                     Email = user.Email ?? string.Empty,
                     Roles = userRoles.ToList(),
                     IsCustomer = user.IsCustomer,
-                    EmailConfirmed = user.EmailConfirmed
+                    EmailConfirmed = user.EmailConfirmed,
+                    CustomerId = user.CustomerId
                 });
             }
             catch (Exception ex)
@@ -267,8 +274,14 @@ namespace sky_webapi.Controllers
                     {
                         new Claim(ClaimTypes.NameIdentifier, user.Id),
                         new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
-                        new Claim("EmailConfirmed", user.EmailConfirmed.ToString())
+                        new Claim("EmailConfirmed", user.EmailConfirmed.ToString()),
+                        new Claim("IsCustomer", user.IsCustomer.ToString())
                     };
+
+                    if (user.CustomerId.HasValue)
+                    {
+                        claims.Add(new Claim("CustomerId", user.CustomerId.Value.ToString()));
+                    }
 
                     // Add roles as claims
                     foreach (var role in userRoles)
