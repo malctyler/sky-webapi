@@ -31,8 +31,23 @@ namespace sky_webapi.Repositories
                 .ToListAsync();
         }
 
+        public async Task<bool> ExistsByDescriptionAsync(string description, int? excludeId = null)
+        {
+            var query = _context.Allplant.AsQueryable();
+            if (excludeId.HasValue)
+            {
+                query = query.Where(p => p.PlantNameID != excludeId);
+            }
+            return await query.AnyAsync(p => p.PlantDescription == description);
+        }
+
         public async Task<AllPlantEntity> AddAsync(AllPlantEntity plant)
         {
+            if (await ExistsByDescriptionAsync(plant.PlantDescription))
+            {
+                throw new InvalidOperationException($"A plant with description '{plant.PlantDescription}' already exists.");
+            }
+
             _context.Allplant.Add(plant);
             await _context.SaveChangesAsync();
             return plant;
@@ -40,6 +55,11 @@ namespace sky_webapi.Repositories
 
         public async Task UpdateAsync(AllPlantEntity plant)
         {
+            if (await ExistsByDescriptionAsync(plant.PlantDescription, plant.PlantNameID))
+            {
+                throw new InvalidOperationException($"A plant with description '{plant.PlantDescription}' already exists.");
+            }
+
             _context.Entry(plant).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }

@@ -49,16 +49,30 @@ namespace sky_webapi.Controllers
         [Authorize(Roles = "Admin")] // Only Admin can create
         public async Task<ActionResult<AllPlantDto>> CreatePlant(AllPlantDto plantDto)
         {
-            var result = await _service.CreatePlantAsync(plantDto);
-            return CreatedAtAction(nameof(GetPlant), new { id = result.PlantNameID }, result);
+            try
+            {
+                var result = await _service.CreatePlantAsync(plantDto);
+                return CreatedAtAction(nameof(GetPlant), new { id = result.PlantNameID }, result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")] // Only Admin can update
         public async Task<IActionResult> UpdatePlant(int id, AllPlantDto plantDto)
         {
-            await _service.UpdatePlantAsync(id, plantDto);
-            return NoContent();
+            try
+            {
+                await _service.UpdatePlantAsync(id, plantDto);
+                return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]

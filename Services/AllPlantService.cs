@@ -33,28 +33,42 @@ namespace sky_webapi.Services
 
         public async Task<AllPlantDto> CreatePlantAsync(AllPlantDto plantDto)
         {
-            var plant = new AllPlantEntity
+            try
             {
-                PlantDescription = plantDto.PlantDescription,
-                PlantCategory = plantDto.PlantCategory,
-                NormalPrice = plantDto.NormalPrice
-            };
+                var plant = new AllPlantEntity
+                {
+                    PlantDescription = plantDto.PlantDescription,
+                    PlantCategory = plantDto.PlantCategory,
+                    NormalPrice = plantDto.NormalPrice
+                };
 
-            var result = await _repository.AddAsync(plant);
-            return MapToDto(result);
+                var result = await _repository.AddAsync(plant);
+                return MapToDto(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException($"Failed to create plant: {ex.Message}");
+            }
         }
 
         public async Task UpdatePlantAsync(int id, AllPlantDto plantDto)
         {
-            var plant = new AllPlantEntity
+            try
             {
-                PlantNameID = id,
-                PlantDescription = plantDto.PlantDescription,
-                PlantCategory = plantDto.PlantCategory,
-                NormalPrice = plantDto.NormalPrice
-            };
+                var plant = new AllPlantEntity
+                {
+                    PlantNameID = id,
+                    PlantDescription = plantDto.PlantDescription,
+                    PlantCategory = plantDto.PlantCategory,
+                    NormalPrice = plantDto.NormalPrice
+                };
 
-            await _repository.UpdateAsync(plant);
+                await _repository.UpdateAsync(plant);
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException($"Failed to update plant: {ex.Message}");
+            }
         }
 
         public async Task DeletePlantAsync(int id)

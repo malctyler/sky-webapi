@@ -26,6 +26,10 @@ namespace sky_webapi.Data
 
             // Configure entity relationships
             modelBuilder.Entity<AllPlantEntity>()
+                .HasIndex(p => p.PlantDescription)
+                .IsUnique();
+
+            modelBuilder.Entity<AllPlantEntity>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.plant)
                 .HasForeignKey(p => p.PlantCategory)
