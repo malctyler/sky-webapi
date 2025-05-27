@@ -405,8 +405,6 @@ _ReSharper.*
 bin
 obj
 packages
-frontend/CertificateTemplate_Allen.docx
-frontend/CertificateTemplate_Allen.pdf
-sky-webapi/appsettings.json
 settings.bat
 manage_env_vars.ps1
+envsettings.json
