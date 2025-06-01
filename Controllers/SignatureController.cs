@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
 
@@ -5,6 +6,7 @@ namespace sky_webapi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Staff")]
     public class SignatureController : ControllerBase
     {
         private readonly IWebHostEnvironment _environment;

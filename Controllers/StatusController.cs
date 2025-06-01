@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using sky_webapi.DTOs;
 using sky_webapi.Services;
@@ -6,6 +7,7 @@ namespace sky_webapi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize] // Base authorization for the controller
     public class StatusController : ControllerBase
     {
         private readonly IStatusService _service;

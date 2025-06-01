@@ -1,0 +1,300 @@
+{
+  "patterns": [
+    {
+      "name": "Entity",
+      "description": "Create a new entity class for the database model",
+      "pattern": [
+        "public class ${Entity}Entity",
+        "{",
+        "    [Key]",
+        "    public int ${Entity}ID { get; set; }",
+        "",
+        "    public string ${Property} { get; set; }",
+        "    public virtual ICollection<${RelatedEntity}> ${RelatedEntities} { get; set; }",
+        "}"
+      ],
+      "example": [
+        "public class CustomerEntity",
+        "{",
+        "    [Key]",
+        "    public int CustID { get; set; }",
+        "",
+        "    [MaxLength(100)]",
+        "    public string CompanyName { get; set; }",
+        "",
+        "    public virtual ICollection<NoteEntity> Notes { get; set; }",
+        "}"
+      ]
+    },
+    {
+      "name": "DTO",
+      "description": "Create a Data Transfer Object for entity serialization",
+      "pattern": [
+        "public class ${Entity}Dto",
+        "{",
+        "    public int ${Entity}ID { get; set; }",
+        "    public string ${Property} { get; set; }",
+        "}"
+      ],
+      "example": [
+        "public class CustomerDto",
+        "{",
+        "    public int CustID { get; set; }",
+        "    public string CompanyName { get; set; }",
+        "    public string ContactFirstNames { get; set; }",
+        "}"
+      ]
+    },
+    {
+      "name": "Repository Interface",
+      "description": "Create a repository interface for data access",
+      "pattern": [
+        "public interface I${Entity}Repository",
+        "{",
+        "    Task<${Entity}Entity> GetByIdAsync(int id);",
+        "    Task<IEnumerable<${Entity}Entity>> GetAllAsync();",
+        "    Task<${Entity}Entity> CreateAsync(${Entity}Entity entity);",
+        "    Task<${Entity}Entity> UpdateAsync(${Entity}Entity entity);",
+        "    Task<bool> DeleteAsync(int id);",
+        "}"
+      ],
+      "example": [
+        "public interface ICustomerRepository",
+        "{",
+        "    Task<CustomerEntity> GetByIdAsync(int id);",
+        "    Task<IEnumerable<CustomerEntity>> GetAllAsync();",
+        "    Task<CustomerEntity> CreateAsync(CustomerEntity customer);",
+        "    Task<CustomerEntity> UpdateAsync(CustomerEntity customer);",
+        "    Task<bool> DeleteAsync(int id);",
+        "}"
+      ]
+    },
+    {
+      "name": "Repository Implementation",
+      "description": "Create a repository implementation class",
+      "pattern": [
+        "public class ${Entity}Repository : I${Entity}Repository",
+        "{",
+        "    private readonly AppDbContext _context;",
+        "",
+        "    public ${Entity}Repository(AppDbContext context)",
+        "    {",
+        "        _context = context;",
+        "    }",
+        "",
+        "    public async Task<${Entity}Entity> GetByIdAsync(int id)",
+        "    {",
+        "        return await _context.${Entities}",
+        "            .FirstOrDefaultAsync(e => e.${Entity}ID == id);",
+        "    }",
+        "}"
+      ],
+      "example": [
+        "public class CustomerRepository : ICustomerRepository",
+        "{",
+        "    private readonly AppDbContext _context;",
+        "",
+        "    public CustomerRepository(AppDbContext context)",
+        "    {",
+        "        _context = context;",
+        "    }",
+        "",
+        "    public async Task<CustomerEntity> GetByIdAsync(int id)",
+        "    {",
+        "        return await _context.Customers",
+        "            .Include(c => c.Notes)",
+        "            .FirstOrDefaultAsync(c => c.CustID == id);",
+        "    }",
+        "}"
+      ]
+    },
+    {
+      "name": "Service Interface",
+      "description": "Create a service interface for business logic",
+      "pattern": [
+        "public interface I${Entity}Service",
+        "{",
+        "    Task<${Entity}Dto> GetByIdAsync(int id);",
+        "    Task<IEnumerable<${Entity}Dto>> GetAllAsync();",
+        "    Task<${Entity}Dto> CreateAsync(${Entity}Dto dto);",
+        "    Task<${Entity}Dto> UpdateAsync(int id, ${Entity}Dto dto);",
+        "    Task<bool> DeleteAsync(int id);",
+        "}"
+      ],
+      "example": [
+        "public interface ICustomerService",
+        "{",
+        "    Task<CustomerDto> GetByIdAsync(int id);",
+        "    Task<IEnumerable<CustomerDto>> GetAllAsync();",
+        "    Task<CustomerDto> CreateAsync(CustomerDto customerDto);",
+        "    Task<CustomerDto> UpdateAsync(int id, CustomerDto customerDto);",
+        "    Task<bool> DeleteAsync(int id);",
+        "}"
+      ]
+    },
+    {
+      "name": "Service Implementation",
+      "description": "Create a service implementation class",
+      "pattern": [
+        "public class ${Entity}Service : I${Entity}Service",
+        "{",
+        "    private readonly I${Entity}Repository _repository;",
+        "",
+        "    public ${Entity}Service(I${Entity}Repository repository)",
+        "    {",
+        "        _repository = repository;",
+        "    }",
+        "",
+        "    public async Task<${Entity}Dto> GetByIdAsync(int id)",
+        "    {",
+        "        var entity = await _repository.GetByIdAsync(id);",
+        "        return entity == null ? null : Map${Entity}ToDto(entity);",
+        "    }",
+        "",
+        "    private static ${Entity}Dto Map${Entity}ToDto(${Entity}Entity entity)",
+        "    {",
+        "        return new ${Entity}Dto",
+        "        {",
+        "            ${Entity}ID = entity.${Entity}ID,",
+        "            ${Property} = entity.${Property}",
+        "        };",
+        "    }",
+        "}"
+      ],
+      "example": [
+        "public class CustomerService : ICustomerService",
+        "{",
+        "    private readonly ICustomerRepository _repository;",
+        "",
+        "    public CustomerService(ICustomerRepository repository)",
+        "    {",
+        "        _repository = repository;",
+        "    }",
+        "",
+        "    public async Task<CustomerDto> GetByIdAsync(int id)",
+        "    {",
+        "        var customer = await _repository.GetByIdAsync(id);",
+        "        return customer == null ? null : MapCustomerToDto(customer);",
+        "    }",
+        "",
+        "    private static CustomerDto MapCustomerToDto(CustomerEntity customer)",
+        "    {",
+        "        return new CustomerDto",
+        "        {",
+        "            CustID = customer.CustID,",
+        "            CompanyName = customer.CompanyName",
+        "        };",
+        "    }",
+        "}"
+      ]
+    },
+    {
+      "name": "Controller",
+      "description": "Create a REST API controller",
+      "pattern": [
+        "[ApiController]",
+        "[Route(\"api/[controller]\")]",
+        "public class ${Entity}Controller : ControllerBase",
+        "{",
+        "    private readonly I${Entity}Service _service;",
+        "",
+        "    public ${Entity}Controller(I${Entity}Service service)",
+        "    {",
+        "        _service = service;",
+        "    }",
+        "",
+        "    [HttpGet(\"{id}\")]",
+        "    public async Task<ActionResult<${Entity}Dto>> GetById(int id)",
+        "    {",
+        "        var result = await _service.GetByIdAsync(id);",
+        "        if (result == null) return NotFound();",
+        "        return Ok(result);",
+        "    }",
+        "}"
+      ],
+      "example": [
+        "[ApiController]",
+        "[Route(\"api/[controller]\")]",
+        "public class CustomersController : ControllerBase",
+        "{",
+        "    private readonly ICustomerService _service;",
+        "",
+        "    public CustomersController(ICustomerService service)",
+        "    {",
+        "        _service = service;",
+        "    }",
+        "",
+        "    [HttpGet(\"{id}\")]",
+        "    public async Task<ActionResult<CustomerDto>> GetById(int id)",
+        "    {",
+        "        var result = await _service.GetByIdAsync(id);",
+        "        if (result == null) return NotFound();",
+        "        return Ok(result);",
+        "    }",
+        "}"
+      ]
+    },
+    {
+      "name": "DbContext Configuration",
+      "description": "Configure entity relationships in AppDbContext",
+      "pattern": [
+        "modelBuilder.Entity<${Entity}Entity>()",
+        "    .HasOne(e => e.${RelatedEntity})",
+        "    .WithMany(r => r.${Entities})",
+        "    .HasForeignKey(e => e.${ForeignKey})",
+        "    .OnDelete(DeleteBehavior.Cascade);"
+      ],
+      "example": [
+        "modelBuilder.Entity<PlantHolding>()",
+        "    .HasOne(p => p.Customer)",
+        "    .WithMany()",
+        "    .HasForeignKey(p => p.CustID)",
+        "    .OnDelete(DeleteBehavior.Cascade);"
+      ]
+    },
+    {
+      "name": "Service Registration",
+      "description": "Register services in Program.cs",
+      "pattern": [
+        "builder.Services.AddScoped<I${Entity}Repository, ${Entity}Repository>();",
+        "builder.Services.AddScoped<I${Entity}Service, ${Entity}Service>();"
+      ],
+      "example": [
+        "builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();",
+        "builder.Services.AddScoped<ICustomerService, CustomerService>();",
+        "builder.Services.AddScoped<INoteRepository, NoteRepository>();",
+        "builder.Services.AddScoped<INoteService, NoteService>();"
+      ]
+    }
+  ],
+  "recommendations": [
+    {
+      "description": "Use DTOs (Data Transfer Objects) to separate domain models from API responses",
+      "example": "Create separate DTO classes in the DTOs folder for API responses instead of exposing entity classes directly"
+    },
+    {
+      "description": "Implement repository pattern for data access",
+      "example": "Create repository interfaces and implementations for each entity type in the Repositories folder"
+    },
+    {
+      "description": "Use service layer for business logic",
+      "example": "Implement service interfaces and classes in the Services folder to handle business logic between controllers and repositories"
+    },
+    {
+      "description": "Configure proper cascade delete behaviors",
+      "example": "Use OnDelete(DeleteBehavior.Cascade) or OnDelete(DeleteBehavior.Restrict) in entity configurations based on business requirements"
+    },
+    {
+      "description": "Add proper data annotations for validation",
+      "example": "Use attributes like [Required], [MaxLength], [StringLength] for entity properties"
+    },
+    {
+      "description": "Implement async/await pattern",
+      "example": "Use async methods with Task<T> return types for database operations"
+    },
+    {
+      "description": "Configure proper HTTP status codes",
+      "example": "Return appropriate status codes (200, 201, 204, 400, 404, etc.) from controller actions"
+    }
+  ]
+}
