@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using sky_webapi.Services;
 using sky_webapi.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace sky_webapi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Staff")]
     public class WeatherController : ControllerBase
     {
         private readonly IWeatherService _weatherService;

@@ -8,7 +8,7 @@ namespace sky_webapi.DTOs
         public string? SerialNumber { get; set; }
         public int? StatusID { get; set; }
         public string? SWL { get; set; }
-        public string? InspectionFrequency { get; set; }
+        public int InspectionFrequency { get; set; } = 12;
         public decimal? InspectionFee { get; set; }
         public string? PlantDescription { get; set; }
         public string? StatusDescription { get; set; }
