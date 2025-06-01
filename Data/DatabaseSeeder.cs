@@ -108,16 +108,66 @@ namespace sky_webapi.Data
             );
 
             // Add sample plant holdings
-            modelBuilder.Entity<PlantHolding>().HasData(
-                new PlantHolding { HoldingID = 1, CustID = 1, PlantNameID = 1, SerialNumber = "EXC001", StatusID = 2, SWL = "2000kg" },
-                new PlantHolding { HoldingID = 2, CustID = 2, PlantNameID = 2, SerialNumber = "LIFT001", StatusID = 1, SWL = "300kg" },
-                new PlantHolding { HoldingID = 3, CustID = 3, PlantNameID = 3, SerialNumber = "MIX001", StatusID = 3, SWL = "100kg" },
-                new PlantHolding { HoldingID = 4, CustID = 4, PlantNameID = 4, SerialNumber = "DRILL001", StatusID = 1, SWL = "N/A" },
-                new PlantHolding { HoldingID = 5, CustID = 5, PlantNameID = 5, SerialNumber = "SAFE001", StatusID = 2, SWL = "150kg" }
-            );
+            var plantHoldings = new List<PlantHolding>();
+            for (int i = 1; i <= 100; i++) // One holding per customer
+            {
+                var plantId = (i % 5) + 1; // Cycles through plant IDs 1-5
+                var statusId = (i % 5) + 1; // Cycles through status IDs 1-5
+                
+                // Generate a 10-character alphanumeric serial number
+                var serialNumber = string.Concat(Enumerable.Range(0, 10)
+                    .Select(x => x % 2 == 0 ? 
+                        ((char)('A' + (i + x) % 26)).ToString() : 
+                        ((i + x) % 10).ToString()));
+
+                plantHoldings.Add(new PlantHolding 
+                { 
+                    HoldingID = i,
+                    CustID = i,
+                    PlantNameID = plantId,
+                    SerialNumber = serialNumber,
+                    StatusID = statusId,
+                    SWL = plantId switch
+                    {
+                        1 => "2000kg", // Heavy Plant
+                        2 => "500kg",  // Small Plant
+                        3 => "300kg",  // Access Equipment
+                        4 => "N/A",    // Power Tools
+                        _ => "150kg"    // Safety Equipment
+                    }
+                });
+            }
+
+            modelBuilder.Entity<PlantHolding>().HasData(plantHoldings);
+
+            // Add sample inspections with dates spread across the last year
+            var inspections = new List<Inspection>();
+            var baseDate = new DateTime(2025, 6, 1); // Current date from context
+
+            for (int i = 1; i <= 100; i++)
+            {
+                var monthsAgo = i % 12; // Spreads inspections across the last year
+                inspections.Add(new Inspection
+                {
+                    UniqueRef = i,
+                    HoldingID = i,
+                    InspectorID = (i % 2) + 1, // Alternates between inspector 1 and 2
+                    InspectionDate = baseDate.AddMonths(-monthsAgo),
+                    Location = $"Site {i}",
+                    RecentCheck = "Completed",
+                    PreviousCheck = "N/A",
+                    SafeWorking = "Yes",
+                    Defects = "None",
+                    Rectified = "N/A",
+                    LatestDate = baseDate.AddMonths(-monthsAgo),
+                    TestDetails = "Standard inspection completed",
+                    MiscNotes = $"Annual inspection for plant holding {i}"
+                });
+            }
+
+            modelBuilder.Entity<Inspection>().HasData(inspections);
 
             modelBuilder.Entity<CustomerEntity>().HasData(customers);
-            modelBuilder.Entity<NoteEntity>().HasData(notes);
 
             // Seed initial roles with static GUIDs
             modelBuilder.Entity<IdentityRole>().HasData(

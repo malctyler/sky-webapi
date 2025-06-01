@@ -1,11 +1,11 @@
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace sky_webapi.Migrations
 {
     /// <inheritdoc />
-    public partial class MoreRestrictions : Migration
+    public partial class UpdatePendingChanges : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

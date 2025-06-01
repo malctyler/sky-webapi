@@ -75,6 +75,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
                 maxRetryCount: 5,
                 maxRetryDelay: TimeSpan.FromSeconds(30),
                 errorNumbersToAdd: null);
+            sqlOptions.CommandTimeout(300); // Set command timeout to 5 minutes
         }));
 builder.Services.AddScoped<ISummaryRepository, SummaryRepository>();
 builder.Services.AddScoped<ISummaryService, SummaryService>();
@@ -97,6 +98,8 @@ builder.Services.AddScoped<IInspectorService, InspectorService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IWeatherService, WeatherService>();
+builder.Services.AddScoped<IInspectionDueDateRepository, InspectionDueDateRepository>();
+builder.Services.AddScoped<IInspectionDueDateService, InspectionDueDateService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

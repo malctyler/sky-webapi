@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using sky_webapi.Data;
 
@@ -11,9 +12,11 @@ using sky_webapi.Data;
 namespace sky_webapi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250601152545_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2085,9 +2088,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 1,
                             Defects = "None",
                             HoldingID = 1,
-                            InspectionDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 4, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 1",
                             MiscNotes = "Annual inspection for plant holding 1",
                             PreviousCheck = "N/A",
@@ -2101,9 +2104,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 2,
                             Defects = "None",
                             HoldingID = 2,
-                            InspectionDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 6, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 6, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 2",
                             MiscNotes = "Annual inspection for plant holding 2",
                             PreviousCheck = "N/A",
@@ -2117,9 +2120,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 3,
                             Defects = "None",
                             HoldingID = 3,
-                            InspectionDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 3",
                             MiscNotes = "Annual inspection for plant holding 3",
                             PreviousCheck = "N/A",
@@ -2133,9 +2136,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 4,
                             Defects = "None",
                             HoldingID = 4,
-                            InspectionDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 11, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 11, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 4",
                             MiscNotes = "Annual inspection for plant holding 4",
                             PreviousCheck = "N/A",
@@ -2149,9 +2152,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 5,
                             Defects = "None",
                             HoldingID = 5,
-                            InspectionDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 2, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 5",
                             MiscNotes = "Annual inspection for plant holding 5",
                             PreviousCheck = "N/A",
@@ -2165,9 +2168,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 6,
                             Defects = "None",
                             HoldingID = 6,
-                            InspectionDate = new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 6, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 6",
                             MiscNotes = "Annual inspection for plant holding 6",
                             PreviousCheck = "N/A",
@@ -2181,9 +2184,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 7,
                             Defects = "None",
                             HoldingID = 7,
-                            InspectionDate = new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 5, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 5, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 7",
                             MiscNotes = "Annual inspection for plant holding 7",
                             PreviousCheck = "N/A",
@@ -2197,9 +2200,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 8,
                             Defects = "None",
                             HoldingID = 8,
-                            InspectionDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 8, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 8",
                             MiscNotes = "Annual inspection for plant holding 8",
                             PreviousCheck = "N/A",
@@ -2213,9 +2216,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 9,
                             Defects = "None",
                             HoldingID = 9,
-                            InspectionDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 9",
                             MiscNotes = "Annual inspection for plant holding 9",
                             PreviousCheck = "N/A",
@@ -2229,9 +2232,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 10,
                             Defects = "None",
                             HoldingID = 10,
-                            InspectionDate = new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 2, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 2, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 10",
                             MiscNotes = "Annual inspection for plant holding 10",
                             PreviousCheck = "N/A",
@@ -2245,9 +2248,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 11,
                             Defects = "None",
                             HoldingID = 11,
-                            InspectionDate = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 12, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 12, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 11",
                             MiscNotes = "Annual inspection for plant holding 11",
                             PreviousCheck = "N/A",
@@ -2261,9 +2264,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 12,
                             Defects = "None",
                             HoldingID = 12,
-                            InspectionDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 8, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 8, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 12",
                             MiscNotes = "Annual inspection for plant holding 12",
                             PreviousCheck = "N/A",
@@ -2277,9 +2280,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 13,
                             Defects = "None",
                             HoldingID = 13,
-                            InspectionDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 5, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 5, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 13",
                             MiscNotes = "Annual inspection for plant holding 13",
                             PreviousCheck = "N/A",
@@ -2293,9 +2296,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 14,
                             Defects = "None",
                             HoldingID = 14,
-                            InspectionDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 8, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 8, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 14",
                             MiscNotes = "Annual inspection for plant holding 14",
                             PreviousCheck = "N/A",
@@ -2309,9 +2312,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 15,
                             Defects = "None",
                             HoldingID = 15,
-                            InspectionDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 1, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 15",
                             MiscNotes = "Annual inspection for plant holding 15",
                             PreviousCheck = "N/A",
@@ -2325,9 +2328,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 16,
                             Defects = "None",
                             HoldingID = 16,
-                            InspectionDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 11, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 16",
                             MiscNotes = "Annual inspection for plant holding 16",
                             PreviousCheck = "N/A",
@@ -2341,9 +2344,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 17,
                             Defects = "None",
                             HoldingID = 17,
-                            InspectionDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 3, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 3, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 17",
                             MiscNotes = "Annual inspection for plant holding 17",
                             PreviousCheck = "N/A",
@@ -2357,9 +2360,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 18,
                             Defects = "None",
                             HoldingID = 18,
-                            InspectionDate = new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 1, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 1, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 18",
                             MiscNotes = "Annual inspection for plant holding 18",
                             PreviousCheck = "N/A",
@@ -2373,9 +2376,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 19,
                             Defects = "None",
                             HoldingID = 19,
-                            InspectionDate = new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 6, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 6, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 19",
                             MiscNotes = "Annual inspection for plant holding 19",
                             PreviousCheck = "N/A",
@@ -2389,9 +2392,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 20,
                             Defects = "None",
                             HoldingID = 20,
-                            InspectionDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 6, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 6, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 20",
                             MiscNotes = "Annual inspection for plant holding 20",
                             PreviousCheck = "N/A",
@@ -2405,9 +2408,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 21,
                             Defects = "None",
                             HoldingID = 21,
-                            InspectionDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 12, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 12, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 21",
                             MiscNotes = "Annual inspection for plant holding 21",
                             PreviousCheck = "N/A",
@@ -2421,9 +2424,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 22,
                             Defects = "None",
                             HoldingID = 22,
-                            InspectionDate = new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 3, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 3, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 22",
                             MiscNotes = "Annual inspection for plant holding 22",
                             PreviousCheck = "N/A",
@@ -2437,9 +2440,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 23,
                             Defects = "None",
                             HoldingID = 23,
-                            InspectionDate = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 6, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 6, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 23",
                             MiscNotes = "Annual inspection for plant holding 23",
                             PreviousCheck = "N/A",
@@ -2453,9 +2456,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 24,
                             Defects = "None",
                             HoldingID = 24,
-                            InspectionDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 24",
                             MiscNotes = "Annual inspection for plant holding 24",
                             PreviousCheck = "N/A",
@@ -2469,9 +2472,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 25,
                             Defects = "None",
                             HoldingID = 25,
-                            InspectionDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 5, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 5, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 25",
                             MiscNotes = "Annual inspection for plant holding 25",
                             PreviousCheck = "N/A",
@@ -2485,9 +2488,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 26,
                             Defects = "None",
                             HoldingID = 26,
-                            InspectionDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 3, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 3, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 26",
                             MiscNotes = "Annual inspection for plant holding 26",
                             PreviousCheck = "N/A",
@@ -2501,9 +2504,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 27,
                             Defects = "None",
                             HoldingID = 27,
-                            InspectionDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 7, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 7, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 27",
                             MiscNotes = "Annual inspection for plant holding 27",
                             PreviousCheck = "N/A",
@@ -2517,9 +2520,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 28,
                             Defects = "None",
                             HoldingID = 28,
-                            InspectionDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 1, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 28",
                             MiscNotes = "Annual inspection for plant holding 28",
                             PreviousCheck = "N/A",
@@ -2533,9 +2536,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 29,
                             Defects = "None",
                             HoldingID = 29,
-                            InspectionDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 3, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 3, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 29",
                             MiscNotes = "Annual inspection for plant holding 29",
                             PreviousCheck = "N/A",
@@ -2549,9 +2552,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 30,
                             Defects = "None",
                             HoldingID = 30,
-                            InspectionDate = new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 9, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 30",
                             MiscNotes = "Annual inspection for plant holding 30",
                             PreviousCheck = "N/A",
@@ -2565,9 +2568,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 31,
                             Defects = "None",
                             HoldingID = 31,
-                            InspectionDate = new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 11, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 31",
                             MiscNotes = "Annual inspection for plant holding 31",
                             PreviousCheck = "N/A",
@@ -2581,9 +2584,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 32,
                             Defects = "None",
                             HoldingID = 32,
-                            InspectionDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 4, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 4, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 32",
                             MiscNotes = "Annual inspection for plant holding 32",
                             PreviousCheck = "N/A",
@@ -2597,9 +2600,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 33,
                             Defects = "None",
                             HoldingID = 33,
-                            InspectionDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 5, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 5, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 33",
                             MiscNotes = "Annual inspection for plant holding 33",
                             PreviousCheck = "N/A",
@@ -2613,9 +2616,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 34,
                             Defects = "None",
                             HoldingID = 34,
-                            InspectionDate = new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 6, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 34",
                             MiscNotes = "Annual inspection for plant holding 34",
                             PreviousCheck = "N/A",
@@ -2629,9 +2632,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 35,
                             Defects = "None",
                             HoldingID = 35,
-                            InspectionDate = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 10, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 10, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 35",
                             MiscNotes = "Annual inspection for plant holding 35",
                             PreviousCheck = "N/A",
@@ -2645,9 +2648,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 36,
                             Defects = "None",
                             HoldingID = 36,
-                            InspectionDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 1, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 1, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 36",
                             MiscNotes = "Annual inspection for plant holding 36",
                             PreviousCheck = "N/A",
@@ -2661,9 +2664,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 37,
                             Defects = "None",
                             HoldingID = 37,
-                            InspectionDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 9, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 9, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 37",
                             MiscNotes = "Annual inspection for plant holding 37",
                             PreviousCheck = "N/A",
@@ -2677,9 +2680,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 38,
                             Defects = "None",
                             HoldingID = 38,
-                            InspectionDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 12, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 12, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 38",
                             MiscNotes = "Annual inspection for plant holding 38",
                             PreviousCheck = "N/A",
@@ -2693,9 +2696,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 39,
                             Defects = "None",
                             HoldingID = 39,
-                            InspectionDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 11, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 11, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 39",
                             MiscNotes = "Annual inspection for plant holding 39",
                             PreviousCheck = "N/A",
@@ -2709,9 +2712,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 40,
                             Defects = "None",
                             HoldingID = 40,
-                            InspectionDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 10, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 40",
                             MiscNotes = "Annual inspection for plant holding 40",
                             PreviousCheck = "N/A",
@@ -2725,9 +2728,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 41,
                             Defects = "None",
                             HoldingID = 41,
-                            InspectionDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 5, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 5, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 41",
                             MiscNotes = "Annual inspection for plant holding 41",
                             PreviousCheck = "N/A",
@@ -2741,9 +2744,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 42,
                             Defects = "None",
                             HoldingID = 42,
-                            InspectionDate = new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 4, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 4, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 42",
                             MiscNotes = "Annual inspection for plant holding 42",
                             PreviousCheck = "N/A",
@@ -2757,9 +2760,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 43,
                             Defects = "None",
                             HoldingID = 43,
-                            InspectionDate = new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 8, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 8, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 43",
                             MiscNotes = "Annual inspection for plant holding 43",
                             PreviousCheck = "N/A",
@@ -2773,9 +2776,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 44,
                             Defects = "None",
                             HoldingID = 44,
-                            InspectionDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 9, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 9, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 44",
                             MiscNotes = "Annual inspection for plant holding 44",
                             PreviousCheck = "N/A",
@@ -2789,9 +2792,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 45,
                             Defects = "None",
                             HoldingID = 45,
-                            InspectionDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 7, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 7, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 45",
                             MiscNotes = "Annual inspection for plant holding 45",
                             PreviousCheck = "N/A",
@@ -2805,9 +2808,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 46,
                             Defects = "None",
                             HoldingID = 46,
-                            InspectionDate = new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 10, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 46",
                             MiscNotes = "Annual inspection for plant holding 46",
                             PreviousCheck = "N/A",
@@ -2821,9 +2824,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 47,
                             Defects = "None",
                             HoldingID = 47,
-                            InspectionDate = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 47",
                             MiscNotes = "Annual inspection for plant holding 47",
                             PreviousCheck = "N/A",
@@ -2837,9 +2840,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 48,
                             Defects = "None",
                             HoldingID = 48,
-                            InspectionDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 2, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 48",
                             MiscNotes = "Annual inspection for plant holding 48",
                             PreviousCheck = "N/A",
@@ -2853,9 +2856,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 49,
                             Defects = "None",
                             HoldingID = 49,
-                            InspectionDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 11, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 11, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 49",
                             MiscNotes = "Annual inspection for plant holding 49",
                             PreviousCheck = "N/A",
@@ -2869,9 +2872,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 50,
                             Defects = "None",
                             HoldingID = 50,
-                            InspectionDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 4, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 50",
                             MiscNotes = "Annual inspection for plant holding 50",
                             PreviousCheck = "N/A",
@@ -2885,9 +2888,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 51,
                             Defects = "None",
                             HoldingID = 51,
-                            InspectionDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 5, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 5, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 51",
                             MiscNotes = "Annual inspection for plant holding 51",
                             PreviousCheck = "N/A",
@@ -2901,9 +2904,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 52,
                             Defects = "None",
                             HoldingID = 52,
-                            InspectionDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 1, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 52",
                             MiscNotes = "Annual inspection for plant holding 52",
                             PreviousCheck = "N/A",
@@ -2917,9 +2920,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 53,
                             Defects = "None",
                             HoldingID = 53,
-                            InspectionDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 9, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 9, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 53",
                             MiscNotes = "Annual inspection for plant holding 53",
                             PreviousCheck = "N/A",
@@ -2933,9 +2936,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 54,
                             Defects = "None",
                             HoldingID = 54,
-                            InspectionDate = new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 1, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 54",
                             MiscNotes = "Annual inspection for plant holding 54",
                             PreviousCheck = "N/A",
@@ -2949,9 +2952,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 55,
                             Defects = "None",
                             HoldingID = 55,
-                            InspectionDate = new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 7, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 55",
                             MiscNotes = "Annual inspection for plant holding 55",
                             PreviousCheck = "N/A",
@@ -2965,9 +2968,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 56,
                             Defects = "None",
                             HoldingID = 56,
-                            InspectionDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 9, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 9, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 56",
                             MiscNotes = "Annual inspection for plant holding 56",
                             PreviousCheck = "N/A",
@@ -2981,9 +2984,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 57,
                             Defects = "None",
                             HoldingID = 57,
-                            InspectionDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 11, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 57",
                             MiscNotes = "Annual inspection for plant holding 57",
                             PreviousCheck = "N/A",
@@ -2997,9 +3000,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 58,
                             Defects = "None",
                             HoldingID = 58,
-                            InspectionDate = new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 8, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 58",
                             MiscNotes = "Annual inspection for plant holding 58",
                             PreviousCheck = "N/A",
@@ -3013,9 +3016,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 59,
                             Defects = "None",
                             HoldingID = 59,
-                            InspectionDate = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 3, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 3, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 59",
                             MiscNotes = "Annual inspection for plant holding 59",
                             PreviousCheck = "N/A",
@@ -3029,9 +3032,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 60,
                             Defects = "None",
                             HoldingID = 60,
-                            InspectionDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 60",
                             MiscNotes = "Annual inspection for plant holding 60",
                             PreviousCheck = "N/A",
@@ -3045,9 +3048,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 61,
                             Defects = "None",
                             HoldingID = 61,
-                            InspectionDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 6, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 6, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 61",
                             MiscNotes = "Annual inspection for plant holding 61",
                             PreviousCheck = "N/A",
@@ -3061,9 +3064,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 62,
                             Defects = "None",
                             HoldingID = 62,
-                            InspectionDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 62",
                             MiscNotes = "Annual inspection for plant holding 62",
                             PreviousCheck = "N/A",
@@ -3077,9 +3080,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 63,
                             Defects = "None",
                             HoldingID = 63,
-                            InspectionDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 4, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 4, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 63",
                             MiscNotes = "Annual inspection for plant holding 63",
                             PreviousCheck = "N/A",
@@ -3093,9 +3096,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 64,
                             Defects = "None",
                             HoldingID = 64,
-                            InspectionDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 3, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 3, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 64",
                             MiscNotes = "Annual inspection for plant holding 64",
                             PreviousCheck = "N/A",
@@ -3109,9 +3112,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 65,
                             Defects = "None",
                             HoldingID = 65,
-                            InspectionDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 12, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 12, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 65",
                             MiscNotes = "Annual inspection for plant holding 65",
                             PreviousCheck = "N/A",
@@ -3125,9 +3128,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 66,
                             Defects = "None",
                             HoldingID = 66,
-                            InspectionDate = new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 12, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 66",
                             MiscNotes = "Annual inspection for plant holding 66",
                             PreviousCheck = "N/A",
@@ -3141,9 +3144,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 67,
                             Defects = "None",
                             HoldingID = 67,
-                            InspectionDate = new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 2, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 2, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 67",
                             MiscNotes = "Annual inspection for plant holding 67",
                             PreviousCheck = "N/A",
@@ -3157,9 +3160,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 68,
                             Defects = "None",
                             HoldingID = 68,
-                            InspectionDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 10, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 68",
                             MiscNotes = "Annual inspection for plant holding 68",
                             PreviousCheck = "N/A",
@@ -3173,9 +3176,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 69,
                             Defects = "None",
                             HoldingID = 69,
-                            InspectionDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 9, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 9, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 69",
                             MiscNotes = "Annual inspection for plant holding 69",
                             PreviousCheck = "N/A",
@@ -3189,9 +3192,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 70,
                             Defects = "None",
                             HoldingID = 70,
-                            InspectionDate = new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 7, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 7, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 70",
                             MiscNotes = "Annual inspection for plant holding 70",
                             PreviousCheck = "N/A",
@@ -3205,9 +3208,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 71,
                             Defects = "None",
                             HoldingID = 71,
-                            InspectionDate = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 71",
                             MiscNotes = "Annual inspection for plant holding 71",
                             PreviousCheck = "N/A",
@@ -3221,9 +3224,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 72,
                             Defects = "None",
                             HoldingID = 72,
-                            InspectionDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 4, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 72",
                             MiscNotes = "Annual inspection for plant holding 72",
                             PreviousCheck = "N/A",
@@ -3237,9 +3240,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 73,
                             Defects = "None",
                             HoldingID = 73,
-                            InspectionDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 6, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 6, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 73",
                             MiscNotes = "Annual inspection for plant holding 73",
                             PreviousCheck = "N/A",
@@ -3253,9 +3256,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 74,
                             Defects = "None",
                             HoldingID = 74,
-                            InspectionDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 74",
                             MiscNotes = "Annual inspection for plant holding 74",
                             PreviousCheck = "N/A",
@@ -3269,9 +3272,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 75,
                             Defects = "None",
                             HoldingID = 75,
-                            InspectionDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 1, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 1, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 75",
                             MiscNotes = "Annual inspection for plant holding 75",
                             PreviousCheck = "N/A",
@@ -3285,9 +3288,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 76,
                             Defects = "None",
                             HoldingID = 76,
-                            InspectionDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 2, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 2, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 76",
                             MiscNotes = "Annual inspection for plant holding 76",
                             PreviousCheck = "N/A",
@@ -3301,9 +3304,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 77,
                             Defects = "None",
                             HoldingID = 77,
-                            InspectionDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 5, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 77",
                             MiscNotes = "Annual inspection for plant holding 77",
                             PreviousCheck = "N/A",
@@ -3317,9 +3320,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 78,
                             Defects = "None",
                             HoldingID = 78,
-                            InspectionDate = new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 2, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 2, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 78",
                             MiscNotes = "Annual inspection for plant holding 78",
                             PreviousCheck = "N/A",
@@ -3333,9 +3336,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 79,
                             Defects = "None",
                             HoldingID = 79,
-                            InspectionDate = new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 7, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 7, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 79",
                             MiscNotes = "Annual inspection for plant holding 79",
                             PreviousCheck = "N/A",
@@ -3349,9 +3352,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 80,
                             Defects = "None",
                             HoldingID = 80,
-                            InspectionDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 9, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 80",
                             MiscNotes = "Annual inspection for plant holding 80",
                             PreviousCheck = "N/A",
@@ -3365,9 +3368,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 81,
                             Defects = "None",
                             HoldingID = 81,
-                            InspectionDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 6, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 81",
                             MiscNotes = "Annual inspection for plant holding 81",
                             PreviousCheck = "N/A",
@@ -3381,9 +3384,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 82,
                             Defects = "None",
                             HoldingID = 82,
-                            InspectionDate = new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 10, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 82",
                             MiscNotes = "Annual inspection for plant holding 82",
                             PreviousCheck = "N/A",
@@ -3397,9 +3400,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 83,
                             Defects = "None",
                             HoldingID = 83,
-                            InspectionDate = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 2, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 2, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 83",
                             MiscNotes = "Annual inspection for plant holding 83",
                             PreviousCheck = "N/A",
@@ -3413,9 +3416,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 84,
                             Defects = "None",
                             HoldingID = 84,
-                            InspectionDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 3, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 3, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 84",
                             MiscNotes = "Annual inspection for plant holding 84",
                             PreviousCheck = "N/A",
@@ -3429,9 +3432,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 85,
                             Defects = "None",
                             HoldingID = 85,
-                            InspectionDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 10, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 10, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 85",
                             MiscNotes = "Annual inspection for plant holding 85",
                             PreviousCheck = "N/A",
@@ -3445,9 +3448,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 86,
                             Defects = "None",
                             HoldingID = 86,
-                            InspectionDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 11, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 11, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 86",
                             MiscNotes = "Annual inspection for plant holding 86",
                             PreviousCheck = "N/A",
@@ -3461,9 +3464,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 87,
                             Defects = "None",
                             HoldingID = 87,
-                            InspectionDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 11, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 87",
                             MiscNotes = "Annual inspection for plant holding 87",
                             PreviousCheck = "N/A",
@@ -3477,9 +3480,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 88,
                             Defects = "None",
                             HoldingID = 88,
-                            InspectionDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 2, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 2, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 88",
                             MiscNotes = "Annual inspection for plant holding 88",
                             PreviousCheck = "N/A",
@@ -3493,9 +3496,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 89,
                             Defects = "None",
                             HoldingID = 89,
-                            InspectionDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 5, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 89",
                             MiscNotes = "Annual inspection for plant holding 89",
                             PreviousCheck = "N/A",
@@ -3509,9 +3512,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 90,
                             Defects = "None",
                             HoldingID = 90,
-                            InspectionDate = new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 3, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 90",
                             MiscNotes = "Annual inspection for plant holding 90",
                             PreviousCheck = "N/A",
@@ -3525,9 +3528,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 91,
                             Defects = "None",
                             HoldingID = 91,
-                            InspectionDate = new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 6, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 91",
                             MiscNotes = "Annual inspection for plant holding 91",
                             PreviousCheck = "N/A",
@@ -3541,9 +3544,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 92,
                             Defects = "None",
                             HoldingID = 92,
-                            InspectionDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 6, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 6, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 92",
                             MiscNotes = "Annual inspection for plant holding 92",
                             PreviousCheck = "N/A",
@@ -3557,9 +3560,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 93,
                             Defects = "None",
                             HoldingID = 93,
-                            InspectionDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 10, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 10, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 93",
                             MiscNotes = "Annual inspection for plant holding 93",
                             PreviousCheck = "N/A",
@@ -3573,9 +3576,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 94,
                             Defects = "None",
                             HoldingID = 94,
-                            InspectionDate = new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 94",
                             MiscNotes = "Annual inspection for plant holding 94",
                             PreviousCheck = "N/A",
@@ -3589,9 +3592,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 95,
                             Defects = "None",
                             HoldingID = 95,
-                            InspectionDate = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2025, 2, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2025, 2, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 95",
                             MiscNotes = "Annual inspection for plant holding 95",
                             PreviousCheck = "N/A",
@@ -3605,9 +3608,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 96,
                             Defects = "None",
                             HoldingID = 96,
-                            InspectionDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 7, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 7, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 96",
                             MiscNotes = "Annual inspection for plant holding 96",
                             PreviousCheck = "N/A",
@@ -3621,9 +3624,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 97,
                             Defects = "None",
                             HoldingID = 97,
-                            InspectionDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 12, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 12, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 97",
                             MiscNotes = "Annual inspection for plant holding 97",
                             PreviousCheck = "N/A",
@@ -3637,9 +3640,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 98,
                             Defects = "None",
                             HoldingID = 98,
-                            InspectionDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 8, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 8, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 98",
                             MiscNotes = "Annual inspection for plant holding 98",
                             PreviousCheck = "N/A",
@@ -3653,9 +3656,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 99,
                             Defects = "None",
                             HoldingID = 99,
-                            InspectionDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 12, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 2,
-                            LatestDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 12, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 99",
                             MiscNotes = "Annual inspection for plant holding 99",
                             PreviousCheck = "N/A",
@@ -3669,9 +3672,9 @@ namespace sky_webapi.Migrations
                             UniqueRef = 100,
                             Defects = "None",
                             HoldingID = 100,
-                            InspectionDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectionDate = new DateTime(2024, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             InspectorID = 1,
-                            LatestDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LatestDate = new DateTime(2024, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Site 100",
                             MiscNotes = "Annual inspection for plant holding 100",
                             PreviousCheck = "N/A",
@@ -3825,9 +3828,9 @@ namespace sky_webapi.Migrations
                             HoldingID = 1,
                             CustID = 1,
                             InspectionFrequency = 12,
-                            PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "B2D4F6H8J0",
+                            PlantNameID = 4,
+                            SWL = "Standard",
+                            SerialNumber = "FESGJ0SG1I",
                             StatusID = 2
                         },
                         new
@@ -3836,19 +3839,19 @@ namespace sky_webapi.Migrations
                             CustID = 2,
                             InspectionFrequency = 12,
                             PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "C3E5G7I9K1",
-                            StatusID = 3
+                            SWL = "Standard",
+                            SerialNumber = "LNJSB3UOFD",
+                            StatusID = 4
                         },
                         new
                         {
                             HoldingID = 3,
                             CustID = 3,
                             InspectionFrequency = 12,
-                            PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "D4F6H8J0L2",
-                            StatusID = 4
+                            PlantNameID = 5,
+                            SWL = "Standard",
+                            SerialNumber = "TBZF6YSGBL",
+                            StatusID = 3
                         },
                         new
                         {
@@ -3856,19 +3859,19 @@ namespace sky_webapi.Migrations
                             CustID = 4,
                             InspectionFrequency = 12,
                             PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "E5G7I9K1M3",
-                            StatusID = 5
+                            SWL = "Standard",
+                            SerialNumber = "AT20NFAB2W",
+                            StatusID = 1
                         },
                         new
                         {
                             HoldingID = 5,
                             CustID = 5,
                             InspectionFrequency = 12,
-                            PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "F6H8J0L2N4",
-                            StatusID = 1
+                            PlantNameID = 2,
+                            SWL = "Standard",
+                            SerialNumber = "1KXFBVSBPZ",
+                            StatusID = 4
                         },
                         new
                         {
@@ -3876,9 +3879,9 @@ namespace sky_webapi.Migrations
                             CustID = 6,
                             InspectionFrequency = 12,
                             PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "G7I9K1M3O5",
-                            StatusID = 2
+                            SWL = "Standard",
+                            SerialNumber = "ANJCZCQA2P",
+                            StatusID = 3
                         },
                         new
                         {
@@ -3886,9 +3889,9 @@ namespace sky_webapi.Migrations
                             CustID = 7,
                             InspectionFrequency = 12,
                             PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "H8J0L2N4P6",
-                            StatusID = 3
+                            SWL = "Standard",
+                            SerialNumber = "A3AACXB67Q",
+                            StatusID = 2
                         },
                         new
                         {
@@ -3896,8 +3899,8 @@ namespace sky_webapi.Migrations
                             CustID = 8,
                             InspectionFrequency = 12,
                             PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "I9K1M3O5Q7",
+                            SWL = "Standard",
+                            SerialNumber = "BNFP2TOK6V",
                             StatusID = 4
                         },
                         new
@@ -3905,19 +3908,19 @@ namespace sky_webapi.Migrations
                             HoldingID = 9,
                             CustID = 9,
                             InspectionFrequency = 12,
-                            PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "J0L2N4P6R8",
-                            StatusID = 5
+                            PlantNameID = 1,
+                            SWL = "Standard",
+                            SerialNumber = "58LZFDQL1F",
+                            StatusID = 1
                         },
                         new
                         {
                             HoldingID = 10,
                             CustID = 10,
                             InspectionFrequency = 12,
-                            PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "K1M3O5Q7S9",
+                            PlantNameID = 2,
+                            SWL = "Standard",
+                            SerialNumber = "VS91YZKT9X",
                             StatusID = 1
                         },
                         new
@@ -3926,28 +3929,28 @@ namespace sky_webapi.Migrations
                             CustID = 11,
                             InspectionFrequency = 12,
                             PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "L2N4P6R8T0",
-                            StatusID = 2
+                            SWL = "Standard",
+                            SerialNumber = "7AHJBHVPD9",
+                            StatusID = 1
                         },
                         new
                         {
                             HoldingID = 12,
                             CustID = 12,
                             InspectionFrequency = 12,
-                            PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "M3O5Q7S9U1",
-                            StatusID = 3
+                            PlantNameID = 1,
+                            SWL = "Standard",
+                            SerialNumber = "LL13AB46I7",
+                            StatusID = 5
                         },
                         new
                         {
                             HoldingID = 13,
                             CustID = 13,
                             InspectionFrequency = 12,
-                            PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "N4P6R8T0V2",
+                            PlantNameID = 2,
+                            SWL = "Standard",
+                            SerialNumber = "TWWGKGBI79",
                             StatusID = 4
                         },
                         new
@@ -3955,80 +3958,80 @@ namespace sky_webapi.Migrations
                             HoldingID = 14,
                             CustID = 14,
                             InspectionFrequency = 12,
-                            PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "O5Q7S9U1W3",
-                            StatusID = 5
+                            PlantNameID = 1,
+                            SWL = "Standard",
+                            SerialNumber = "5GKUUZEVO5",
+                            StatusID = 3
                         },
                         new
                         {
                             HoldingID = 15,
                             CustID = 15,
                             InspectionFrequency = 12,
-                            PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "P6R8T0V2X4",
-                            StatusID = 1
+                            PlantNameID = 2,
+                            SWL = "Standard",
+                            SerialNumber = "8QT83EDAG7",
+                            StatusID = 4
                         },
                         new
                         {
                             HoldingID = 16,
                             CustID = 16,
                             InspectionFrequency = 12,
-                            PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "Q7S9U1W3Y5",
-                            StatusID = 2
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "VOE686GMTW",
+                            StatusID = 5
                         },
                         new
                         {
                             HoldingID = 17,
                             CustID = 17,
                             InspectionFrequency = 12,
-                            PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "R8T0V2X4Z6",
-                            StatusID = 3
+                            PlantNameID = 5,
+                            SWL = "Standard",
+                            SerialNumber = "0KMS2I5XGJ",
+                            StatusID = 2
                         },
                         new
                         {
                             HoldingID = 18,
                             CustID = 18,
                             InspectionFrequency = 12,
-                            PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "S9U1W3Y5A7",
-                            StatusID = 4
+                            PlantNameID = 5,
+                            SWL = "Standard",
+                            SerialNumber = "XCP25287Q6",
+                            StatusID = 5
                         },
                         new
                         {
                             HoldingID = 19,
                             CustID = 19,
                             InspectionFrequency = 12,
-                            PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "T0V2X4Z6B8",
-                            StatusID = 5
+                            PlantNameID = 1,
+                            SWL = "Standard",
+                            SerialNumber = "VHWSZD3MSZ",
+                            StatusID = 2
                         },
                         new
                         {
                             HoldingID = 20,
                             CustID = 20,
                             InspectionFrequency = 12,
-                            PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "U1W3Y5A7C9",
-                            StatusID = 1
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "2UH7BCHLGK",
+                            StatusID = 2
                         },
                         new
                         {
                             HoldingID = 21,
                             CustID = 21,
                             InspectionFrequency = 12,
-                            PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "V2X4Z6B8D0",
-                            StatusID = 2
+                            PlantNameID = 5,
+                            SWL = "Standard",
+                            SerialNumber = "QNQ1X9M4LG",
+                            StatusID = 5
                         },
                         new
                         {
@@ -4036,38 +4039,38 @@ namespace sky_webapi.Migrations
                             CustID = 22,
                             InspectionFrequency = 12,
                             PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "W3Y5A7C9E1",
-                            StatusID = 3
+                            SWL = "Standard",
+                            SerialNumber = "WN8CQ5L756",
+                            StatusID = 1
                         },
                         new
                         {
                             HoldingID = 23,
                             CustID = 23,
                             InspectionFrequency = 12,
-                            PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "X4Z6B8D0F2",
-                            StatusID = 4
+                            PlantNameID = 2,
+                            SWL = "Standard",
+                            SerialNumber = "UA6OYX9K71",
+                            StatusID = 1
                         },
                         new
                         {
                             HoldingID = 24,
                             CustID = 24,
                             InspectionFrequency = 12,
-                            PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "Y5A7C9E1G3",
-                            StatusID = 5
+                            PlantNameID = 2,
+                            SWL = "Standard",
+                            SerialNumber = "XBYSNMHVXV",
+                            StatusID = 2
                         },
                         new
                         {
                             HoldingID = 25,
                             CustID = 25,
                             InspectionFrequency = 12,
-                            PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "Z6B8D0F2H4",
+                            PlantNameID = 4,
+                            SWL = "Standard",
+                            SerialNumber = "DE4K9MAUMF",
                             StatusID = 1
                         },
                         new
@@ -4075,10 +4078,10 @@ namespace sky_webapi.Migrations
                             HoldingID = 26,
                             CustID = 26,
                             InspectionFrequency = 12,
-                            PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "A7C9E1G3I5",
-                            StatusID = 2
+                            PlantNameID = 4,
+                            SWL = "Standard",
+                            SerialNumber = "D8GXHXX4MW",
+                            StatusID = 3
                         },
                         new
                         {
@@ -4086,29 +4089,29 @@ namespace sky_webapi.Migrations
                             CustID = 27,
                             InspectionFrequency = 12,
                             PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "B8D0F2H4J6",
-                            StatusID = 3
+                            SWL = "Standard",
+                            SerialNumber = "H2TTYOX9ZI",
+                            StatusID = 2
                         },
                         new
                         {
                             HoldingID = 28,
                             CustID = 28,
                             InspectionFrequency = 12,
-                            PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "C9E1G3I5K7",
-                            StatusID = 4
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "3YLV1Q9S4B",
+                            StatusID = 3
                         },
                         new
                         {
                             HoldingID = 29,
                             CustID = 29,
                             InspectionFrequency = 12,
-                            PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "D0F2H4J6L8",
-                            StatusID = 5
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "FUOA8QLRZO",
+                            StatusID = 1
                         },
                         new
                         {
@@ -4116,18 +4119,18 @@ namespace sky_webapi.Migrations
                             CustID = 30,
                             InspectionFrequency = 12,
                             PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "E1G3I5K7M9",
-                            StatusID = 1
+                            SWL = "Standard",
+                            SerialNumber = "2Q67SH85WX",
+                            StatusID = 5
                         },
                         new
                         {
                             HoldingID = 31,
                             CustID = 31,
                             InspectionFrequency = 12,
-                            PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "F2H4J6L8N0",
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "LCD6W7UFNE",
                             StatusID = 2
                         },
                         new
@@ -4135,19 +4138,19 @@ namespace sky_webapi.Migrations
                             HoldingID = 32,
                             CustID = 32,
                             InspectionFrequency = 12,
-                            PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "G3I5K7M9O1",
-                            StatusID = 3
+                            PlantNameID = 1,
+                            SWL = "Standard",
+                            SerialNumber = "AXAI633OVE",
+                            StatusID = 4
                         },
                         new
                         {
                             HoldingID = 33,
                             CustID = 33,
                             InspectionFrequency = 12,
-                            PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "H4J6L8N0P2",
+                            PlantNameID = 2,
+                            SWL = "Standard",
+                            SerialNumber = "TBAXDT2SZ6",
                             StatusID = 4
                         },
                         new
@@ -4156,8 +4159,8 @@ namespace sky_webapi.Migrations
                             CustID = 34,
                             InspectionFrequency = 12,
                             PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "I5K7M9O1Q3",
+                            SWL = "Standard",
+                            SerialNumber = "MO42473XD2",
                             StatusID = 5
                         },
                         new
@@ -4165,20 +4168,20 @@ namespace sky_webapi.Migrations
                             HoldingID = 35,
                             CustID = 35,
                             InspectionFrequency = 12,
-                            PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "J6L8N0P2R4",
-                            StatusID = 1
+                            PlantNameID = 5,
+                            SWL = "Standard",
+                            SerialNumber = "GZ833P6HJ3",
+                            StatusID = 2
                         },
                         new
                         {
                             HoldingID = 36,
                             CustID = 36,
                             InspectionFrequency = 12,
-                            PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "K7M9O1Q3S5",
-                            StatusID = 2
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "77C4M4OD9E",
+                            StatusID = 5
                         },
                         new
                         {
@@ -4186,8 +4189,8 @@ namespace sky_webapi.Migrations
                             CustID = 37,
                             InspectionFrequency = 12,
                             PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "L8N0P2R4T6",
+                            SWL = "Standard",
+                            SerialNumber = "8BTXLEH0EF",
                             StatusID = 3
                         },
                         new
@@ -4195,10 +4198,10 @@ namespace sky_webapi.Migrations
                             HoldingID = 38,
                             CustID = 38,
                             InspectionFrequency = 12,
-                            PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "M9O1Q3S5U7",
-                            StatusID = 4
+                            PlantNameID = 2,
+                            SWL = "Standard",
+                            SerialNumber = "U9ZJ9RWTBK",
+                            StatusID = 5
                         },
                         new
                         {
@@ -4206,8 +4209,8 @@ namespace sky_webapi.Migrations
                             CustID = 39,
                             InspectionFrequency = 12,
                             PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "N0P2R4T6V8",
+                            SWL = "Standard",
+                            SerialNumber = "58LIO35B3Q",
                             StatusID = 5
                         },
                         new
@@ -4215,10 +4218,10 @@ namespace sky_webapi.Migrations
                             HoldingID = 40,
                             CustID = 40,
                             InspectionFrequency = 12,
-                            PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "O1Q3S5U7W9",
-                            StatusID = 1
+                            PlantNameID = 4,
+                            SWL = "Standard",
+                            SerialNumber = "6J5FWWQ1QY",
+                            StatusID = 2
                         },
                         new
                         {
@@ -4226,19 +4229,19 @@ namespace sky_webapi.Migrations
                             CustID = 41,
                             InspectionFrequency = 12,
                             PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "P2R4T6V8X0",
-                            StatusID = 2
+                            SWL = "Standard",
+                            SerialNumber = "FEDRSMQYFW",
+                            StatusID = 4
                         },
                         new
                         {
                             HoldingID = 42,
                             CustID = 42,
                             InspectionFrequency = 12,
-                            PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "Q3S5U7W9Y1",
-                            StatusID = 3
+                            PlantNameID = 2,
+                            SWL = "Standard",
+                            SerialNumber = "38MKKOTDF7",
+                            StatusID = 2
                         },
                         new
                         {
@@ -4246,49 +4249,49 @@ namespace sky_webapi.Migrations
                             CustID = 43,
                             InspectionFrequency = 12,
                             PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "R4T6V8X0Z2",
-                            StatusID = 4
+                            SWL = "Standard",
+                            SerialNumber = "VR6P3ERHY8",
+                            StatusID = 1
                         },
                         new
                         {
                             HoldingID = 44,
                             CustID = 44,
                             InspectionFrequency = 12,
-                            PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "S5U7W9Y1A3",
-                            StatusID = 5
+                            PlantNameID = 2,
+                            SWL = "Standard",
+                            SerialNumber = "ZNTR9FWJRS",
+                            StatusID = 2
                         },
                         new
                         {
                             HoldingID = 45,
                             CustID = 45,
                             InspectionFrequency = 12,
-                            PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "T6V8X0Z2B4",
-                            StatusID = 1
+                            PlantNameID = 4,
+                            SWL = "Standard",
+                            SerialNumber = "JGRBEGIH0N",
+                            StatusID = 5
                         },
                         new
                         {
                             HoldingID = 46,
                             CustID = 46,
                             InspectionFrequency = 12,
-                            PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "U7W9Y1A3C5",
-                            StatusID = 2
+                            PlantNameID = 1,
+                            SWL = "Standard",
+                            SerialNumber = "PB5BFUY55B",
+                            StatusID = 3
                         },
                         new
                         {
                             HoldingID = 47,
                             CustID = 47,
                             InspectionFrequency = 12,
-                            PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "V8X0Z2B4D6",
-                            StatusID = 3
+                            PlantNameID = 5,
+                            SWL = "Standard",
+                            SerialNumber = "5CE9KEJCFI",
+                            StatusID = 1
                         },
                         new
                         {
@@ -4296,9 +4299,9 @@ namespace sky_webapi.Migrations
                             CustID = 48,
                             InspectionFrequency = 12,
                             PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "W9Y1A3C5E7",
-                            StatusID = 4
+                            SWL = "Standard",
+                            SerialNumber = "WPCS05UMRS",
+                            StatusID = 1
                         },
                         new
                         {
@@ -4306,9 +4309,9 @@ namespace sky_webapi.Migrations
                             CustID = 49,
                             InspectionFrequency = 12,
                             PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "X0Z2B4D6F8",
-                            StatusID = 5
+                            SWL = "Standard",
+                            SerialNumber = "KVD64Q2IWU",
+                            StatusID = 1
                         },
                         new
                         {
@@ -4316,28 +4319,28 @@ namespace sky_webapi.Migrations
                             CustID = 50,
                             InspectionFrequency = 12,
                             PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "Y1A3C5E7G9",
-                            StatusID = 1
+                            SWL = "Standard",
+                            SerialNumber = "BI7VD35G5H",
+                            StatusID = 3
                         },
                         new
                         {
                             HoldingID = 51,
                             CustID = 51,
                             InspectionFrequency = 12,
-                            PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "Z2B4D6F8H0",
-                            StatusID = 2
+                            PlantNameID = 4,
+                            SWL = "Standard",
+                            SerialNumber = "RFF9RHOMBG",
+                            StatusID = 4
                         },
                         new
                         {
                             HoldingID = 52,
                             CustID = 52,
                             InspectionFrequency = 12,
-                            PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "A3C5E7G9I1",
+                            PlantNameID = 4,
+                            SWL = "Standard",
+                            SerialNumber = "ANIYQ7BBJB",
                             StatusID = 3
                         },
                         new
@@ -4345,29 +4348,29 @@ namespace sky_webapi.Migrations
                             HoldingID = 53,
                             CustID = 53,
                             InspectionFrequency = 12,
-                            PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "B4D6F8H0J2",
-                            StatusID = 4
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "88JYW4CCGN",
+                            StatusID = 3
                         },
                         new
                         {
                             HoldingID = 54,
                             CustID = 54,
                             InspectionFrequency = 12,
-                            PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "C5E7G9I1K3",
-                            StatusID = 5
+                            PlantNameID = 4,
+                            SWL = "Standard",
+                            SerialNumber = "L31OF3A5TH",
+                            StatusID = 3
                         },
                         new
                         {
                             HoldingID = 55,
                             CustID = 55,
                             InspectionFrequency = 12,
-                            PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "D6F8H0J2L4",
+                            PlantNameID = 4,
+                            SWL = "Standard",
+                            SerialNumber = "VG08GNRQZX",
                             StatusID = 1
                         },
                         new
@@ -4375,9 +4378,9 @@ namespace sky_webapi.Migrations
                             HoldingID = 56,
                             CustID = 56,
                             InspectionFrequency = 12,
-                            PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "E7G9I1K3M5",
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "800HEWTW8T",
                             StatusID = 2
                         },
                         new
@@ -4385,39 +4388,39 @@ namespace sky_webapi.Migrations
                             HoldingID = 57,
                             CustID = 57,
                             InspectionFrequency = 12,
-                            PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "F8H0J2L4N6",
-                            StatusID = 3
+                            PlantNameID = 4,
+                            SWL = "Standard",
+                            SerialNumber = "GW5PAV81NT",
+                            StatusID = 1
                         },
                         new
                         {
                             HoldingID = 58,
                             CustID = 58,
                             InspectionFrequency = 12,
-                            PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "G9I1K3M5O7",
-                            StatusID = 4
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "DD62689X3I",
+                            StatusID = 3
                         },
                         new
                         {
                             HoldingID = 59,
                             CustID = 59,
                             InspectionFrequency = 12,
-                            PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "H0J2L4N6P8",
-                            StatusID = 5
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "C317Y82B3E",
+                            StatusID = 4
                         },
                         new
                         {
                             HoldingID = 60,
                             CustID = 60,
                             InspectionFrequency = 12,
-                            PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "I1K3M5O7Q9",
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "RBPDZIEOXL",
                             StatusID = 1
                         },
                         new
@@ -4425,9 +4428,9 @@ namespace sky_webapi.Migrations
                             HoldingID = 61,
                             CustID = 61,
                             InspectionFrequency = 12,
-                            PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "J2L4N6P8R0",
+                            PlantNameID = 1,
+                            SWL = "Standard",
+                            SerialNumber = "Z009TZ37GQ",
                             StatusID = 2
                         },
                         new
@@ -4435,20 +4438,20 @@ namespace sky_webapi.Migrations
                             HoldingID = 62,
                             CustID = 62,
                             InspectionFrequency = 12,
-                            PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "K3M5O7Q9S1",
-                            StatusID = 3
+                            PlantNameID = 2,
+                            SWL = "Standard",
+                            SerialNumber = "4BDP1BV9LN",
+                            StatusID = 2
                         },
                         new
                         {
                             HoldingID = 63,
                             CustID = 63,
                             InspectionFrequency = 12,
-                            PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "L4N6P8R0T2",
-                            StatusID = 4
+                            PlantNameID = 5,
+                            SWL = "Standard",
+                            SerialNumber = "S58UDB11Z0",
+                            StatusID = 2
                         },
                         new
                         {
@@ -4456,38 +4459,38 @@ namespace sky_webapi.Migrations
                             CustID = 64,
                             InspectionFrequency = 12,
                             PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "M5O7Q9S1U3",
-                            StatusID = 5
+                            SWL = "Standard",
+                            SerialNumber = "I2SDL5NBYH",
+                            StatusID = 2
                         },
                         new
                         {
                             HoldingID = 65,
                             CustID = 65,
                             InspectionFrequency = 12,
-                            PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "N6P8R0T2V4",
-                            StatusID = 1
+                            PlantNameID = 4,
+                            SWL = "Standard",
+                            SerialNumber = "FZXWZEZMP4",
+                            StatusID = 3
                         },
                         new
                         {
                             HoldingID = 66,
                             CustID = 66,
                             InspectionFrequency = 12,
-                            PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "O7Q9S1U3W5",
-                            StatusID = 2
+                            PlantNameID = 4,
+                            SWL = "Standard",
+                            SerialNumber = "0I3EYVSD3F",
+                            StatusID = 1
                         },
                         new
                         {
                             HoldingID = 67,
                             CustID = 67,
                             InspectionFrequency = 12,
-                            PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "P8R0T2V4X6",
+                            PlantNameID = 5,
+                            SWL = "Standard",
+                            SerialNumber = "SRYQ9JHLVK",
                             StatusID = 3
                         },
                         new
@@ -4495,50 +4498,50 @@ namespace sky_webapi.Migrations
                             HoldingID = 68,
                             CustID = 68,
                             InspectionFrequency = 12,
-                            PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "Q9S1U3W5Y7",
-                            StatusID = 4
+                            PlantNameID = 2,
+                            SWL = "Standard",
+                            SerialNumber = "NFCVB4SNL4",
+                            StatusID = 2
                         },
                         new
                         {
                             HoldingID = 69,
                             CustID = 69,
                             InspectionFrequency = 12,
-                            PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "R0T2V4X6Z8",
-                            StatusID = 5
+                            PlantNameID = 1,
+                            SWL = "Standard",
+                            SerialNumber = "BIMDZG49TZ",
+                            StatusID = 1
                         },
                         new
                         {
                             HoldingID = 70,
                             CustID = 70,
                             InspectionFrequency = 12,
-                            PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "S1U3W5Y7A9",
-                            StatusID = 1
+                            PlantNameID = 2,
+                            SWL = "Standard",
+                            SerialNumber = "QJMFXFCQ3P",
+                            StatusID = 4
                         },
                         new
                         {
                             HoldingID = 71,
                             CustID = 71,
                             InspectionFrequency = 12,
-                            PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "T2V4X6Z8B0",
-                            StatusID = 2
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "T6B9X2XYEV",
+                            StatusID = 3
                         },
                         new
                         {
                             HoldingID = 72,
                             CustID = 72,
                             InspectionFrequency = 12,
-                            PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "U3W5Y7A9C1",
-                            StatusID = 3
+                            PlantNameID = 4,
+                            SWL = "Standard",
+                            SerialNumber = "7EVPQP4YC4",
+                            StatusID = 1
                         },
                         new
                         {
@@ -4546,29 +4549,29 @@ namespace sky_webapi.Migrations
                             CustID = 73,
                             InspectionFrequency = 12,
                             PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "V4X6Z8B0D2",
-                            StatusID = 4
+                            SWL = "Standard",
+                            SerialNumber = "RM0F26IVR3",
+                            StatusID = 3
                         },
                         new
                         {
                             HoldingID = 74,
                             CustID = 74,
                             InspectionFrequency = 12,
-                            PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "W5Y7A9C1E3",
-                            StatusID = 5
+                            PlantNameID = 4,
+                            SWL = "Standard",
+                            SerialNumber = "F5M0BOC44V",
+                            StatusID = 2
                         },
                         new
                         {
                             HoldingID = 75,
                             CustID = 75,
                             InspectionFrequency = 12,
-                            PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "X6Z8B0D2F4",
-                            StatusID = 1
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "UXAOVCQY1J",
+                            StatusID = 3
                         },
                         new
                         {
@@ -4576,8 +4579,8 @@ namespace sky_webapi.Migrations
                             CustID = 76,
                             InspectionFrequency = 12,
                             PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "Y7A9C1E3G5",
+                            SWL = "Standard",
+                            SerialNumber = "CS6IM2KDU3",
                             StatusID = 2
                         },
                         new
@@ -4586,8 +4589,8 @@ namespace sky_webapi.Migrations
                             CustID = 77,
                             InspectionFrequency = 12,
                             PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "Z8B0D2F4H6",
+                            SWL = "Standard",
+                            SerialNumber = "CEXX2K76EG",
                             StatusID = 3
                         },
                         new
@@ -4595,9 +4598,9 @@ namespace sky_webapi.Migrations
                             HoldingID = 78,
                             CustID = 78,
                             InspectionFrequency = 12,
-                            PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "A9C1E3G5I7",
+                            PlantNameID = 1,
+                            SWL = "Standard",
+                            SerialNumber = "63AON5A6NB",
                             StatusID = 4
                         },
                         new
@@ -4605,70 +4608,70 @@ namespace sky_webapi.Migrations
                             HoldingID = 79,
                             CustID = 79,
                             InspectionFrequency = 12,
-                            PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "B0D2F4H6J8",
-                            StatusID = 5
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "S4RCKE90NP",
+                            StatusID = 2
                         },
                         new
                         {
                             HoldingID = 80,
                             CustID = 80,
                             InspectionFrequency = 12,
-                            PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "C1E3G5I7K9",
-                            StatusID = 1
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "P35QLUF571",
+                            StatusID = 2
                         },
                         new
                         {
                             HoldingID = 81,
                             CustID = 81,
                             InspectionFrequency = 12,
-                            PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "D2F4H6J8L0",
-                            StatusID = 2
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "160Y2NHAQE",
+                            StatusID = 1
                         },
                         new
                         {
                             HoldingID = 82,
                             CustID = 82,
                             InspectionFrequency = 12,
-                            PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "E3G5I7K9M1",
-                            StatusID = 3
+                            PlantNameID = 5,
+                            SWL = "Standard",
+                            SerialNumber = "35WAH41QRU",
+                            StatusID = 5
                         },
                         new
                         {
                             HoldingID = 83,
                             CustID = 83,
                             InspectionFrequency = 12,
-                            PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "F4H6J8L0N2",
-                            StatusID = 4
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "AUU362V0R8",
+                            StatusID = 2
                         },
                         new
                         {
                             HoldingID = 84,
                             CustID = 84,
                             InspectionFrequency = 12,
-                            PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "G5I7K9M1O3",
-                            StatusID = 5
+                            PlantNameID = 2,
+                            SWL = "Standard",
+                            SerialNumber = "NL89HLALX7",
+                            StatusID = 4
                         },
                         new
                         {
                             HoldingID = 85,
                             CustID = 85,
                             InspectionFrequency = 12,
-                            PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "H6J8L0N2P4",
-                            StatusID = 1
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "8FYCA5BH7G",
+                            StatusID = 4
                         },
                         new
                         {
@@ -4676,19 +4679,19 @@ namespace sky_webapi.Migrations
                             CustID = 86,
                             InspectionFrequency = 12,
                             PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "I7K9M1O3Q5",
-                            StatusID = 2
+                            SWL = "Standard",
+                            SerialNumber = "2NEYSPQ4VI",
+                            StatusID = 4
                         },
                         new
                         {
                             HoldingID = 87,
                             CustID = 87,
                             InspectionFrequency = 12,
-                            PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "J8L0N2P4R6",
-                            StatusID = 3
+                            PlantNameID = 5,
+                            SWL = "Standard",
+                            SerialNumber = "51JGTX6C6F",
+                            StatusID = 5
                         },
                         new
                         {
@@ -4696,9 +4699,9 @@ namespace sky_webapi.Migrations
                             CustID = 88,
                             InspectionFrequency = 12,
                             PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "K9M1O3Q5S7",
-                            StatusID = 4
+                            SWL = "Standard",
+                            SerialNumber = "DS0W7CQHX0",
+                            StatusID = 1
                         },
                         new
                         {
@@ -4706,68 +4709,68 @@ namespace sky_webapi.Migrations
                             CustID = 89,
                             InspectionFrequency = 12,
                             PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "L0N2P4R6T8",
-                            StatusID = 5
+                            SWL = "Standard",
+                            SerialNumber = "HM2IQ24ZS2",
+                            StatusID = 2
                         },
                         new
                         {
                             HoldingID = 90,
                             CustID = 90,
                             InspectionFrequency = 12,
-                            PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "M1O3Q5S7U9",
-                            StatusID = 1
+                            PlantNameID = 2,
+                            SWL = "Standard",
+                            SerialNumber = "W4XJKVLXSN",
+                            StatusID = 3
                         },
                         new
                         {
                             HoldingID = 91,
                             CustID = 91,
                             InspectionFrequency = 12,
-                            PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "N2P4R6T8V0",
-                            StatusID = 2
+                            PlantNameID = 5,
+                            SWL = "Standard",
+                            SerialNumber = "Y47S1PIEVP",
+                            StatusID = 5
                         },
                         new
                         {
                             HoldingID = 92,
                             CustID = 92,
                             InspectionFrequency = 12,
-                            PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "O3Q5S7U9W1",
-                            StatusID = 3
+                            PlantNameID = 2,
+                            SWL = "Standard",
+                            SerialNumber = "5YVDLFIKLS",
+                            StatusID = 5
                         },
                         new
                         {
                             HoldingID = 93,
                             CustID = 93,
                             InspectionFrequency = 12,
-                            PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "P4R6T8V0X2",
-                            StatusID = 4
+                            PlantNameID = 1,
+                            SWL = "Standard",
+                            SerialNumber = "PG7BPTL412",
+                            StatusID = 3
                         },
                         new
                         {
                             HoldingID = 94,
                             CustID = 94,
                             InspectionFrequency = 12,
-                            PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "Q5S7U9W1Y3",
-                            StatusID = 5
+                            PlantNameID = 4,
+                            SWL = "Standard",
+                            SerialNumber = "5M8DTCWH5Q",
+                            StatusID = 3
                         },
                         new
                         {
                             HoldingID = 95,
                             CustID = 95,
                             InspectionFrequency = 12,
-                            PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "R6T8V0X2Z4",
+                            PlantNameID = 4,
+                            SWL = "Standard",
+                            SerialNumber = "9HMNEJYG45",
                             StatusID = 1
                         },
                         new
@@ -4775,9 +4778,9 @@ namespace sky_webapi.Migrations
                             HoldingID = 96,
                             CustID = 96,
                             InspectionFrequency = 12,
-                            PlantNameID = 2,
-                            SWL = "500kg",
-                            SerialNumber = "S7U9W1Y3A5",
+                            PlantNameID = 3,
+                            SWL = "Standard",
+                            SerialNumber = "RGZBDFQCE9",
                             StatusID = 2
                         },
                         new
@@ -4785,19 +4788,19 @@ namespace sky_webapi.Migrations
                             HoldingID = 97,
                             CustID = 97,
                             InspectionFrequency = 12,
-                            PlantNameID = 3,
-                            SWL = "300kg",
-                            SerialNumber = "T8V0X2Z4B6",
-                            StatusID = 3
+                            PlantNameID = 5,
+                            SWL = "Standard",
+                            SerialNumber = "GE1I52G81L",
+                            StatusID = 1
                         },
                         new
                         {
                             HoldingID = 98,
                             CustID = 98,
                             InspectionFrequency = 12,
-                            PlantNameID = 4,
-                            SWL = "N/A",
-                            SerialNumber = "U9W1Y3A5C7",
+                            PlantNameID = 2,
+                            SWL = "Standard",
+                            SerialNumber = "H8ZREN1AJN",
                             StatusID = 4
                         },
                         new
@@ -4805,20 +4808,20 @@ namespace sky_webapi.Migrations
                             HoldingID = 99,
                             CustID = 99,
                             InspectionFrequency = 12,
-                            PlantNameID = 5,
-                            SWL = "150kg",
-                            SerialNumber = "V0X2Z4B6D8",
-                            StatusID = 5
+                            PlantNameID = 2,
+                            SWL = "Standard",
+                            SerialNumber = "NVD0AMRA8N",
+                            StatusID = 1
                         },
                         new
                         {
                             HoldingID = 100,
                             CustID = 100,
                             InspectionFrequency = 12,
-                            PlantNameID = 1,
-                            SWL = "2000kg",
-                            SerialNumber = "W1Y3A5C7E9",
-                            StatusID = 1
+                            PlantNameID = 5,
+                            SWL = "Standard",
+                            SerialNumber = "SPKCYE2GEQ",
+                            StatusID = 5
                         });
                 });
 
