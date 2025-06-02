@@ -29,23 +29,22 @@ namespace sky_webapi.Services
         {
             var inspections = await _repository.GetByPlantHoldingAsync(holdingId);
             return inspections.Select(MapToReadDto);
-        }
-
-        public async Task<InspectionReadDto> CreateInspectionAsync(InspectionDto inspectionDto)
+        }        public async Task<InspectionReadDto> CreateInspectionAsync(CreateUpdateInspectionDto createDto)
         {
             var inspection = new Inspection
             {
-                HoldingID = inspectionDto.HoldingID,
-                InspectionDate = inspectionDto.InspectionDate,
-                Location = inspectionDto.Location,
-                RecentCheck = inspectionDto.RecentCheck,
-                PreviousCheck = inspectionDto.PreviousCheck,
-                SafeWorking = inspectionDto.SafeWorking,
-                Defects = inspectionDto.Defects,
-                Rectified = inspectionDto.Rectified,
-                LatestDate = inspectionDto.LatestDate,
-                TestDetails = inspectionDto.TestDetails,                MiscNotes = inspectionDto.MiscNotes,
-                InspectorID = inspectionDto.InspectorID
+                HoldingID = createDto.HoldingID,
+                InspectionDate = createDto.InspectionDate,
+                Location = createDto.Location,
+                RecentCheck = createDto.RecentCheck,
+                PreviousCheck = createDto.PreviousCheck,
+                SafeWorking = createDto.SafeWorking,
+                Defects = createDto.Defects,
+                Rectified = createDto.Rectified,
+                LatestDate = createDto.LatestDate,
+                TestDetails = createDto.TestDetails,
+                MiscNotes = createDto.MiscNotes,
+                InspectorID = createDto.InspectorID
             };
 
             var result = await _repository.AddAsync(inspection);
@@ -53,22 +52,22 @@ namespace sky_webapi.Services
             return MapToReadDto(createdInspection!);
         }
 
-        public async Task<InspectionReadDto> UpdateInspectionAsync(int id, InspectionDto inspectionDto)
+        public async Task<InspectionReadDto> UpdateInspectionAsync(int id, CreateUpdateInspectionDto updateDto)
         {
             var inspection = new Inspection
             {
                 UniqueRef = id,
-                HoldingID = inspectionDto.HoldingID,
-                InspectionDate = inspectionDto.InspectionDate,
-                Location = inspectionDto.Location,
-                RecentCheck = inspectionDto.RecentCheck,
-                PreviousCheck = inspectionDto.PreviousCheck,
-                SafeWorking = inspectionDto.SafeWorking,
-                Defects = inspectionDto.Defects,
-                Rectified = inspectionDto.Rectified,
-                LatestDate = inspectionDto.LatestDate,                TestDetails = inspectionDto.TestDetails,
-                MiscNotes = inspectionDto.MiscNotes,
-                InspectorID = inspectionDto.InspectorID
+                HoldingID = updateDto.HoldingID,
+                InspectionDate = updateDto.InspectionDate,
+                Location = updateDto.Location,
+                RecentCheck = updateDto.RecentCheck,
+                PreviousCheck = updateDto.PreviousCheck,
+                SafeWorking = updateDto.SafeWorking,
+                Defects = updateDto.Defects,
+                Rectified = updateDto.Rectified,
+                LatestDate = updateDto.LatestDate,                TestDetails = updateDto.TestDetails,
+                MiscNotes = updateDto.MiscNotes,
+                InspectorID = updateDto.InspectorID
             };
 
             await _repository.UpdateAsync(inspection);

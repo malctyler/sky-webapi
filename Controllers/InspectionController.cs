@@ -45,16 +45,16 @@ namespace sky_webapi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<InspectionReadDto>> CreateInspection(InspectionDto inspectionDto)
+        public async Task<ActionResult<InspectionReadDto>> CreateInspection(CreateUpdateInspectionDto createDto)
         {
-            var createdInspection = await _service.CreateInspectionAsync(inspectionDto);
+            var createdInspection = await _service.CreateInspectionAsync(createDto);
             return CreatedAtAction(nameof(GetInspection), new { id = createdInspection.UniqueRef }, createdInspection);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<InspectionReadDto>> UpdateInspection(int id, InspectionDto inspectionDto)
+        public async Task<ActionResult<InspectionReadDto>> UpdateInspection(int id, CreateUpdateInspectionDto updateDto)
         {
-            var updatedInspection = await _service.UpdateInspectionAsync(id, inspectionDto);
+            var updatedInspection = await _service.UpdateInspectionAsync(id, updateDto);
             return Ok(updatedInspection);
         }
 

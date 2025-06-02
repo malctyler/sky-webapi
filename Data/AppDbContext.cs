@@ -19,6 +19,7 @@ namespace sky_webapi.Data
         public DbSet<PlantHolding> PlantHoldings { get; set; }
         public DbSet<Inspection> Inspections { get; set; }
         public DbSet<InspectorEntity> Inspectors { get; set; }
+        public DbSet<ScheduledInspection> ScheduledInspections { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -118,6 +119,18 @@ namespace sky_webapi.Data
                 .WithMany(c => c.Notes)
                 .HasForeignKey(n => n.CustID)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ScheduledInspection>()
+                .HasOne(si => si.PlantHolding)
+                .WithMany()
+                .HasForeignKey(si => si.HoldingID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ScheduledInspection>()
+                .HasOne(si => si.Inspector)
+                .WithMany()
+                .HasForeignKey(si => si.InspectorID)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
