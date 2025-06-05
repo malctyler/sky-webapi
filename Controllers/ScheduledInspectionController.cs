@@ -67,10 +67,9 @@ namespace sky_webapi.Controllers
                     new { id = createdInspection.Id },
                     createdInspection);
             }            catch (DuplicateInspectionException ex)
-            {
-                return StatusCode(409, new { 
+            {                return StatusCode(409, new { 
                     message = ex.Message, 
-                    existingDate = ex.ExistingInspectionDate.ToString("o"),
+                    existingDates = ex.ExistingInspectionDates.Select(d => d.ToString("dd/MM/yyyy")),
                     serialNumber = ex.SerialNumber
                 });
             }

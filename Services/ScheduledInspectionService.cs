@@ -46,15 +46,12 @@ namespace sky_webapi.Services
         {
             // Check for existing incomplete inspections for this holding
             if (!createDto.Force)
-            {
-                var existingInspections = await _repository.GetExistingIncompleteInspectionsAsync(createDto.HoldingID);
-                var firstIncomplete = existingInspections.FirstOrDefault();
-                if (firstIncomplete != null)
+            {                var existingInspections = await _repository.GetExistingIncompleteInspectionsAsync(createDto.HoldingID);
+                if (existingInspections.Any())
                 {
-                    throw new DuplicateInspectionException(
-                        firstIncomplete.ScheduledDate,
-                        firstIncomplete.PlantHolding?.SerialNumber ?? "unknown"
-                    );
+                    var serialNumber = existingInspections.First().PlantHolding?.SerialNumber ?? "unknown";
+                    var existingDates = existingInspections.Select(i => i.ScheduledDate);
+                    throw new DuplicateInspectionException(existingDates, serialNumber);
                 }
             }
 
