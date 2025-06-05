@@ -42,12 +42,12 @@ namespace sky_webapi.Services
             var inspections = await _repository.GetUpcomingAsync(startDate, endDate);
             return inspections.Select(MapToDto);
         }        public async Task<ScheduledInspectionDto> CreateScheduledInspectionAsync(CreateUpdateScheduledInspectionDto createDto)
-        {
-            var inspection = new ScheduledInspection
+        {            var inspection = new ScheduledInspection
             {
                 HoldingID = createDto.HoldingID,
                 ScheduledDate = createDto.ScheduledDate,
                 Location = createDto.Location,
+                Notes = createDto.Notes,
                 InspectorID = createDto.InspectorID,
                 IsCompleted = createDto.IsCompleted
             };
@@ -56,13 +56,13 @@ namespace sky_webapi.Services
             var createdInspection = await _repository.GetByIdAsync(result.Id);
             return MapToDto(createdInspection!);
         }        public async Task<ScheduledInspectionDto> UpdateScheduledInspectionAsync(int id, CreateUpdateScheduledInspectionDto updateDto)
-        {
-            var inspection = new ScheduledInspection
+        {            var inspection = new ScheduledInspection
             {
                 Id = id,
                 HoldingID = updateDto.HoldingID,
                 ScheduledDate = updateDto.ScheduledDate,
                 Location = updateDto.Location,
+                Notes = updateDto.Notes,
                 InspectorID = updateDto.InspectorID,
                 IsCompleted = updateDto.IsCompleted
             };
@@ -78,12 +78,13 @@ namespace sky_webapi.Services
         }
 
         private static ScheduledInspectionDto MapToDto(ScheduledInspection inspection)
-        {
-            return new ScheduledInspectionDto
+        {            return new ScheduledInspectionDto
             {
                 Id = inspection.Id,
                 HoldingID = inspection.HoldingID,
                 ScheduledDate = inspection.ScheduledDate,
+                Location = inspection.Location,
+                Notes = inspection.Notes,
                 InspectorID = inspection.InspectorID,
                 IsCompleted = inspection.IsCompleted,
                 PlantDescription = inspection.PlantHolding?.Plant?.PlantDescription,
@@ -91,7 +92,8 @@ namespace sky_webapi.Services
                 CustomerCompanyName = inspection.PlantHolding?.Customer?.CompanyName,
                 CustomerContactName = inspection.PlantHolding?.Customer != null 
                     ? $"{inspection.PlantHolding.Customer.ContactTitle} {inspection.PlantHolding.Customer.ContactFirstNames} {inspection.PlantHolding.Customer.ContactSurname}"
-                    : null,                InspectorName = inspection.Inspector?.InspectorsName
+                    : null,
+                InspectorName = inspection.Inspector?.InspectorsName
             };
         }
     }
