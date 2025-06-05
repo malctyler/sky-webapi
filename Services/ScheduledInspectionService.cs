@@ -42,7 +42,21 @@ namespace sky_webapi.Services
             var inspections = await _repository.GetUpcomingAsync(startDate, endDate);
             return inspections.Select(MapToDto);
         }        public async Task<ScheduledInspectionDto> CreateScheduledInspectionAsync(CreateUpdateScheduledInspectionDto createDto)
-        {            var inspection = new ScheduledInspection
+        {
+            // Check for existing incomplete inspection for this holding
+            if (!createDto.Force)
+            {
+                var existingInspection = await _repository.GetExistingIncompleteInspectionAsync(createDto.HoldingID);
+                if (existingInspection != null)
+                {
+                    throw new DuplicateInspectionException(
+                        existingInspection.ScheduledDate,
+                        existingInspection.PlantHolding?.SerialNumber ?? "unknown"
+                    );
+                }
+            }
+
+            var inspection = new ScheduledInspection
             {
                 HoldingID = createDto.HoldingID,
                 ScheduledDate = createDto.ScheduledDate,

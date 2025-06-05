@@ -17,7 +17,9 @@ namespace sky_webapi.DTOs
         /// <summary>
         /// Optional location where the inspection will take place
         /// </summary>
-        public string? Location { get; set; }        /// <summary>
+        public string? Location { get; set; }
+
+        /// <summary>
         /// Additional notes about the scheduled inspection
         /// </summary>
         public string? Notes { get; set; }
@@ -30,6 +32,12 @@ namespace sky_webapi.DTOs
         /// <summary>
         /// Whether the inspection has been completed
         /// </summary>
+        public bool IsCompleted { get; set; }
+
+        /// <summary>
+        /// Flag to force creation of a scheduled inspection even if a duplicate exists
+        /// </summary>
+        public bool Force { get; set; } = false;
         public bool IsCompleted { get; set; }
     }
 }

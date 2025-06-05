@@ -54,17 +54,22 @@ namespace sky_webapi.Controllers
         {
             var inspections = await _service.GetUpcomingScheduledInspectionsAsync(startDate, endDate);
             return Ok(inspections);
-        }
-
-        [HttpPost]
+        }        [HttpPost]
         [Authorize(Roles = "Staff")]
         public async Task<ActionResult<ScheduledInspectionDto>> CreateScheduledInspection(CreateUpdateScheduledInspectionDto createDto)
         {
-            var createdInspection = await _service.CreateScheduledInspectionAsync(createDto);
-            return CreatedAtAction(
-                nameof(GetScheduledInspection),
-                new { id = createdInspection.Id },
-                createdInspection);
+            try 
+            {
+                var createdInspection = await _service.CreateScheduledInspectionAsync(createDto);
+                return CreatedAtAction(
+                    nameof(GetScheduledInspection),
+                    new { id = createdInspection.Id },
+                    createdInspection);
+            }
+            catch (DuplicateInspectionException ex)
+            {
+                return Conflict(new { message = ex.Message, existingDate = ex.ExistingInspectionDate });
+            }
         }
 
         [HttpPut("{id}")]

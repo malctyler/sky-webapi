@@ -13,5 +13,6 @@ namespace sky_webapi.Repositories
         Task UpdateAsync(ScheduledInspection scheduledInspection);
         Task DeleteAsync(int id);
         Task<bool> ExistsAsync(int id);
+        Task<ScheduledInspection?> GetExistingIncompleteInspectionAsync(int holdingId);
     }
 }
