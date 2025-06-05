@@ -17,7 +17,10 @@ namespace sky_webapi.DTOs
         /// <summary>
         /// Optional location where the inspection will take place
         /// </summary>
-        public string? Location { get; set; }
+        public string? Location { get; set; }        /// <summary>
+        /// Additional notes about the scheduled inspection
+        /// </summary>
+        public string? Notes { get; set; }
 
         /// <summary>
         /// Optional ID of the inspector assigned to this inspection
