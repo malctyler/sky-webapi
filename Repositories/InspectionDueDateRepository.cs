@@ -28,11 +28,18 @@ namespace sky_webapi.Repositories
                     && i.PlantHolding.Customer != null 
                     && i.PlantHolding.Plant != null 
                     && i.PlantHolding.Plant.Category != null)
-                .ToListAsync();            var dtos = inspections.Select(i =>
+                .OrderByDescending(i => i.InspectionDate)  // Get the most recent inspection for each holding
+                .ToListAsync();
+
+            var holdingGroups = inspections.GroupBy(i => i.PlantHolding!.HoldingID)
+                .Select(g => g.First());  // Take the most recent inspection for each holding
+
+            var dtos = holdingGroups.Select(i =>
             {
                 var lastInspection = i.InspectionDate.GetValueOrDefault(DateTime.MinValue);
                 var dueDate = lastInspection.AddMonths(i.PlantHolding!.InspectionFrequency);
-                  return new InspectionDueDateDto
+
+                return new InspectionDueDateDto
                 {
                     HoldingID = i.PlantHolding!.HoldingID,
                     LastInspection = lastInspection,
