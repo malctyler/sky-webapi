@@ -106,7 +106,7 @@ namespace sky_webapi.Repositories
         public async Task<bool> ExistsAsync(int id)
         {
             return await _context.ScheduledInspections.AnyAsync(si => si.Id == id);
-        }        public async Task<ScheduledInspection?> GetExistingIncompleteInspectionAsync(int holdingId)
+        }        public async Task<IEnumerable<ScheduledInspection>> GetExistingIncompleteInspectionAsync(int holdingId)
         {
             return await _context.ScheduledInspections
                 .Include(si => si.PlantHolding)
@@ -116,7 +116,20 @@ namespace sky_webapi.Repositories
                 .Include(si => si.Inspector)
                 .Where(si => si.HoldingID == holdingId && !si.IsCompleted)
                 .OrderByDescending(si => si.ScheduledDate)
-                .FirstOrDefaultAsync();
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<ScheduledInspection>> GetExistingIncompleteInspectionsAsync(int holdingId)
+        {
+            return await _context.ScheduledInspections
+                .Include(si => si.PlantHolding)
+                    .ThenInclude(ph => ph.Plant)
+                .Include(si => si.PlantHolding)
+                    .ThenInclude(ph => ph.Customer)
+                .Include(si => si.Inspector)
+                .Where(si => si.HoldingID == holdingId && !si.IsCompleted)
+                .OrderByDescending(si => si.ScheduledDate)
+                .ToListAsync();
         }
     }
 }

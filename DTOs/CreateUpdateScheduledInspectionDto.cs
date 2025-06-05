@@ -35,9 +35,7 @@ namespace sky_webapi.DTOs
         public bool IsCompleted { get; set; }
 
         /// <summary>
-        /// Flag to force creation of a scheduled inspection even if a duplicate exists
-        /// </summary>
+        /// Flag to force creation of a scheduled inspection even if a duplicate exists        /// </summary>
         public bool Force { get; set; } = false;
-        public bool IsCompleted { get; set; }
     }
 }
