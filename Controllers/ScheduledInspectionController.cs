@@ -65,10 +65,13 @@ namespace sky_webapi.Controllers
                     nameof(GetScheduledInspection),
                     new { id = createdInspection.Id },
                     createdInspection);
-            }
-            catch (DuplicateInspectionException ex)
+            }            catch (DuplicateInspectionException ex)
             {
-                return Conflict(new { message = ex.Message, existingDate = ex.ExistingInspectionDate });
+                return StatusCode(409, new { 
+                    message = ex.Message, 
+                    existingDate = ex.ExistingInspectionDate.ToString("o"),
+                    serialNumber = ex.SerialNumber
+                });
             }
         }
 
