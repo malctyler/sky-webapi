@@ -1,9 +1,9 @@
 using System;
 
 namespace sky_webapi.DTOs
-{
-    public class InspectionDueDateDto
+{    public class InspectionDueDateDto
     {
+        public int HoldingID { get; set; }
         public DateTime LastInspection { get; set; }
         public DateTime DueDate { get; set; }
         public string CompanyName { get; set; } = string.Empty;

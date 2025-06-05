@@ -32,9 +32,9 @@ namespace sky_webapi.Repositories
             {
                 var lastInspection = i.InspectionDate.GetValueOrDefault(DateTime.MinValue);
                 var dueDate = lastInspection.AddMonths(i.PlantHolding!.InspectionFrequency);
-                
-                return new InspectionDueDateDto
+                  return new InspectionDueDateDto
                 {
+                    HoldingID = i.PlantHolding!.HoldingID,
                     LastInspection = lastInspection,
                     DueDate = dueDate,
                     CompanyName = i.PlantHolding.Customer!.CompanyName ?? string.Empty,
