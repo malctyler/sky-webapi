@@ -1,6 +1,7 @@
 using sky_webapi.DTOs;
 using sky_webapi.Data.Entities;
 using sky_webapi.Repositories;
+using sky_webapi.Exceptions;
 
 namespace sky_webapi.Services
 {

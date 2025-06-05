@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using sky_webapi.DTOs;
 using sky_webapi.Services;
+using sky_webapi.Exceptions;
 
 namespace sky_webapi.Controllers
 {

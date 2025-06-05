@@ -11,61 +11,41 @@ namespace sky_webapi.Repositories
         public ScheduledInspectionRepository(AppDbContext context)
         {
             _context = context;
-        }
-
-        public async Task<IEnumerable<ScheduledInspection>> GetAllAsync()
+        }        public async Task<IEnumerable<ScheduledInspection>> GetAllAsync()
         {
             return await _context.ScheduledInspections
-                .Include(si => si.PlantHolding)
-                    .ThenInclude(ph => ph.Plant)
-                .Include(si => si.PlantHolding)
-                    .ThenInclude(ph => ph.Customer)
+                .Include(si => si.PlantHolding!).ThenInclude(ph => ph!.Plant!)
+                .Include(si => si.PlantHolding!).ThenInclude(ph => ph!.Customer!)
                 .Include(si => si.Inspector)
                 .ToListAsync();
-        }
-
-        public async Task<ScheduledInspection?> GetByIdAsync(int id)
+        }        public async Task<ScheduledInspection?> GetByIdAsync(int id)
         {
             return await _context.ScheduledInspections
-                .Include(si => si.PlantHolding)
-                    .ThenInclude(ph => ph.Plant)
-                .Include(si => si.PlantHolding)
-                    .ThenInclude(ph => ph.Customer)
+                .Include(si => si.PlantHolding!).ThenInclude(ph => ph!.Plant!)
+                .Include(si => si.PlantHolding!).ThenInclude(ph => ph!.Customer!)
                 .Include(si => si.Inspector)
                 .FirstOrDefaultAsync(si => si.Id == id);
-        }
-
-        public async Task<IEnumerable<ScheduledInspection>> GetByHoldingIdAsync(int holdingId)
+        }        public async Task<IEnumerable<ScheduledInspection>> GetByHoldingIdAsync(int holdingId)
         {
             return await _context.ScheduledInspections
-                .Include(si => si.PlantHolding)
-                    .ThenInclude(ph => ph.Plant)
-                .Include(si => si.PlantHolding)
-                    .ThenInclude(ph => ph.Customer)
+                .Include(si => si.PlantHolding!).ThenInclude(ph => ph!.Plant!)
+                .Include(si => si.PlantHolding!).ThenInclude(ph => ph!.Customer!)
                 .Include(si => si.Inspector)
                 .Where(si => si.HoldingID == holdingId)
                 .ToListAsync();
-        }
-
-        public async Task<IEnumerable<ScheduledInspection>> GetByInspectorIdAsync(int inspectorId)
+        }        public async Task<IEnumerable<ScheduledInspection>> GetByInspectorIdAsync(int inspectorId)
         {
             return await _context.ScheduledInspections
-                .Include(si => si.PlantHolding)
-                    .ThenInclude(ph => ph.Plant)
-                .Include(si => si.PlantHolding)
-                    .ThenInclude(ph => ph.Customer)
+                .Include(si => si.PlantHolding!).ThenInclude(ph => ph!.Plant!)
+                .Include(si => si.PlantHolding!).ThenInclude(ph => ph!.Customer!)
                 .Include(si => si.Inspector)
                 .Where(si => si.InspectorID == inspectorId)
                 .ToListAsync();
-        }
-
-        public async Task<IEnumerable<ScheduledInspection>> GetUpcomingAsync(DateTime startDate, DateTime endDate)
+        }        public async Task<IEnumerable<ScheduledInspection>> GetUpcomingAsync(DateTime startDate, DateTime endDate)
         {
             return await _context.ScheduledInspections
-                .Include(si => si.PlantHolding)
-                    .ThenInclude(ph => ph.Plant)
-                .Include(si => si.PlantHolding)
-                    .ThenInclude(ph => ph.Customer)
+                .Include(si => si.PlantHolding!).ThenInclude(ph => ph!.Plant!)
+                .Include(si => si.PlantHolding!).ThenInclude(ph => ph!.Customer!)
                 .Include(si => si.Inspector)
                 .Where(si => si.ScheduledDate >= startDate && si.ScheduledDate <= endDate && !si.IsCompleted)
                 .OrderBy(si => si.ScheduledDate)
@@ -109,10 +89,8 @@ namespace sky_webapi.Repositories
         }        public async Task<IEnumerable<ScheduledInspection>> GetExistingIncompleteInspectionsAsync(int holdingId)
         {
             return await _context.ScheduledInspections
-                .Include(si => si.PlantHolding)
-                    .ThenInclude(ph => ph.Plant)
-                .Include(si => si.PlantHolding)
-                    .ThenInclude(ph => ph.Customer)
+                .Include(si => si.PlantHolding!).ThenInclude(ph => ph!.Plant!)
+                .Include(si => si.PlantHolding!).ThenInclude(ph => ph!.Customer!)
                 .Include(si => si.Inspector)
                 .Where(si => si.HoldingID == holdingId && !si.IsCompleted)
                 .OrderByDescending(si => si.ScheduledDate)
