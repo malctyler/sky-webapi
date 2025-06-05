@@ -7,7 +7,7 @@ namespace sky_webapi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Staff")]
+    [Authorize] // Change from [Authorize(Roles = "Staff")] to [Authorize] to allow all authenticated users
     public class WeatherController : ControllerBase
     {
         private readonly IWeatherService _weatherService;
