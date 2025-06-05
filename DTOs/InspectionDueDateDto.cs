@@ -10,6 +10,7 @@ namespace sky_webapi.DTOs
         public string CategoryDescription { get; set; } = string.Empty;
         public string SerialNumber { get; set; } = string.Empty;
         public int InspectionFrequency { get; set; }
+        public int ScheduledInspectionCount { get; set; }
 
         // UK formatted date strings
         public string FormattedLastInspection => LastInspection.ToString("dd/MM/yyyy");

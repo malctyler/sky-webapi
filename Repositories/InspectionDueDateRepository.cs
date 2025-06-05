@@ -18,7 +18,8 @@ namespace sky_webapi.Repositories
         }
 
         public async Task<IEnumerable<InspectionDueDateDto>> GetAllInspectionDueDatesAsync()
-        {            var inspections = await _context.Inspections
+        {
+            var inspections = await _context.Inspections
                 .Include(i => i.PlantHolding!)
                 .ThenInclude(ph => ph.Customer!)
                 .Include(i => i.PlantHolding!)
@@ -34,10 +35,18 @@ namespace sky_webapi.Repositories
             var holdingGroups = inspections.GroupBy(i => i.PlantHolding!.HoldingID)
                 .Select(g => g.First());  // Take the most recent inspection for each holding
 
+            var scheduledInspections = await _context.ScheduledInspections
+                .Where(si => !si.IsCompleted)
+                .GroupBy(si => si.HoldingID)
+                .Select(g => new { HoldingID = g.Key, Count = g.Count() })
+                .ToListAsync();
+
             var dtos = holdingGroups.Select(i =>
             {
                 var lastInspection = i.InspectionDate.GetValueOrDefault(DateTime.MinValue);
                 var dueDate = lastInspection.AddMonths(i.PlantHolding!.InspectionFrequency);
+                var scheduledCount = scheduledInspections
+                    .FirstOrDefault(si => si.HoldingID == i.PlantHolding.HoldingID)?.Count ?? 0;
 
                 return new InspectionDueDateDto
                 {
@@ -47,7 +56,8 @@ namespace sky_webapi.Repositories
                     CompanyName = i.PlantHolding.Customer!.CompanyName ?? string.Empty,
                     CategoryDescription = i.PlantHolding.Plant!.Category!.CategoryDescription ?? string.Empty,
                     SerialNumber = i.PlantHolding.SerialNumber ?? string.Empty,
-                    InspectionFrequency = i.PlantHolding.InspectionFrequency
+                    InspectionFrequency = i.PlantHolding.InspectionFrequency,
+                    ScheduledInspectionCount = scheduledCount
                 };
             });
 
