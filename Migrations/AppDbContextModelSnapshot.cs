@@ -3730,7 +3730,14 @@ namespace sky_webapi.Migrations
 
                     b.Property<string>("InvoiceRef")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ReferenceWithoutInitials")
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("nvarchar(450)")
+                        .HasComputedColumnSql("SUBSTRING(InvoiceRef, CHARINDEX('/', InvoiceRef), LEN(InvoiceRef) - CHARINDEX('/', InvoiceRef) + 1)", true);
 
                     b.Property<bool>("Settled")
                         .HasColumnType("bit");
@@ -3748,6 +3755,9 @@ namespace sky_webapi.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ReferenceWithoutInitials")
+                        .IsUnique();
 
                     b.ToTable("Ledgers");
                 });

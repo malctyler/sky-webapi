@@ -139,11 +139,22 @@ namespace sky_webapi.Data
 
             modelBuilder.Entity<Ledger>()
                 .Property(l => l.VAT)
+                .HasPrecision(18, 2);            modelBuilder.Entity<Ledger>()
+                .Property(l => l.Total)
                 .HasPrecision(18, 2);
 
             modelBuilder.Entity<Ledger>()
-                .Property(l => l.Total)
-                .HasPrecision(18, 2);
+                .Property(l => l.InvoiceRef)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<Ledger>()
+                .Property(l => l.ReferenceWithoutInitials)
+                .HasComputedColumnSql("SUBSTRING(InvoiceRef, CHARINDEX('/', InvoiceRef), LEN(InvoiceRef) - CHARINDEX('/', InvoiceRef) + 1)", stored: true);
+
+            modelBuilder.Entity<Ledger>()
+                .HasIndex(l => l.ReferenceWithoutInitials)
+                .IsUnique();
         }
     }
 }

@@ -73,33 +73,44 @@ namespace sky_webapi.Controllers
         [HttpPost]
         public async Task<ActionResult<LedgerDto>> CreateLedger(CreateUpdateLedgerDto createLedgerDto)
         {
-            var ledger = new Ledger
+            try
             {
-                InvoiceDate = createLedgerDto.InvoiceDate,
-                CustomerName = createLedgerDto.CustomerName,
-                InvoiceRef = createLedgerDto.InvoiceRef,
-                SubTotal = createLedgerDto.SubTotal,
-                VAT = createLedgerDto.VAT,
-                Total = createLedgerDto.Total,
-                Settled = createLedgerDto.Settled
-            };
+                var ledger = new Ledger
+                {
+                    InvoiceDate = createLedgerDto.InvoiceDate,
+                    CustomerName = createLedgerDto.CustomerName,
+                    InvoiceRef = createLedgerDto.InvoiceRef,
+                    SubTotal = createLedgerDto.SubTotal,
+                    VAT = createLedgerDto.VAT,
+                    Total = createLedgerDto.Total,
+                    Settled = createLedgerDto.Settled
+                };
 
-            _context.Ledgers.Add(ledger);
-            await _context.SaveChangesAsync();
+                _context.Ledgers.Add(ledger);
+                await _context.SaveChangesAsync();
 
-            var ledgerDto = new LedgerDto
+                var ledgerDto = new LedgerDto
+                {
+                    Id = ledger.Id,
+                    InvoiceDate = ledger.InvoiceDate,
+                    CustomerName = ledger.CustomerName,
+                    InvoiceRef = ledger.InvoiceRef,
+                    SubTotal = ledger.SubTotal,
+                    VAT = ledger.VAT,
+                    Total = ledger.Total,
+                    Settled = ledger.Settled
+                };
+
+                return CreatedAtAction(nameof(GetLedger), new { id = ledger.Id }, ledgerDto);
+            }
+            catch (DbUpdateException ex)
             {
-                Id = ledger.Id,
-                InvoiceDate = ledger.InvoiceDate,
-                CustomerName = ledger.CustomerName,
-                InvoiceRef = ledger.InvoiceRef,
-                SubTotal = ledger.SubTotal,
-                VAT = ledger.VAT,
-                Total = ledger.Total,
-                Settled = ledger.Settled
-            };
-
-            return CreatedAtAction(nameof(GetLedger), new { id = ledger.Id }, ledgerDto);
+                if (ex.InnerException?.Message.Contains("IX_Ledgers_ReferenceWithoutInitials") == true)
+                {
+                    return BadRequest(new { message = "An invoice with this reference pattern already exists (ignoring initials)." });
+                }
+                throw;
+            }
         }
 
         // PUT: api/Ledger/5
