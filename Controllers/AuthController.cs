@@ -135,6 +135,8 @@ namespace sky_webapi.Controllers
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id),
                     new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
+                    new Claim(ClaimTypes.GivenName, user.FirstName),
+                    new Claim(ClaimTypes.Surname, user.LastName),
                     new Claim("EmailConfirmed", user.EmailConfirmed.ToString()),
                     new Claim("IsCustomer", user.IsCustomer.ToString())
                 };
@@ -174,6 +176,8 @@ namespace sky_webapi.Controllers
                     Id = user.Id,
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
                     Email = user.Email ?? string.Empty,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
                     Roles = userRoles.ToList(),
                     IsCustomer = user.IsCustomer,
                     EmailConfirmed = user.EmailConfirmed,
