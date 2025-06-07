@@ -7,10 +7,9 @@ namespace sky_webapi.Data.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CustID { get; set; }
-
+        public int CustID { get; set; }        [Required]
         [MaxLength(50)]
-        public string? CompanyName { get; set; }
+        public string CompanyName { get; set; } = string.Empty;
 
         [MaxLength(50)]
         public string? ContactTitle { get; set; }

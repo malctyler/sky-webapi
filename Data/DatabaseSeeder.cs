@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using sky_webapi.Data.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace sky_webapi.Data
 {
@@ -63,12 +66,12 @@ namespace sky_webapi.Data
             var notes = new List<NoteEntity>();
 
             for (int i = 1; i <= 100; i++)
-            {
-                char letter = (char)((i % 26) + 65);
+            {                // Generate a unique company name
+                string companyName = $"Company {GetUniqueCompanyNameSuffix(i)}";
                 customers.Add(new CustomerEntity
                 {
                     CustID = i,
-                    CompanyName = $"Company {letter}",
+                    CompanyName = companyName,
                     ContactTitle = "Mr.",
                     ContactFirstNames = "John",
                     ContactSurname = "Doe",
@@ -240,6 +243,18 @@ namespace sky_webapi.Data
                     ClaimValue = "False"
                 }
             );
+        }
+
+        private static string GetUniqueCompanyNameSuffix(int index)
+        {
+            // Use combination of letters and numbers for more unique names
+            int firstLetter = ((index - 1) / 26) + 1;
+            char letter = (char)((index - 1) % 26 + 65);
+            
+            if (firstLetter == 1)
+                return letter.ToString();
+            
+            return $"{letter}{firstLetter}";
         }
     }
 }
