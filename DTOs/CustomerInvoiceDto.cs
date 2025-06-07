@@ -8,7 +8,9 @@ namespace sky_webapi.DTOs
         public int CustomerId { get; set; }
         public required string CustomerName { get; set; }
         public required string Address { get; set; }
-        public required string City { get; set; }
+        public required string AddressLine2 { get; set; }
+        public required string AddressLine3 { get; set; }
+        public required string AddressLine4 { get; set; }
         public required string PostCode { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

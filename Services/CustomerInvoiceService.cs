@@ -47,7 +47,6 @@ namespace sky_webapi.Services
             }
 
             // Get inspections with related plant holdings for the date range
-            // Using a single query with null-safe projections
             var lineItems = await _context.Inspections
                 .AsNoTracking()
                 .Where(i => i.PlantHolding != null &&
@@ -63,7 +62,8 @@ namespace sky_webapi.Services
                     PlantDescription = i.PlantHolding!.Plant != null 
                         ? i.PlantHolding.Plant.PlantDescription ?? "Unknown Plant"
                         : "Unknown Plant",
-                    SerialNumber = i.PlantHolding.SerialNumber ?? "N/A",                    InspectionFee = i.PlantHolding.InspectionFee ?? 0m
+                    SerialNumber = i.PlantHolding.SerialNumber ?? "N/A",
+                    InspectionFee = i.PlantHolding.InspectionFee ?? 0m
                 })
                 .ToListAsync();
 
@@ -74,7 +74,9 @@ namespace sky_webapi.Services
                 CustomerId = customerId,
                 CustomerName = customer.CompanyName ?? "Unknown",
                 Address = customer.Line1 ?? "",
-                City = customer.Line2 ?? "",
+                AddressLine2 = customer.Line2 ?? "",
+                AddressLine3 = customer.Line3 ?? "",
+                AddressLine4 = customer.Line4 ?? "",
                 PostCode = customer.Postcode ?? "",
                 StartDate = startDate,
                 EndDate = endDate,
