@@ -5,6 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>sky_webapi</RootNamespace>
     <UserSecretsId>884c5ae1-c47a-4ff7-ae58-40f4e7b6cc33</UserSecretsId>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,7 +20,8 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="1.1.6" />
-    <PackageReference Include="OpenWeatherMap.NET" Version="1.0.0" />
+    <!-- Replacing OpenWeatherMap.NET with modern HTTP client usage -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.3.1" />
   </ItemGroup>
 

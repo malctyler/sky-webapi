@@ -118,7 +118,9 @@ namespace sky_webapi.Data
                 var serialNumber = string.Concat(Enumerable.Range(0, 10)
                     .Select(x => x % 2 == 0 ? 
                         ((char)('A' + (i + x) % 26)).ToString() : 
-                        ((i + x) % 10).ToString()));
+                        ((i + x) % 10).ToString()));                // Generate a random fee between 75 and 200 in multiples of 5
+                var random = new Random(i); // Use customer ID as seed for reproducibility
+                var fee = (decimal)(Math.Floor(random.Next(75, 201) / 5.0) * 5);
 
                 plantHoldings.Add(new PlantHolding 
                 { 
@@ -127,6 +129,7 @@ namespace sky_webapi.Data
                     PlantNameID = plantId,
                     SerialNumber = serialNumber,
                     StatusID = statusId,
+                    InspectionFee = fee,
                     SWL = plantId switch
                     {
                         1 => "2000kg", // Heavy Plant

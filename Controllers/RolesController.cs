@@ -31,7 +31,7 @@ namespace sky_webapi.Controllers
             var result = new List<RoleDto>();
             foreach (var role in roles)
             {
-                result.Add(new RoleDto { Id = role.Id, Name = role.Name });
+                result.Add(new RoleDto { Id = role.Id ?? "", Name = role.Name ?? "" });
             }
             return Ok(result);
         }
@@ -41,7 +41,7 @@ namespace sky_webapi.Controllers
         {
             var role = await _roleManager.FindByIdAsync(id);
             if (role == null) return NotFound();
-            return Ok(new RoleDto { Id = role.Id, Name = role.Name });
+            return Ok(new RoleDto { Id = role.Id ?? "", Name = role.Name ?? "" });
         }
 
         [HttpPost]
@@ -77,7 +77,7 @@ namespace sky_webapi.Controllers
 
                 _logger.LogInformation("Successfully created role: {RoleName}", model.Name);
                 return CreatedAtAction(nameof(GetRole), new { id = role.Id }, 
-                    new RoleDto { Id = role.Id, Name = role.Name });
+                    new RoleDto { Id = role.Id ?? "", Name = role.Name ?? "" });
             }
             catch (Exception ex)
             {

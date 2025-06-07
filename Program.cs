@@ -96,6 +96,7 @@ builder.Services.AddScoped<IInspectionService, InspectionService>();
 builder.Services.AddScoped<IInspectorRepository, InspectorRepository>();
 builder.Services.AddScoped<IInspectorService, InspectorService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<ICustomerInvoiceService, CustomerInvoiceService>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IWeatherService, WeatherService>();
 builder.Services.AddScoped<IInspectionDueDateRepository, InspectionDueDateRepository>();

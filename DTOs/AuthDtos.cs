@@ -34,14 +34,12 @@ namespace sky_webapi.DTOs
         public string CurrentPassword { get; set; } = string.Empty;
         public string NewPassword { get; set; } = string.Empty;
         public string ConfirmNewPassword { get; set; } = string.Empty;
-    }
-
-    public class UserDto
+    }    public class UserDto
     {
-        public string Id { get; set; }
-        public string Email { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public required string Id { get; set; }
+        public required string Email { get; set; }
+        public required string FirstName { get; set; }
+        public required string LastName { get; set; }
         public bool IsCustomer { get; set; }
         public int? CustomerId { get; set; }
         public bool EmailConfirmed { get; set; }
@@ -49,13 +47,13 @@ namespace sky_webapi.DTOs
 
     public class RoleAssignmentDto
     {
-        public string RoleName { get; set; }
+        public required string RoleName { get; set; }
     }
 
     public class RoleDto
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
+        public required string Id { get; set; }
+        public required string Name { get; set; }
     }
 
     public class ClaimDto

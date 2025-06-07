@@ -1,19 +1,18 @@
 namespace sky_webapi.DTOs
-{
-    public class WeatherForecastDetailDto
+{    public class WeatherForecastDetailDto
     {
         public List<ForecastItem> Items { get; set; } = new();
-        public CityInfo City { get; set; }
+        public required CityInfo City { get; set; }
     }
 
     public class ForecastItem
     {
         public long DateTime { get; set; }
-        public MainWeather Main { get; set; }
-        public List<Weather> Weather { get; set; }
-        public Wind Wind { get; set; }
+        public required MainWeather Main { get; set; }
+        public required List<Weather> Weather { get; set; } = new();
+        public required Wind Wind { get; set; }
         public double Pop { get; set; }
-        public string DtTxt { get; set; }
+        public required string DtTxt { get; set; }
     }
 
     public class MainWeather
@@ -29,9 +28,9 @@ namespace sky_webapi.DTOs
     public class Weather
     {
         public int Id { get; set; }
-        public string Main { get; set; }
-        public string Description { get; set; }
-        public string Icon { get; set; }
+        public required string Main { get; set; }
+        public required string Description { get; set; }
+        public required string Icon { get; set; }
     }
 
     public class Wind
@@ -43,9 +42,9 @@ namespace sky_webapi.DTOs
 
     public class CityInfo
     {
-        public string Name { get; set; }
-        public Coordinates Coord { get; set; }
-        public string Country { get; set; }
+        public required string Name { get; set; }
+        public required Coordinates Coord { get; set; }
+        public required string Country { get; set; }
         public long Sunrise { get; set; }
         public long Sunset { get; set; }
     }

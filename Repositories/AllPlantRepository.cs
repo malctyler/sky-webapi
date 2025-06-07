@@ -42,8 +42,7 @@ namespace sky_webapi.Repositories
         }
 
         public async Task<AllPlantEntity> AddAsync(AllPlantEntity plant)
-        {
-            if (await ExistsByDescriptionAsync(plant.PlantDescription))
+        {            if (plant.PlantDescription != null && await ExistsByDescriptionAsync(plant.PlantDescription))
             {
                 throw new InvalidOperationException($"A plant with description '{plant.PlantDescription}' already exists.");
             }
@@ -54,8 +53,7 @@ namespace sky_webapi.Repositories
         }
 
         public async Task UpdateAsync(AllPlantEntity plant)
-        {
-            if (await ExistsByDescriptionAsync(plant.PlantDescription, plant.PlantNameID))
+        {            if (plant.PlantDescription != null && await ExistsByDescriptionAsync(plant.PlantDescription, plant.PlantNameID))
             {
                 throw new InvalidOperationException($"A plant with description '{plant.PlantDescription}' already exists.");
             }

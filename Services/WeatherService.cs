@@ -38,9 +38,8 @@ namespace sky_webapi.Services
             {
                 Temperature = weatherData.GetProperty("main").GetProperty("temp").GetDouble(),
                 FeelsLike = weatherData.GetProperty("main").GetProperty("feels_like").GetDouble(),
-                Humidity = weatherData.GetProperty("main").GetProperty("humidity").GetInt32(),
-                Description = weatherData.GetProperty("weather")[0].GetProperty("description").GetString(),
-                Icon = weatherData.GetProperty("weather")[0].GetProperty("icon").GetString(),
+                Humidity = weatherData.GetProperty("main").GetProperty("humidity").GetInt32(),                Description = weatherData.GetProperty("weather")[0].GetProperty("description").GetString() ?? "Unknown",
+                Icon = weatherData.GetProperty("weather")[0].GetProperty("icon").GetString() ?? "unknown",
                 WindSpeed = weatherData.GetProperty("wind").GetProperty("speed").GetDouble()
             };
         }
@@ -59,9 +58,8 @@ namespace sky_webapi.Services
             {
                 Items = new List<ForecastItem>(),
                 City = new CityInfo
-                {
-                    Name = forecastData.GetProperty("city").GetProperty("name").GetString(),
-                    Country = forecastData.GetProperty("city").GetProperty("country").GetString(),
+                {                    Name = forecastData.GetProperty("city").GetProperty("name").GetString() ?? "Unknown",
+                    Country = forecastData.GetProperty("city").GetProperty("country").GetString() ?? "Unknown",
                     Sunrise = forecastData.GetProperty("city").GetProperty("sunrise").GetInt64(),
                     Sunset = forecastData.GetProperty("city").GetProperty("sunset").GetInt64(),
                     Coord = new Coordinates
@@ -74,11 +72,10 @@ namespace sky_webapi.Services
 
             var list = forecastData.GetProperty("list");
             foreach (var item in list.EnumerateArray())
-            {
-                forecast.Items.Add(new ForecastItem
+            {                forecast.Items.Add(new ForecastItem
                 {
                     DateTime = item.GetProperty("dt").GetInt64(),
-                    DtTxt = item.GetProperty("dt_txt").GetString(),
+                    DtTxt = item.GetProperty("dt_txt").GetString() ?? "Unknown",
                     Pop = item.GetProperty("pop").GetDouble(),
                     Main = new MainWeather
                     {
@@ -92,9 +89,9 @@ namespace sky_webapi.Services
                     Weather = item.GetProperty("weather").EnumerateArray().Select(w => new Weather
                     {
                         Id = w.GetProperty("id").GetInt32(),
-                        Main = w.GetProperty("main").GetString(),
-                        Description = w.GetProperty("description").GetString(),
-                        Icon = w.GetProperty("icon").GetString()
+                        Main = w.GetProperty("main").GetString() ?? "Unknown",
+                        Description = w.GetProperty("description").GetString() ?? "Unknown",
+                        Icon = w.GetProperty("icon").GetString() ?? "unknown"
                     }).ToList(),
                     Wind = new Wind
                     {

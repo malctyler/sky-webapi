@@ -23,10 +23,8 @@ namespace sky_webapi.Controllers
         {
             _userManager = userManager;
             _logger = logger;
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
+        }        [HttpGet]
+        public ActionResult<IEnumerable<UserDto>> GetUsers()
         {
             var users = _userManager.Users;
             var result = new List<UserDto>();
@@ -34,13 +32,13 @@ namespace sky_webapi.Controllers
             {
                 result.Add(new UserDto
                 {
-                    Id = user.Id,
-                    Email = user.Email,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
+                    Id = user.Id ?? "",
+                    Email = user.Email ?? "",
+                    FirstName = user.FirstName ?? "",
+                    LastName = user.LastName ?? "",
                     IsCustomer = user.IsCustomer,
                     CustomerId = user.CustomerId,
-                    EmailConfirmed = user.EmailConfirmed // Added
+                    EmailConfirmed = user.EmailConfirmed
                 });
             }
             return Ok(result);
@@ -50,16 +48,15 @@ namespace sky_webapi.Controllers
         public async Task<ActionResult<UserDto>> GetUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if (user == null) return NotFound();
-            return Ok(new UserDto
+            if (user == null) return NotFound();            return Ok(new UserDto
             {
-                Id = user.Id,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
+                Id = user.Id ?? "",
+                Email = user.Email ?? "",
+                FirstName = user.FirstName ?? "",
+                LastName = user.LastName ?? "",
                 IsCustomer = user.IsCustomer,
                 CustomerId = user.CustomerId,
-                EmailConfirmed = user.EmailConfirmed // Added
+                EmailConfirmed = user.EmailConfirmed
             });
         }
 
