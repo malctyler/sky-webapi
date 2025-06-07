@@ -20,6 +20,7 @@ namespace sky_webapi.Data
         public DbSet<Inspection> Inspections { get; set; }
         public DbSet<InspectorEntity> Inspectors { get; set; }
         public DbSet<ScheduledInspection> ScheduledInspections { get; set; }
+        public DbSet<Ledger> Ledgers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -131,6 +132,18 @@ namespace sky_webapi.Data
                 .WithMany()
                 .HasForeignKey(si => si.InspectorID)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Ledger>()
+                .Property(l => l.SubTotal)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Ledger>()
+                .Property(l => l.VAT)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Ledger>()
+                .Property(l => l.Total)
+                .HasPrecision(18, 2);
         }
     }
 }
