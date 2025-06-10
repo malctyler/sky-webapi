@@ -4,6 +4,7 @@ using sky_webapi.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace sky_webapi.Data
 {
@@ -20,6 +21,22 @@ namespace sky_webapi.Data
         private const string AdminUserSecurityStamp = "JIRVGNRNQ7Z3TPFRS4YPFN5QVMPXQY2K";
         // Pre-hashed password for "Admin123!" - Compatible with ASP.NET Core Identity v9
         private const string AdminPasswordHash = "AQAAAAIAAYagAAAAELPDyn6G7TKxOvThBltjPcf3ieDXUmVaZlKK3Q4Qf3jTIgyCFjPXDSOixax8c/UHVg==";
+
+        private static readonly string[] PostcodeDistricts = new[]
+        {
+            // London
+            "E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8", "E9", "E10",
+            "N1", "N2", "N3", "N4", "N5", "N6", "N7", "N8", "N9", "N10",
+            "SW1", "SW2", "SW3", "SW4", "SW5", "SW6", "SW7", "SW8", "SW9", "SW10",
+            // South
+            "PO1", "PO2", "PO3", "PO4", "SO14", "SO15", "SO16", "SO17",
+            // South East
+            "ME1", "ME2", "ME3", "ME4", "CT1", "CT2", "CT3", "CT4",
+            "TN1", "TN2", "TN3", "TN4", "BN1", "BN2", "BN3",
+            // South West
+            "BS1", "BS2", "BS3", "BS4", "EX1", "EX2", "EX3", "EX4",
+            "PL1", "PL2", "PL3", "PL4", "TR1", "TR2", "TR3", "TR4"
+        };
 
         public static void SeedData(ModelBuilder modelBuilder)
         {
@@ -67,8 +84,7 @@ namespace sky_webapi.Data
 
             for (int i = 1; i <= 100; i++)
             {                // Generate a unique company name
-                string companyName = $"Company {GetUniqueCompanyNameSuffix(i)}";
-                customers.Add(new CustomerEntity
+                string companyName = $"Company {GetUniqueCompanyNameSuffix(i)}";                customers.Add(new CustomerEntity
                 {
                     CustID = i,
                     CompanyName = companyName,
@@ -79,7 +95,7 @@ namespace sky_webapi.Data
                     Line2 = "",
                     Line3 = "",
                     Line4 = "",
-                    Postcode = "12345",
+                    Postcode = GenerateRandomPostcode(),
                     Telephone = "123-456-7890",
                     Fax = "123-456-7891",
                     Email = "john.doe@companya.com"
@@ -245,6 +261,37 @@ namespace sky_webapi.Data
             );
         }
 
+        public static async Task UpdateExistingCustomerPostcodes(AppDbContext context)
+        {
+            var customers = await context.Customers.ToListAsync();
+            var random = new Random(42); // Use fixed seed for reproducibility
+
+            foreach (var customer in customers)
+            {
+                // Use customer ID as additional seed to ensure same customer always gets same postcode
+                var customRandom = new Random(42 + customer.CustID);
+                var district = PostcodeDistricts[customRandom.Next(PostcodeDistricts.Length)];
+                var number = customRandom.Next(1, 10);
+                var letters = new string(Enumerable.Range(0, 2)
+                    .Select(_ => (char)('A' + customRandom.Next(26)))
+                    .ToArray());
+
+                customer.Postcode = $"{district} {number}{letters}";
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        public static void UpdateCustomerPostcodes(AppDbContext context)
+        {
+            var customers = context.Customers.ToList();
+            foreach (var customer in customers)
+            {
+                customer.Postcode = GenerateRandomPostcode();
+            }
+            context.SaveChanges();
+        }
+
         private static string GetUniqueCompanyNameSuffix(int index)
         {
             // Use combination of letters and numbers for more unique names
@@ -255,6 +302,22 @@ namespace sky_webapi.Data
                 return letter.ToString();
             
             return $"{letter}{firstLetter}";
+        }
+
+        private static string GenerateRandomPostcode()
+        {
+            var random = new Random();
+            var district = PostcodeDistricts[random.Next(PostcodeDistricts.Length)];
+            
+            // Generate random number part (1-9)
+            var number = random.Next(1, 10);
+            
+            // Generate random letters (AA-ZZ)
+            var letters = new string(Enumerable.Range(0, 2)
+                .Select(_ => (char)('A' + random.Next(26)))
+                .ToArray());
+
+            return $"{district} {number}{letters}";
         }
     }
 }

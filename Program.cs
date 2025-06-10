@@ -173,6 +173,15 @@ app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.MapControllers();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();    app.UseSwaggerUI(c => 
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sky API V1");
+        c.DocExpansion(DocExpansion.None);
+    });
+}
+
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
