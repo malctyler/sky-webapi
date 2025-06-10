@@ -1,7 +1,8 @@
 using System;
 
 namespace sky_webapi.DTOs
-{    public class InspectionDueDateDto
+{    
+    public class InspectionDueDateDto
     {
         public int HoldingID { get; set; }
         public DateTime LastInspection { get; set; }
@@ -11,6 +12,7 @@ namespace sky_webapi.DTOs
         public string SerialNumber { get; set; } = string.Empty;
         public int InspectionFrequency { get; set; }
         public int ScheduledInspectionCount { get; set; }
+        public string Postcode { get; set; } = string.Empty;
 
         // UK formatted date strings
         public string FormattedLastInspection => LastInspection.ToString("dd/MM/yyyy");

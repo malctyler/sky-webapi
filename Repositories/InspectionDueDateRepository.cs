@@ -57,7 +57,8 @@ namespace sky_webapi.Repositories
                     CategoryDescription = i.PlantHolding.Plant!.Category!.CategoryDescription ?? string.Empty,
                     SerialNumber = i.PlantHolding.SerialNumber ?? string.Empty,
                     InspectionFrequency = i.PlantHolding.InspectionFrequency,
-                    ScheduledInspectionCount = scheduledCount
+                    ScheduledInspectionCount = scheduledCount,
+                    Postcode = i.PlantHolding.Customer!.Postcode ?? string.Empty
                 };
             });
 
