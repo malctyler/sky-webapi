@@ -133,13 +133,16 @@ namespace sky_webapi.Data
                 .HasForeignKey(si => si.InspectorID)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Configure Ledger entity
             modelBuilder.Entity<Ledger>()
                 .Property(l => l.SubTotal)
                 .HasPrecision(18, 2);
 
             modelBuilder.Entity<Ledger>()
                 .Property(l => l.VAT)
-                .HasPrecision(18, 2);            modelBuilder.Entity<Ledger>()
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Ledger>()
                 .Property(l => l.Total)
                 .HasPrecision(18, 2);
 
@@ -149,12 +152,18 @@ namespace sky_webapi.Data
                 .HasMaxLength(100);
 
             modelBuilder.Entity<Ledger>()
+                .Property(l => l.CustomerName)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<Ledger>()
                 .Property(l => l.ReferenceWithoutInitials)
-                .HasComputedColumnSql("SUBSTRING(InvoiceRef, CHARINDEX('/', InvoiceRef), LEN(InvoiceRef) - CHARINDEX('/', InvoiceRef) + 1)", stored: true);
+                .HasComputedColumnSql("CAST(SUBSTRING(InvoiceRef, CHARINDEX('/', InvoiceRef), LEN(InvoiceRef) - CHARINDEX('/', InvoiceRef) + 1) AS nvarchar(100))", stored: true);
 
             modelBuilder.Entity<Ledger>()
                 .HasIndex(l => l.ReferenceWithoutInitials)
-                .IsUnique();
+                .IsUnique()
+                .HasFilter(null);
         }
     }
 }

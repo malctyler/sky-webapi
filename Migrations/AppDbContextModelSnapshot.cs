@@ -3723,7 +3723,8 @@ namespace sky_webapi.Migrations
 
                     b.Property<string>("CustomerName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("InvoiceDate")
                         .HasColumnType("datetime2");
@@ -3737,7 +3738,7 @@ namespace sky_webapi.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("nvarchar(450)")
-                        .HasComputedColumnSql("SUBSTRING(InvoiceRef, CHARINDEX('/', InvoiceRef), LEN(InvoiceRef) - CHARINDEX('/', InvoiceRef) + 1)", true);
+                        .HasComputedColumnSql("CAST(SUBSTRING(InvoiceRef, CHARINDEX('/', InvoiceRef), LEN(InvoiceRef) - CHARINDEX('/', InvoiceRef) + 1) AS nvarchar(100))", true);
 
                     b.Property<bool>("Settled")
                         .HasColumnType("bit");

@@ -12,8 +12,8 @@ using sky_webapi.Data;
 namespace sky_webapi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250607190026_AddLedgerReferenceWithoutInitialsColumn_20250607")]
-    partial class AddLedgerReferenceWithoutInitialsColumn_20250607
+    [Migration("20250609194846_InitialLedgerTableSetup")]
+    partial class InitialLedgerTableSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -3726,7 +3726,8 @@ namespace sky_webapi.Migrations
 
                     b.Property<string>("CustomerName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("InvoiceDate")
                         .HasColumnType("datetime2");
@@ -3740,7 +3741,7 @@ namespace sky_webapi.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("nvarchar(450)")
-                        .HasComputedColumnSql("SUBSTRING(InvoiceRef, CHARINDEX('/', InvoiceRef), LEN(InvoiceRef) - CHARINDEX('/', InvoiceRef) + 1)", true);
+                        .HasComputedColumnSql("CAST(SUBSTRING(InvoiceRef, CHARINDEX('/', InvoiceRef), LEN(InvoiceRef) - CHARINDEX('/', InvoiceRef) + 1) AS nvarchar(100))", true);
 
                     b.Property<bool>("Settled")
                         .HasColumnType("bit");
