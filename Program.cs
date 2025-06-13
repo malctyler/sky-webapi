@@ -48,14 +48,13 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["JwtSettings:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!)),
-        ClockSkew = TimeSpan.Zero // Remove clock skew to make token expiration exact
+        ClockSkew = TimeSpan.FromMinutes(5), // Add 5-minute tolerance
     };
 });
 
 // Add services to the container.
 builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowReactApp",
+{    options.AddPolicy("AllowReactApp",
         policy => policy
             .WithOrigins(
                 "https://witty-plant-0550d6403.6.azurestaticapps.net",
@@ -63,8 +62,7 @@ builder.Services.AddCors(options =>
                 "https://localhost:3000")
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .AllowCredentials()
-            .SetIsOriginAllowed(_ => true)); // Allow any origin temporarily for debugging
+            .AllowCredentials());// Allow any origin temporarily for debugging
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>

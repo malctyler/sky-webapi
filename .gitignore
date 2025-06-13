@@ -408,3 +408,5 @@ packages
 settings.bat
 manage_env_vars.ps1
 envsettings.json
+.github/copilot/prompts/security-audit-prompt.md
+.github/copilot/prompts/security-audit-report.md

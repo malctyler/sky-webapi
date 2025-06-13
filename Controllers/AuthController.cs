@@ -170,11 +170,20 @@ namespace sky_webapi.Controllers
                     expires: DateTime.Now.AddMinutes(
                         Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"])),
                     signingCredentials: creds
-                );                _logger.LogInformation("User logged in successfully: {Email}", model.Email);
+                );                _logger.LogInformation("User logged in successfully: {Email}", model.Email);                var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+                
+                Response.Cookies.Append("jwt", jwtToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddMinutes(
+                        Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"]))
+                });
+
                 return Ok(new AuthResponseDto
                 {
                     Id = user.Id,
-                    Token = new JwtSecurityTokenHandler().WriteToken(token),
                     Email = user.Email ?? string.Empty,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
@@ -231,21 +240,23 @@ namespace sky_webapi.Controllers
                 _logger.LogError(ex, "Error during password change");
                 return StatusCode(500, new { Message = "An error occurred while changing the password." });
             }
-        }
-
-        [HttpPost("logout")]
+        }        [HttpPost("logout")]
         [Authorize]
         public IActionResult Logout()
         {
-            // Since we're using JWT tokens, we can't invalidate the token on the server side
-            // The client should remove the token from their storage
-            // This endpoint is mainly for logging purposes and future extensibility
-            
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
             if (!string.IsNullOrEmpty(email))
             {
                 _logger.LogInformation("User logged out: {Email}", email);
             }
+
+            // Remove the JWT cookie
+            Response.Cookies.Delete("jwt", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict
+            });
             
             return Ok(new { Message = "Logged out successfully" });
         }
