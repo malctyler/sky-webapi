@@ -100,9 +100,7 @@ namespace sky_webapi.Controllers
                 _logger.LogError(ex, "Error during user registration for {Email}", model.Email);
                 return StatusCode(500, new { Message = "An error occurred during registration. Please try again later." });
             }
-        }
-
-        [HttpPost("login")]
+        }        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
             try
@@ -160,8 +158,8 @@ namespace sky_webapi.Controllers
                     SigningCredentials = creds
                 };
 
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                var tokenString = tokenHandler.WriteToken(token);
+                var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+                var generatedToken = tokenHandler.WriteToken(securityToken);
 
                 // Get the origin from the request
                 var origin = Request.Headers["Origin"].ToString();
@@ -180,24 +178,23 @@ namespace sky_webapi.Controllers
                 {
                     cookieOptions.Secure = false;
                     cookieOptions.SameSite = SameSiteMode.None;
-                    // Don't set domain for localhost
                 }
                 else
                 {
                     cookieOptions.Secure = true;
                     cookieOptions.SameSite = SameSiteMode.None;
-                    cookieOptions.Domain = ".azurewebsites.net"; // Note the leading dot
+                    cookieOptions.Domain = ".azurewebsites.net";
                 }
 
                 _logger.LogInformation("Setting cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Domain={Domain}",
                     cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, 
                     cookieOptions.Domain ?? "not set");
 
-                Response.Cookies.Append("jwt", tokenString, cookieOptions);
+                Response.Cookies.Append("jwt", generatedToken, cookieOptions);
 
                 _logger.LogInformation("User logged in successfully: {Email}", model.Email);
 
-                return Ok(new AuthResponseDto
+                var response = new AuthResponseDto
                 {
                     Id = user.Id,
                     Email = user.Email ?? string.Empty,
@@ -207,8 +204,10 @@ namespace sky_webapi.Controllers
                     IsCustomer = user.IsCustomer,
                     EmailConfirmed = user.EmailConfirmed,
                     CustomerId = user.CustomerId,
-                    Token = tokenString // Include token in response for debugging
-                });
+                    Token = generatedToken
+                };
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -267,17 +266,23 @@ namespace sky_webapi.Controllers
                 _logger.LogInformation("User logged out: {Email}", email);
             }
 
+            var origin = Request.Headers["Origin"].ToString();
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Secure = Request.Scheme == "https",
-                SameSite = SameSiteMode.Lax,
                 Path = "/"
             };
 
-            if (!Request.Host.Host.Contains("localhost"))
+            if (origin.Contains("localhost"))
             {
-                cookieOptions.Domain = "azurewebsites.net";
+                cookieOptions.Secure = false;
+                cookieOptions.SameSite = SameSiteMode.None;
+            }
+            else
+            {
+                cookieOptions.Secure = true;
+                cookieOptions.SameSite = SameSiteMode.None;
+                cookieOptions.Domain = ".azurewebsites.net";
             }
 
             Response.Cookies.Delete("jwt", cookieOptions);
@@ -402,8 +407,7 @@ namespace sky_webapi.Controllers
                 if (user == null)
                 {
                     return Unauthorized();
-                }                var userRoles = await _userManager.GetRolesAsync(user);
-                  return Ok(new AuthResponseDto
+                }                var userRoles = await _userManager.GetRolesAsync(user);                  return Ok(new AuthResponseDto
                 {
                     Id = user.Id,
                     Email = user.Email ?? string.Empty,
@@ -413,7 +417,7 @@ namespace sky_webapi.Controllers
                     IsCustomer = user.IsCustomer,
                     EmailConfirmed = user.EmailConfirmed,
                     CustomerId = user.CustomerId,
-                    Token = jwtToken // Include the token in the response for debugging
+                    Token = string.Empty // No need to include token in current user response
                 });
             }
             catch (Exception ex)
