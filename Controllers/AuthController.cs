@@ -171,15 +171,25 @@ namespace sky_webapi.Controllers
                         Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"])),
                     signingCredentials: creds
                 );                _logger.LogInformation("User logged in successfully: {Email}", model.Email);                var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
-                
-                Response.Cookies.Append("jwt", jwtToken, new CookieOptions
+                  // Get domain from request
+                var domain = Request.Host.Host;
+                // If it's localhost, don't set domain
+                var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
                     Secure = true,
                     SameSite = SameSiteMode.Strict,
                     Expires = DateTime.UtcNow.AddMinutes(
                         Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"]))
-                });
+                };
+                
+                // Only set domain for non-localhost
+                if (!domain.Contains("localhost"))
+                {
+                    cookieOptions.Domain = ".azurewebsites.net";
+                }
+
+                Response.Cookies.Append("jwt", jwtToken, cookieOptions);
 
                 return Ok(new AuthResponseDto
                 {
@@ -250,13 +260,20 @@ namespace sky_webapi.Controllers
                 _logger.LogInformation("User logged out: {Email}", email);
             }
 
-            // Clear the JWT cookie
-            Response.Cookies.Delete("jwt", new CookieOptions
+            // Clear the JWT cookie            var domain = Request.Host.Host;
+            var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict
-            });
+            };
+
+            if (!domain.Contains("localhost"))
+            {
+                cookieOptions.Domain = ".azurewebsites.net";
+            }
+
+            Response.Cookies.Delete("jwt", cookieOptions);
 
             return Ok(new { Message = "Logged out successfully" });
         }

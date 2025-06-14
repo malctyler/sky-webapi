@@ -63,7 +63,8 @@ builder.Services.AddAuthentication(options =>
 
 // Add services to the container.
 builder.Services.AddCors(options =>
-{    options.AddPolicy("AllowReactApp",
+{
+    options.AddPolicy("AllowReactApp",
         policy => policy
             .WithOrigins(
                 "https://witty-plant-0550d6403.6.azurestaticapps.net",
@@ -71,7 +72,14 @@ builder.Services.AddCors(options =>
                 "https://localhost:3000")
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .AllowCredentials());// Allow any origin temporarily for debugging
+            .AllowCredentials()
+            .SetIsOriginAllowed(origin => 
+            {
+                var host = new Uri(origin).Host;
+                return host.EndsWith("azurewebsites.net") || 
+                       host == "localhost" ||
+                       host.EndsWith("azurestaticapps.net");
+            }));
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
