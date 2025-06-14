@@ -250,14 +250,14 @@ namespace sky_webapi.Controllers
                 _logger.LogInformation("User logged out: {Email}", email);
             }
 
-            // Remove the JWT cookie
+            // Clear the JWT cookie
             Response.Cookies.Delete("jwt", new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict
             });
-            
+
             return Ok(new { Message = "Logged out successfully" });
         }
 
@@ -399,6 +399,39 @@ namespace sky_webapi.Controllers
             {
                 _logger.LogError(ex, "Error getting current user");
                 return StatusCode(500, new { Message = "An error occurred while getting user information." });
+            }
+        }
+
+        [HttpGet("validate-cookie")]
+        public IActionResult ValidateCookie()
+        {
+            var jwtCookie = Request.Cookies["jwt"];
+            if (string.IsNullOrEmpty(jwtCookie))
+            {
+                return BadRequest(new { Message = "No JWT cookie found" });
+            }
+
+            try
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var jsonToken = handler.ReadToken(jwtCookie) as JwtSecurityToken;
+                
+                if (jsonToken == null) 
+                    return BadRequest(new { Message = "Invalid JWT format" });
+
+                if (jsonToken.ValidTo < DateTime.UtcNow)
+                    return BadRequest(new { Message = "Token has expired" });
+
+                return Ok(new { 
+                    Message = "Valid JWT cookie",
+                    ExpiresAt = jsonToken.ValidTo,
+                    Claims = jsonToken.Claims.Select(c => new { c.Type, c.Value })
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error validating JWT cookie");
+                return BadRequest(new { Message = "Invalid JWT token", Error = ex.Message });
             }
         }
     }
