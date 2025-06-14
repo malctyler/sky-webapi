@@ -165,6 +165,32 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+// Configure CORS first, before any other middleware
+app.UseCors("AllowReactApp");
+
+// Add security headers
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+    context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+    if (context.Request.Headers.TryGetValue("Origin", out var origin))
+    {
+        context.Response.Headers.Append("Access-Control-Allow-Origin", origin.ToString());
+    }
+    await next();
+});
+
+// Enable middleware to serve generated Swagger
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sky API V1");
+        c.DocExpansion(DocExpansion.None);
+    });
+}
+
 app.UseDeveloperExceptionPage();
 app.UseSwagger();
 app.UseSwaggerUI(c => 
@@ -175,9 +201,6 @@ app.UseSwaggerUI(c =>
 });
 
 app.UseHttpsRedirection();
-
-// Apply CORS before authentication
-app.UseCors("AllowReactApp");
 
 // Add authentication middleware
 app.UseAuthentication();

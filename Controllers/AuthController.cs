@@ -105,6 +105,17 @@ namespace sky_webapi.Controllers
         {
             try
             {
+                // Handle preflight request
+                if (Request.Method == "OPTIONS")
+                {
+                    Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+                    if (Request.Headers.TryGetValue("Origin", out var preflightOrigin))
+                    {
+                        Response.Headers.Append("Access-Control-Allow-Origin", preflightOrigin.ToString());
+                    }
+                    return Ok();
+                }
+
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user == null)
                 {
@@ -163,52 +174,33 @@ namespace sky_webapi.Controllers
 
                 // Get the origin from the request
                 var origin = Request.Headers["Origin"].ToString();
-                _logger.LogInformation("Request origin: {Origin}", origin);
+                var isLocalhost = origin.Contains("localhost");
+                var isSecure = Request.IsHttps || !isLocalhost;
+
+                // Ensure headers are set before cookie
+                Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+                if (!string.IsNullOrEmpty(origin))
+                {
+                    Response.Headers.Append("Access-Control-Allow-Origin", origin);
+                }
 
                 var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
                     Path = "/",
+                    Secure = isSecure,
+                    SameSite = isSecure ? SameSiteMode.None : SameSiteMode.Lax,
                     Expires = DateTime.UtcNow.AddMinutes(
                         Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"]))
-                };                // Configure cookie options based on the environment and origin
-                var isLocalhost = origin.Contains("localhost");
-                var isSecure = Request.IsHttps || !isLocalhost;
-
-                cookieOptions.Secure = isSecure;
-                cookieOptions.SameSite = isSecure ? SameSiteMode.None : SameSiteMode.Lax;
+                };
 
                 if (!isLocalhost && !string.IsNullOrEmpty(origin))
                 {
                     try
                     {
                         var originUri = new Uri(origin);
-                        var host = originUri.Host;
-                        
-                        _logger.LogInformation("Processing origin host: {Host}", host);
-                        
-                        if (host.EndsWith("azurestaticapps.net"))
-                        {
-                            // For Azure Static Web Apps, include the full subdomain
-                            // e.g., witty-plant-0550d6403.6.azurestaticapps.net
-                            cookieOptions.Domain = host;
-                            _logger.LogInformation("Setting cookie domain for Azure Static Web Apps: {Domain}", host);
-                        }
-                        else if (host.EndsWith("azurewebsites.net"))
-                        {
-                            cookieOptions.Domain = host;
-                            _logger.LogInformation("Setting cookie domain for Azure Web Apps: {Domain}", host);
-                        }
-                        else
-                        {
-                            // For custom domains, use the main domain
-                            var parts = host.Split('.');
-                            if (parts.Length >= 2)
-                            {
-                                cookieOptions.Domain = parts[^2] + "." + parts[^1];
-                                _logger.LogInformation("Setting cookie domain for custom domain: {Domain}", cookieOptions.Domain);
-                            }
-                        }
+                        cookieOptions.Domain = originUri.Host;
+                        _logger.LogInformation("Setting cookie domain to exact host: {Domain}", cookieOptions.Domain);
                     }
                     catch (Exception ex)
                     {
@@ -216,13 +208,12 @@ namespace sky_webapi.Controllers
                     }
                 }
 
-                _logger.LogInformation("Setting cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Domain={Domain}",
+                _logger.LogInformation("Setting cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Domain={Domain}, Path={Path}",
                     cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, 
-                    cookieOptions.Domain ?? "not set");
+                    cookieOptions.Domain ?? "not set", cookieOptions.Path);
 
+                // Set cookie before sending response
                 Response.Cookies.Append("jwt", generatedToken, cookieOptions);
-
-                _logger.LogInformation("User logged in successfully: {Email}", model.Email);
 
                 var response = new AuthResponseDto
                 {
@@ -234,7 +225,7 @@ namespace sky_webapi.Controllers
                     IsCustomer = user.IsCustomer,
                     EmailConfirmed = user.EmailConfirmed,
                     CustomerId = user.CustomerId,
-                    Token = generatedToken
+                    Token = generatedToken // Consider removing this since we're using cookies
                 };
 
                 return Ok(response);
