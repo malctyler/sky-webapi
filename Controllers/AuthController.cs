@@ -111,21 +111,13 @@ namespace sky_webapi.Controllers
                 if (user == null)
                 {
                     _logger.LogWarning("Login attempt with non-existent email: {Email}", model.Email);
-                    return Unauthorized(new { Message = "Invalid email or password" });
+                    return Unauthorized(new { Message = "Invalid email or password." });
                 }
 
-                // Prevent login if email is not confirmed
-                if (!user.EmailConfirmed)
+                if (!await _userManager.CheckPasswordAsync(user, model.Password))
                 {
-                    _logger.LogWarning("Login attempt with unconfirmed email: {Email}", model.Email);
-                    return Unauthorized(new { Message = "Please confirm your email before logging in." });
-                }
-
-                var isPasswordValid = await _userManager.CheckPasswordAsync(user, model.Password);
-                if (!isPasswordValid)
-                {
-                    _logger.LogWarning("Failed login attempt for user: {Email}", model.Email);
-                    return Unauthorized(new { Message = "Invalid email or password" });
+                    _logger.LogWarning("Login attempt with incorrect password for user: {Email}", model.Email);
+                    return Unauthorized(new { Message = "Invalid email or password." });
                 }
 
                 var userRoles = await _userManager.GetRolesAsync(user);
@@ -135,24 +127,17 @@ namespace sky_webapi.Controllers
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id),
                     new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
-                    new Claim(ClaimTypes.GivenName, user.FirstName),
-                    new Claim(ClaimTypes.Surname, user.LastName),
+                    new Claim(ClaimTypes.GivenName, user.FirstName ?? string.Empty),
+                    new Claim(ClaimTypes.Surname, user.LastName ?? string.Empty),
                     new Claim("EmailConfirmed", user.EmailConfirmed.ToString()),
                     new Claim("IsCustomer", user.IsCustomer.ToString())
                 };
 
-                if (user.CustomerId.HasValue)
-                {
-                    claims.Add(new Claim("CustomerId", user.CustomerId.Value.ToString()));
-                }
-
-                // Add roles as claims
                 foreach (var role in userRoles)
                 {
                     claims.Add(new Claim(ClaimTypes.Role, role));
                 }
 
-                // Add existing claims, excluding any that we're already adding
                 claims.AddRange(userClaims.Where(c => 
                     !claims.Any(existingClaim => 
                         existingClaim.Type == c.Type && 
@@ -163,53 +148,66 @@ namespace sky_webapi.Controllers
                         throw new InvalidOperationException("JWT SecretKey is not configured")));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-                var token = new JwtSecurityToken(
-                    issuer: _configuration["JwtSettings:Issuer"],
-                    audience: _configuration["JwtSettings:Audience"],
-                    claims: claims,
-                    expires: DateTime.Now.AddMinutes(
-                        Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"])),
-                    signingCredentials: creds
-                );                _logger.LogInformation("User logged in successfully: {Email}", model.Email);                var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);                var cookieOptions = new CookieOptions
+                // Generate JWT token
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var tokenDescriptor = new SecurityTokenDescriptor
                 {
-                    HttpOnly = false, // Temporarily set to false for debugging
-                    Secure = false, // Temporarily set to false for debugging
-                    SameSite = SameSiteMode.None, // Try with None to debug cross-site issues
+                    Subject = new ClaimsIdentity(claims),
                     Expires = DateTime.UtcNow.AddMinutes(
                         Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"])),
-                    Path = "/"
+                    Issuer = _configuration["JwtSettings:Issuer"],
+                    Audience = _configuration["JwtSettings:Audience"],
+                    SigningCredentials = creds
                 };
+
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var tokenString = tokenHandler.WriteToken(token);
+
+                // Get the origin from the request
+                var origin = Request.Headers["Origin"].ToString();
+                _logger.LogInformation("Request origin: {Origin}", origin);
+
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Path = "/",
+                    Expires = DateTime.UtcNow.AddMinutes(
+                        Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"]))
+                };
+
+                // Configure cookie options based on the environment and origin
+                if (origin.Contains("localhost"))
+                {
+                    cookieOptions.Secure = false;
+                    cookieOptions.SameSite = SameSiteMode.None;
+                    // Don't set domain for localhost
+                }
+                else
+                {
+                    cookieOptions.Secure = true;
+                    cookieOptions.SameSite = SameSiteMode.None;
+                    cookieOptions.Domain = ".azurewebsites.net"; // Note the leading dot
+                }
 
                 _logger.LogInformation("Setting cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Domain={Domain}",
                     cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, 
-                    !Request.Host.Host.Contains("localhost") ? "azurewebsites.net" : "not set");
+                    cookieOptions.Domain ?? "not set");
 
-                // In development, don't set domain to allow localhost
-                if (!Request.Host.Host.Contains("localhost"))
-                {
-                    cookieOptions.Domain = "azurewebsites.net";
-                }                if (string.IsNullOrEmpty(jwtToken))
-                {
-                    _logger.LogError("JWT Token is null or empty");
-                    return StatusCode(500, new { Message = "Failed to generate token" });
-                }
+                Response.Cookies.Append("jwt", tokenString, cookieOptions);
 
-                _logger.LogInformation("JWT Token length: {Length}", jwtToken.Length);
-                Response.Cookies.Append("jwt", jwtToken, cookieOptions);
-
-                // Add the token to response headers for debugging
-                Response.Headers.Append("X-Debug-Token", jwtToken);
+                _logger.LogInformation("User logged in successfully: {Email}", model.Email);
 
                 return Ok(new AuthResponseDto
                 {
                     Id = user.Id,
                     Email = user.Email ?? string.Empty,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
+                    FirstName = user.FirstName ?? string.Empty,
+                    LastName = user.LastName ?? string.Empty,
                     Roles = userRoles.ToList(),
                     IsCustomer = user.IsCustomer,
                     EmailConfirmed = user.EmailConfirmed,
-                    CustomerId = user.CustomerId
+                    CustomerId = user.CustomerId,
+                    Token = tokenString // Include token in response for debugging
                 });
             }
             catch (Exception ex)
@@ -405,8 +403,7 @@ namespace sky_webapi.Controllers
                 {
                     return Unauthorized();
                 }                var userRoles = await _userManager.GetRolesAsync(user);
-                
-                return Ok(new AuthResponseDto
+                  return Ok(new AuthResponseDto
                 {
                     Id = user.Id,
                     Email = user.Email ?? string.Empty,
@@ -415,7 +412,8 @@ namespace sky_webapi.Controllers
                     Roles = userRoles.ToList(),
                     IsCustomer = user.IsCustomer,
                     EmailConfirmed = user.EmailConfirmed,
-                    CustomerId = user.CustomerId
+                    CustomerId = user.CustomerId,
+                    Token = jwtToken // Include the token in the response for debugging
                 });
             }
             catch (Exception ex)
