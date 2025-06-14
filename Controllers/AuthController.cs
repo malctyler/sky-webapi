@@ -171,19 +171,25 @@ namespace sky_webapi.Controllers
                     Path = "/",
                     Expires = DateTime.UtcNow.AddMinutes(
                         Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"]))
-                };
+                };                // Configure cookie options based on the environment and origin
+                var isLocalhost = origin.Contains("localhost");
+                var isSecure = Request.IsHttps || !isLocalhost;
 
-                // Configure cookie options based on the environment and origin
-                if (origin.Contains("localhost"))
+                cookieOptions.Secure = isSecure;
+                cookieOptions.SameSite = isSecure ? SameSiteMode.None : SameSiteMode.Lax;
+
+                if (!isLocalhost)
                 {
-                    cookieOptions.Secure = false;
-                    cookieOptions.SameSite = SameSiteMode.None;
-                }
-                else
-                {
-                    cookieOptions.Secure = true;
-                    cookieOptions.SameSite = SameSiteMode.None;
-                    cookieOptions.Domain = ".azurewebsites.net";
+                    // Extract the domain from the request host
+                    var host = Request.Host.Host;
+                    if (host.EndsWith("azurewebsites.net"))
+                    {
+                        cookieOptions.Domain = "azurewebsites.net";
+                    }
+                    else if (host.EndsWith("azurestaticapps.net"))
+                    {
+                        cookieOptions.Domain = "azurestaticapps.net";
+                    }
                 }
 
                 _logger.LogInformation("Setting cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Domain={Domain}",
@@ -264,25 +270,31 @@ namespace sky_webapi.Controllers
             if (!string.IsNullOrEmpty(email))
             {
                 _logger.LogInformation("User logged out: {Email}", email);
-            }
-
-            var origin = Request.Headers["Origin"].ToString();
+            }            var origin = Request.Headers["Origin"].ToString();
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
                 Path = "/"
             };
 
-            if (origin.Contains("localhost"))
+            var isLocalhost = origin.Contains("localhost");
+            var isSecure = Request.IsHttps || !isLocalhost;
+
+            cookieOptions.Secure = isSecure;
+            cookieOptions.SameSite = isSecure ? SameSiteMode.None : SameSiteMode.Lax;
+
+            if (!isLocalhost)
             {
-                cookieOptions.Secure = false;
-                cookieOptions.SameSite = SameSiteMode.None;
-            }
-            else
-            {
-                cookieOptions.Secure = true;
-                cookieOptions.SameSite = SameSiteMode.None;
-                cookieOptions.Domain = ".azurewebsites.net";
+                // Extract the domain from the request host
+                var host = Request.Host.Host;
+                if (host.EndsWith("azurewebsites.net"))
+                {
+                    cookieOptions.Domain = "azurewebsites.net";
+                }
+                else if (host.EndsWith("azurestaticapps.net"))
+                {
+                    cookieOptions.Domain = "azurestaticapps.net";
+                }
             }
 
             Response.Cookies.Delete("jwt", cookieOptions);
