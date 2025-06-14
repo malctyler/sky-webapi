@@ -173,17 +173,17 @@ namespace sky_webapi.Controllers
                 );                _logger.LogInformation("User logged in successfully: {Email}", model.Email);                var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);                var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict,
+                    Secure = Request.Scheme == "https", // Only set Secure for HTTPS
+                    SameSite = SameSiteMode.Lax, // Use Lax for cross-site requests
                     Expires = DateTime.UtcNow.AddMinutes(
                         Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"])),
                     Path = "/"
                 };
 
-                // Set domain for production environment
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Development")
+                // In development, don't set domain to allow localhost
+                if (!Request.Host.Host.Contains("localhost"))
                 {
-                    cookieOptions.Domain = ".azurewebsites.net";
+                    cookieOptions.Domain = "azurewebsites.net";
                 }
 
                 Response.Cookies.Append("jwt", jwtToken, cookieOptions);
@@ -260,14 +260,14 @@ namespace sky_webapi.Controllers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
+                Secure = Request.Scheme == "https",
+                SameSite = SameSiteMode.Lax,
                 Path = "/"
             };
 
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Development")
+            if (!Request.Host.Host.Contains("localhost"))
             {
-                cookieOptions.Domain = ".azurewebsites.net";
+                cookieOptions.Domain = "azurewebsites.net";
             }
 
             Response.Cookies.Delete("jwt", cookieOptions);

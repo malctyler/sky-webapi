@@ -64,22 +64,34 @@ builder.Services.AddAuthentication(options =>
 // Add services to the container.
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp",
-        policy => policy
-            .WithOrigins(
-                "https://witty-plant-0550d6403.6.azurestaticapps.net",
-                "http://localhost:3000",
-                "https://localhost:3000")
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials()
-            .SetIsOriginAllowed(origin => 
-            {
-                var host = new Uri(origin).Host;
-                return host.EndsWith("azurewebsites.net") || 
-                       host == "localhost" ||
-                       host.EndsWith("azurestaticapps.net");
-            }));
+    if (builder.Environment.IsDevelopment())
+    {
+        options.AddPolicy("AllowReactApp",
+            policy => policy
+                .SetIsOriginAllowed(_ => true) // Allow any origin in development
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
+    }
+    else
+    {
+        options.AddPolicy("AllowReactApp",
+            policy => policy
+                .WithOrigins(
+                    "https://witty-plant-0550d6403.6.azurestaticapps.net",
+                    "http://localhost:3000",
+                    "https://localhost:3000")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials()
+                .SetIsOriginAllowed(origin => 
+                {
+                    var host = new Uri(origin).Host;
+                    return host.EndsWith("azurewebsites.net") || 
+                           host == "localhost" ||
+                           host.EndsWith("azurestaticapps.net");
+                }));
+    }
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
