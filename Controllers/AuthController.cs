@@ -172,21 +172,33 @@ namespace sky_webapi.Controllers
                     signingCredentials: creds
                 );                _logger.LogInformation("User logged in successfully: {Email}", model.Email);                var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);                var cookieOptions = new CookieOptions
                 {
-                    HttpOnly = true,
-                    Secure = Request.Scheme == "https", // Only set Secure for HTTPS
-                    SameSite = SameSiteMode.Lax, // Use Lax for cross-site requests
+                    HttpOnly = false, // Temporarily set to false for debugging
+                    Secure = false, // Temporarily set to false for debugging
+                    SameSite = SameSiteMode.None, // Try with None to debug cross-site issues
                     Expires = DateTime.UtcNow.AddMinutes(
                         Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"])),
                     Path = "/"
                 };
 
+                _logger.LogInformation("Setting cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Domain={Domain}",
+                    cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, 
+                    !Request.Host.Host.Contains("localhost") ? "azurewebsites.net" : "not set");
+
                 // In development, don't set domain to allow localhost
                 if (!Request.Host.Host.Contains("localhost"))
                 {
                     cookieOptions.Domain = "azurewebsites.net";
+                }                if (string.IsNullOrEmpty(jwtToken))
+                {
+                    _logger.LogError("JWT Token is null or empty");
+                    return StatusCode(500, new { Message = "Failed to generate token" });
                 }
 
+                _logger.LogInformation("JWT Token length: {Length}", jwtToken.Length);
                 Response.Cookies.Append("jwt", jwtToken, cookieOptions);
+
+                // Add the token to response headers for debugging
+                Response.Headers.Append("X-Debug-Token", jwtToken);
 
                 return Ok(new AuthResponseDto
                 {
