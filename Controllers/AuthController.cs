@@ -180,15 +180,32 @@ namespace sky_webapi.Controllers
 
                 if (!isLocalhost)
                 {
-                    // Extract the domain from the request host
-                    var host = Request.Host.Host;
-                    if (host.EndsWith("azurewebsites.net"))
+                    // Extract domain from Origin header for production environment
+                    if (!string.IsNullOrEmpty(origin))
                     {
-                        cookieOptions.Domain = "azurewebsites.net";
-                    }
-                    else if (host.EndsWith("azurestaticapps.net"))
-                    {
-                        cookieOptions.Domain = "azurestaticapps.net";
+                        var originUri = new Uri(origin);
+                        if (originUri.Host.EndsWith("azurestaticapps.net"))
+                        {
+                            // Extract the base domain for Static Web Apps
+                            cookieOptions.Domain = "azurestaticapps.net";
+                            _logger.LogInformation("Setting cookie domain for Azure Static Web Apps");
+                        }
+                        else if (originUri.Host.EndsWith("azurewebsites.net"))
+                        {
+                            // In case the frontend is hosted on App Service
+                            cookieOptions.Domain = "azurewebsites.net";
+                            _logger.LogInformation("Setting cookie domain for Azure Web Apps");
+                        }
+                        else
+                        {
+                            // For custom domains, use the request's origin domain
+                            var parts = originUri.Host.Split('.');
+                            if (parts.Length >= 2)
+                            {
+                                cookieOptions.Domain = parts[^2] + "." + parts[^1];
+                                _logger.LogInformation("Setting cookie domain for custom domain");
+                            }
+                        }
                     }
                 }
 
@@ -269,8 +286,10 @@ namespace sky_webapi.Controllers
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
             if (!string.IsNullOrEmpty(email))
             {
-                _logger.LogInformation("User logged out: {Email}", email);
-            }            var origin = Request.Headers["Origin"].ToString();
+                _logger.LogInformation("User logout attempt: {Email}", email);
+            }
+
+            var origin = Request.Headers["Origin"].ToString();
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
@@ -285,19 +304,46 @@ namespace sky_webapi.Controllers
 
             if (!isLocalhost)
             {
-                // Extract the domain from the request host
-                var host = Request.Host.Host;
-                if (host.EndsWith("azurewebsites.net"))
+                // Extract domain from Origin header for production environment
+                if (!string.IsNullOrEmpty(origin))
                 {
-                    cookieOptions.Domain = "azurewebsites.net";
-                }
-                else if (host.EndsWith("azurestaticapps.net"))
-                {
-                    cookieOptions.Domain = "azurestaticapps.net";
+                    var originUri = new Uri(origin);
+                    if (originUri.Host.EndsWith("azurestaticapps.net"))
+                    {
+                        // Extract the base domain for Static Web Apps
+                        cookieOptions.Domain = "azurestaticapps.net";
+                        _logger.LogInformation("Setting cookie domain for Azure Static Web Apps");
+                    }
+                    else if (originUri.Host.EndsWith("azurewebsites.net"))
+                    {
+                        // In case the frontend is hosted on App Service
+                        cookieOptions.Domain = "azurewebsites.net";
+                        _logger.LogInformation("Setting cookie domain for Azure Web Apps");
+                    }
+                    else
+                    {
+                        // For custom domains, use the request's origin domain
+                        var parts = originUri.Host.Split('.');
+                        if (parts.Length >= 2)
+                        {
+                            cookieOptions.Domain = parts[^2] + "." + parts[^1];
+                            _logger.LogInformation("Setting cookie domain for custom domain");
+                        }
+                    }
                 }
             }
 
+            _logger.LogInformation("Clearing cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Domain={Domain}",
+                cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, 
+                cookieOptions.Domain ?? "not set");
+
             Response.Cookies.Delete("jwt", cookieOptions);
+            
+            if (!string.IsNullOrEmpty(email))
+            {
+                _logger.LogInformation("User logged out successfully: {Email}", email);
+            }
+            
             return Ok(new { Message = "Logged out successfully" });
         }
 
