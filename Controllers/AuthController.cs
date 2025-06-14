@@ -170,21 +170,18 @@ namespace sky_webapi.Controllers
                     expires: DateTime.Now.AddMinutes(
                         Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"])),
                     signingCredentials: creds
-                );                _logger.LogInformation("User logged in successfully: {Email}", model.Email);                var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
-                  // Get domain from request
-                var domain = Request.Host.Host;
-                // If it's localhost, don't set domain
-                var cookieOptions = new CookieOptions
+                );                _logger.LogInformation("User logged in successfully: {Email}", model.Email);                var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);                var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
                     Secure = true,
                     SameSite = SameSiteMode.Strict,
                     Expires = DateTime.UtcNow.AddMinutes(
-                        Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"]))
+                        Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"])),
+                    Path = "/"
                 };
-                
-                // Only set domain for non-localhost
-                if (!domain.Contains("localhost"))
+
+                // Set domain for production environment
+                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Development")
                 {
                     cookieOptions.Domain = ".azurewebsites.net";
                 }
@@ -260,21 +257,20 @@ namespace sky_webapi.Controllers
                 _logger.LogInformation("User logged out: {Email}", email);
             }
 
-            // Clear the JWT cookie            var domain = Request.Host.Host;
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Strict
+                SameSite = SameSiteMode.Strict,
+                Path = "/"
             };
 
-            if (!domain.Contains("localhost"))
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Development")
             {
                 cookieOptions.Domain = ".azurewebsites.net";
             }
 
             Response.Cookies.Delete("jwt", cookieOptions);
-
             return Ok(new { Message = "Logged out successfully" });
         }
 
@@ -396,16 +392,14 @@ namespace sky_webapi.Controllers
                 if (user == null)
                 {
                     return Unauthorized();
-                }
-
-                var userRoles = await _userManager.GetRolesAsync(user);
+                }                var userRoles = await _userManager.GetRolesAsync(user);
                 
                 return Ok(new AuthResponseDto
                 {
                     Id = user.Id,
                     Email = user.Email ?? string.Empty,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
+                    FirstName = user.FirstName ?? string.Empty,
+                    LastName = user.LastName ?? string.Empty,
                     Roles = userRoles.ToList(),
                     IsCustomer = user.IsCustomer,
                     EmailConfirmed = user.EmailConfirmed,
