@@ -362,5 +362,44 @@ namespace sky_webapi.Controllers
             return NotFound();
             #endif
         }
+
+        [HttpGet("current")]
+        [Authorize]
+        public async Task<ActionResult<AuthResponseDto>> GetCurrentUser()
+        {
+            try
+            {
+                var email = User.FindFirst(ClaimTypes.Email)?.Value;
+                if (string.IsNullOrEmpty(email))
+                {
+                    return Unauthorized();
+                }
+
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    return Unauthorized();
+                }
+
+                var userRoles = await _userManager.GetRolesAsync(user);
+                
+                return Ok(new AuthResponseDto
+                {
+                    Id = user.Id,
+                    Email = user.Email ?? string.Empty,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Roles = userRoles.ToList(),
+                    IsCustomer = user.IsCustomer,
+                    EmailConfirmed = user.EmailConfirmed,
+                    CustomerId = user.CustomerId
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting current user");
+                return StatusCode(500, new { Message = "An error occurred while getting user information." });
+            }
+        }
     }
 }
