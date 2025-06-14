@@ -178,34 +178,41 @@ namespace sky_webapi.Controllers
                 cookieOptions.Secure = isSecure;
                 cookieOptions.SameSite = isSecure ? SameSiteMode.None : SameSiteMode.Lax;
 
-                if (!isLocalhost)
+                if (!isLocalhost && !string.IsNullOrEmpty(origin))
                 {
-                    // Extract domain from Origin header for production environment
-                    if (!string.IsNullOrEmpty(origin))
+                    try
                     {
                         var originUri = new Uri(origin);
-                        if (originUri.Host.EndsWith("azurestaticapps.net"))
+                        var host = originUri.Host;
+                        
+                        _logger.LogInformation("Processing origin host: {Host}", host);
+                        
+                        if (host.EndsWith("azurestaticapps.net"))
                         {
-                            // Extract the base domain for Static Web Apps
-                            cookieOptions.Domain = "azurestaticapps.net";
-                            _logger.LogInformation("Setting cookie domain for Azure Static Web Apps");
+                            // For Azure Static Web Apps, include the full subdomain
+                            // e.g., witty-plant-0550d6403.6.azurestaticapps.net
+                            cookieOptions.Domain = host;
+                            _logger.LogInformation("Setting cookie domain for Azure Static Web Apps: {Domain}", host);
                         }
-                        else if (originUri.Host.EndsWith("azurewebsites.net"))
+                        else if (host.EndsWith("azurewebsites.net"))
                         {
-                            // In case the frontend is hosted on App Service
-                            cookieOptions.Domain = "azurewebsites.net";
-                            _logger.LogInformation("Setting cookie domain for Azure Web Apps");
+                            cookieOptions.Domain = host;
+                            _logger.LogInformation("Setting cookie domain for Azure Web Apps: {Domain}", host);
                         }
                         else
                         {
-                            // For custom domains, use the request's origin domain
-                            var parts = originUri.Host.Split('.');
+                            // For custom domains, use the main domain
+                            var parts = host.Split('.');
                             if (parts.Length >= 2)
                             {
                                 cookieOptions.Domain = parts[^2] + "." + parts[^1];
-                                _logger.LogInformation("Setting cookie domain for custom domain");
+                                _logger.LogInformation("Setting cookie domain for custom domain: {Domain}", cookieOptions.Domain);
                             }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error processing origin for cookie domain");
                     }
                 }
 
@@ -302,34 +309,40 @@ namespace sky_webapi.Controllers
             cookieOptions.Secure = isSecure;
             cookieOptions.SameSite = isSecure ? SameSiteMode.None : SameSiteMode.Lax;
 
-            if (!isLocalhost)
+            if (!isLocalhost && !string.IsNullOrEmpty(origin))
             {
-                // Extract domain from Origin header for production environment
-                if (!string.IsNullOrEmpty(origin))
+                try
                 {
                     var originUri = new Uri(origin);
-                    if (originUri.Host.EndsWith("azurestaticapps.net"))
+                    var host = originUri.Host;
+                    
+                    _logger.LogInformation("Processing origin host for logout: {Host}", host);
+                    
+                    if (host.EndsWith("azurestaticapps.net"))
                     {
-                        // Extract the base domain for Static Web Apps
-                        cookieOptions.Domain = "azurestaticapps.net";
-                        _logger.LogInformation("Setting cookie domain for Azure Static Web Apps");
+                        // For Azure Static Web Apps, include the full subdomain
+                        cookieOptions.Domain = host;
+                        _logger.LogInformation("Setting cookie domain for Azure Static Web Apps: {Domain}", host);
                     }
-                    else if (originUri.Host.EndsWith("azurewebsites.net"))
+                    else if (host.EndsWith("azurewebsites.net"))
                     {
-                        // In case the frontend is hosted on App Service
-                        cookieOptions.Domain = "azurewebsites.net";
-                        _logger.LogInformation("Setting cookie domain for Azure Web Apps");
+                        cookieOptions.Domain = host;
+                        _logger.LogInformation("Setting cookie domain for Azure Web Apps: {Domain}", host);
                     }
                     else
                     {
-                        // For custom domains, use the request's origin domain
-                        var parts = originUri.Host.Split('.');
+                        // For custom domains, use the main domain
+                        var parts = host.Split('.');
                         if (parts.Length >= 2)
                         {
                             cookieOptions.Domain = parts[^2] + "." + parts[^1];
-                            _logger.LogInformation("Setting cookie domain for custom domain");
+                            _logger.LogInformation("Setting cookie domain for custom domain: {Domain}", cookieOptions.Domain);
                         }
                     }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error processing origin for cookie domain during logout");
                 }
             }
 
