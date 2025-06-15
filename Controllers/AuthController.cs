@@ -302,7 +302,28 @@ namespace sky_webapi.Controllers
         [Authorize]
         public IActionResult ValidateToken()
         {
-            return Ok(new { valid = true });
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    _logger.LogWarning("Token validation failed: No user ID claim found");
+                    return Unauthorized(new { Message = "Invalid token" });
+                }
+
+                _logger.LogInformation("Token validated successfully for user ID: {UserId}", userId);
+                return Ok(new { 
+                    valid = true,
+                    userId = userId,
+                    email = User.FindFirst(ClaimTypes.Email)?.Value,
+                    roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList()
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error validating token");
+                return StatusCode(500, new { Message = "An error occurred while validating the token" });
+            }
         }
 
         [HttpGet("check-email-confirmation/{email}")]

@@ -82,33 +82,21 @@ builder.Services.AddAuthentication(options =>
 // Add services to the container.
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp",
-        policy => policy
-            .SetIsOriginAllowed(origin =>
-            {
-                if (string.IsNullOrEmpty(origin)) return false;
-                
-                try
-                {
-                    var host = new Uri(origin).Host;
-                    if (builder.Environment.IsDevelopment())
-                    {
-                        return true; // Allow any origin in development
-                    }
-                    
-                    // In production, only allow specific domains
-                    return host.EndsWith("azurestaticapps.net") || 
-                           host.EndsWith("azurewebsites.net") ||
-                           host == "localhost";
-                }
-                catch
-                {
-                    return false; // Invalid origin
-                }
-            })
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins(
+                "https://witty-plant-0550d6403.6.azurestaticapps.net",
+                "http://localhost:3000",
+                "https://localhost:3000"
+            )
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .AllowCredentials());
+            .AllowCredentials()
+            .SetIsOriginAllowedToAllowWildcardSubdomains();
+
+        // Add specific headers we want to allow
+        policy.WithExposedHeaders("Token-Expired");
+    });
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -195,12 +183,43 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// Configure CORS first
-app.UseCors("AllowReactApp");
-
-// Enable authentication and authorization
+// Order is important here
+app.UseRouting();
+app.UseCors("AllowReactApp"); // Must be after UseRouting and before Authorization
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllers();
+
+// Global error handling
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+
+        // If we get here, no error occurred
+        if (context.Response.StatusCode == 404 && !context.Response.HasStarted)
+        {
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsJsonAsync(new { Message = "Endpoint not found" });
+        }
+    }
+    catch (Exception ex)
+    {
+        // Log the error
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Unhandled exception");
+
+        // Don't modify response if it has already started
+        if (!context.Response.HasStarted)
+        {
+            context.Response.StatusCode = 500;
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsJsonAsync(new { Message = "An error occurred processing your request" });
+        }
+    }
+});
 
 // Configure routing and endpoints
 app.UseRouting();
