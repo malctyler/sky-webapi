@@ -199,8 +199,29 @@ namespace sky_webapi.Controllers
                     try
                     {
                         var originUri = new Uri(origin);
-                        cookieOptions.Domain = originUri.Host;
-                        _logger.LogInformation("Setting cookie domain to exact host: {Domain}", cookieOptions.Domain);
+                        var host = originUri.Host;
+
+                        if (host.EndsWith("azurestaticapps.net"))
+                        {
+                            // Set the domain to .azurestaticapps.net
+                            cookieOptions.Domain = ".azurestaticapps.net";
+                            _logger.LogInformation("Setting cookie domain for Azure Static Web Apps: {Domain}", cookieOptions.Domain);
+                        }
+                        else if (host.EndsWith("azurewebsites.net"))
+                        {
+                            cookieOptions.Domain = ".azurewebsites.net";
+                            _logger.LogInformation("Setting cookie domain for Azure Web Apps: {Domain}", cookieOptions.Domain);
+                        }
+                        else
+                        {
+                            // For custom domains, use the top two levels with a leading dot
+                            var parts = host.Split('.');
+                            if (parts.Length >= 2)
+                            {
+                                cookieOptions.Domain = "." + parts[^2] + "." + parts[^1];
+                                _logger.LogInformation("Setting cookie domain for custom domain: {Domain}", cookieOptions.Domain);
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -306,27 +327,24 @@ namespace sky_webapi.Controllers
                 {
                     var originUri = new Uri(origin);
                     var host = originUri.Host;
-                    
-                    _logger.LogInformation("Processing origin host for logout: {Host}", host);
-                    
+
                     if (host.EndsWith("azurestaticapps.net"))
                     {
-                        // For Azure Static Web Apps, include the full subdomain
-                        cookieOptions.Domain = host;
-                        _logger.LogInformation("Setting cookie domain for Azure Static Web Apps: {Domain}", host);
+                        cookieOptions.Domain = ".azurestaticapps.net";
+                        _logger.LogInformation("Setting cookie domain for Azure Static Web Apps: {Domain}", cookieOptions.Domain);
                     }
                     else if (host.EndsWith("azurewebsites.net"))
                     {
-                        cookieOptions.Domain = host;
-                        _logger.LogInformation("Setting cookie domain for Azure Web Apps: {Domain}", host);
+                        cookieOptions.Domain = ".azurewebsites.net";
+                        _logger.LogInformation("Setting cookie domain for Azure Web Apps: {Domain}", cookieOptions.Domain);
                     }
                     else
                     {
-                        // For custom domains, use the main domain
+                        // For custom domains, use the top two levels with a leading dot
                         var parts = host.Split('.');
                         if (parts.Length >= 2)
                         {
-                            cookieOptions.Domain = parts[^2] + "." + parts[^1];
+                            cookieOptions.Domain = "." + parts[^2] + "." + parts[^1];
                             _logger.LogInformation("Setting cookie domain for custom domain: {Domain}", cookieOptions.Domain);
                         }
                     }
@@ -337,9 +355,9 @@ namespace sky_webapi.Controllers
                 }
             }
 
-            _logger.LogInformation("Clearing cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Domain={Domain}",
+            _logger.LogInformation("Clearing cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Domain={Domain}, Path={Path}",
                 cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, 
-                cookieOptions.Domain ?? "not set");
+                cookieOptions.Domain ?? "not set", cookieOptions.Path);
 
             Response.Cookies.Delete("jwt", cookieOptions);
             
