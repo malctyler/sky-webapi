@@ -194,44 +194,9 @@ namespace sky_webapi.Controllers
                         Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"]))
                 };
 
-                if (!isLocalhost && !string.IsNullOrEmpty(origin))
-                {
-                    try
-                    {
-                        var originUri = new Uri(origin);
-                        var host = originUri.Host;
-
-                        if (host.EndsWith("azurestaticapps.net"))
-                        {
-                            // Set the domain to .azurestaticapps.net
-                            cookieOptions.Domain = ".azurestaticapps.net";
-                            _logger.LogInformation("Setting cookie domain for Azure Static Web Apps: {Domain}", cookieOptions.Domain);
-                        }
-                        else if (host.EndsWith("azurewebsites.net"))
-                        {
-                            cookieOptions.Domain = ".azurewebsites.net";
-                            _logger.LogInformation("Setting cookie domain for Azure Web Apps: {Domain}", cookieOptions.Domain);
-                        }
-                        else
-                        {
-                            // For custom domains, use the top two levels with a leading dot
-                            var parts = host.Split('.');
-                            if (parts.Length >= 2)
-                            {
-                                cookieOptions.Domain = "." + parts[^2] + "." + parts[^1];
-                                _logger.LogInformation("Setting cookie domain for custom domain: {Domain}", cookieOptions.Domain);
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Error processing origin for cookie domain");
-                    }
-                }
-
-                _logger.LogInformation("Setting cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Domain={Domain}, Path={Path}",
-                    cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, 
-                    cookieOptions.Domain ?? "not set", cookieOptions.Path);
+                // Do not set Domain - let the browser use the domain that served the response
+                _logger.LogInformation("Setting cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Path={Path}",
+                    cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, cookieOptions.Path);
 
                 // Set cookie before sending response
                 Response.Cookies.Append("jwt", generatedToken, cookieOptions);
@@ -309,55 +274,19 @@ namespace sky_webapi.Controllers
             }
 
             var origin = Request.Headers["Origin"].ToString();
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Path = "/"
-            };
-
             var isLocalhost = origin.Contains("localhost");
             var isSecure = Request.IsHttps || !isLocalhost;
 
-            cookieOptions.Secure = isSecure;
-            cookieOptions.SameSite = isSecure ? SameSiteMode.None : SameSiteMode.Lax;
-
-            if (!isLocalhost && !string.IsNullOrEmpty(origin))
+            var cookieOptions = new CookieOptions
             {
-                try
-                {
-                    var originUri = new Uri(origin);
-                    var host = originUri.Host;
+                HttpOnly = true,
+                Path = "/",
+                Secure = isSecure,
+                SameSite = isSecure ? SameSiteMode.None : SameSiteMode.Lax
+            };
 
-                    if (host.EndsWith("azurestaticapps.net"))
-                    {
-                        cookieOptions.Domain = ".azurestaticapps.net";
-                        _logger.LogInformation("Setting cookie domain for Azure Static Web Apps: {Domain}", cookieOptions.Domain);
-                    }
-                    else if (host.EndsWith("azurewebsites.net"))
-                    {
-                        cookieOptions.Domain = ".azurewebsites.net";
-                        _logger.LogInformation("Setting cookie domain for Azure Web Apps: {Domain}", cookieOptions.Domain);
-                    }
-                    else
-                    {
-                        // For custom domains, use the top two levels with a leading dot
-                        var parts = host.Split('.');
-                        if (parts.Length >= 2)
-                        {
-                            cookieOptions.Domain = "." + parts[^2] + "." + parts[^1];
-                            _logger.LogInformation("Setting cookie domain for custom domain: {Domain}", cookieOptions.Domain);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error processing origin for cookie domain during logout");
-                }
-            }
-
-            _logger.LogInformation("Clearing cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Domain={Domain}, Path={Path}",
-                cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, 
-                cookieOptions.Domain ?? "not set", cookieOptions.Path);
+            _logger.LogInformation("Clearing cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Path={Path}",
+                cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, cookieOptions.Path);
 
             Response.Cookies.Delete("jwt", cookieOptions);
             
