@@ -48,14 +48,32 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["JwtSettings:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!)),
-        ClockSkew = TimeSpan.FromMinutes(5), // Add 5-minute tolerance
+        ClockSkew = TimeSpan.FromMinutes(5)
     };
 
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = context =>
         {
+            // Try to get the JWT from cookies first
             context.Token = context.Request.Cookies["jwt"];
+            if (string.IsNullOrEmpty(context.Token))
+            {
+                // Fallback to Authorization header
+                var authorization = context.Request.Headers.Authorization.ToString();
+                if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                {
+                    context.Token = authorization.Substring("Bearer ".Length);
+                }
+            }
+            return Task.CompletedTask;
+        },
+        OnAuthenticationFailed = context =>
+        {
+            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+            {
+                context.Response.Headers.Append("Token-Expired", "true");
+            }
             return Task.CompletedTask;
         }
     };
@@ -165,24 +183,10 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// Configure CORS first, before any other middleware
-app.UseCors("AllowReactApp");
-
-// Add security headers
-app.Use(async (context, next) =>
-{
-    context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
-    context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
-    if (context.Request.Headers.TryGetValue("Origin", out var origin))
-    {
-        context.Response.Headers.Append("Access-Control-Allow-Origin", origin.ToString());
-    }
-    await next();
-});
-
-// Enable middleware to serve generated Swagger
+// In development, enable Swagger
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
@@ -191,20 +195,16 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseDeveloperExceptionPage();
-app.UseSwagger();
-app.UseSwaggerUI(c => 
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sky Web API v1");
-    c.DocumentTitle = "Sky Web API Documentation";
-    c.DefaultModelsExpandDepth(-1); // Hide schemas section by default
-});
+// Configure CORS first
+app.UseCors("AllowReactApp");
 
-app.UseHttpsRedirection();
-
-// Add authentication middleware
+// Enable authentication and authorization
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Configure routing and endpoints
+app.UseRouting();
+app.MapControllers();
 
 // Enable serving static files and set default files
 app.UseDefaultFiles();
@@ -221,15 +221,6 @@ app.UseStaticFiles(new StaticFileOptions
 app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.MapControllers();
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();    app.UseSwaggerUI(c => 
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sky API V1");
-        c.DocExpansion(DocExpansion.None);
-    });
-}
 
 app.Run();
 
