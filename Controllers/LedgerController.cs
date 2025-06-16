@@ -20,13 +20,28 @@ namespace sky_webapi.Controllers
         public LedgerController(AppDbContext context)
         {
             _context = context;
-        }
-
-        // GET: api/Ledger
+        }        // GET: api/Ledger
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LedgerDto>>> GetLedgers()
+        public async Task<ActionResult<IEnumerable<LedgerDto>>> GetLedgers([FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null, [FromQuery] string? customerName = null)
         {
-            var ledgers = await _context.Ledgers
+            var query = _context.Ledgers.AsQueryable();
+
+            if (startDate.HasValue)
+            {
+                query = query.Where(l => l.InvoiceDate.Date >= startDate.Value.Date);
+            }
+
+            if (endDate.HasValue)
+            {
+                query = query.Where(l => l.InvoiceDate.Date <= endDate.Value.Date);
+            }
+
+            if (!string.IsNullOrWhiteSpace(customerName))
+            {
+                query = query.Where(l => l.CustomerName.Contains(customerName, StringComparison.OrdinalIgnoreCase));
+            }
+
+            var ledgers = await query
                 .Select(l => new LedgerDto
                 {
                     Id = l.Id,
