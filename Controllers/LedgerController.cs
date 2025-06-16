@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using sky_webapi.Data;
 using sky_webapi.Data.Entities;
 using sky_webapi.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,11 +35,9 @@ namespace sky_webapi.Controllers
             if (endDate.HasValue)
             {
                 query = query.Where(l => l.InvoiceDate.Date <= endDate.Value.Date);
-            }
-
-            if (!string.IsNullOrWhiteSpace(customerName))
+            }            if (!string.IsNullOrWhiteSpace(customerName))
             {
-                query = query.Where(l => l.CustomerName.Contains(customerName, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(l => EF.Functions.Like(l.CustomerName.ToLower(), $"%{customerName.ToLower()}%"));
             }
 
             var ledgers = await query
