@@ -185,14 +185,12 @@ namespace sky_webapi.Controllers
                 if (!string.IsNullOrEmpty(origin))
                 {
                     Response.Headers.Append("Access-Control-Allow-Origin", origin);
-                }
-
-                var cookieOptions = new CookieOptions
+                }                var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
                     Path = "/",
-                    Secure = isSecure,
-                    SameSite = isSecure ? SameSiteMode.None : SameSiteMode.Lax,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
                     Expires = DateTime.UtcNow.AddMinutes(
                         Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"]))
                 };
@@ -202,7 +200,7 @@ namespace sky_webapi.Controllers
                     cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, cookieOptions.Path);
 
                 // Set cookie before sending response
-                Response.Cookies.Append("jwt", generatedToken, cookieOptions);
+                Response.Cookies.Append("auth_token", generatedToken, cookieOptions);
 
                 var response = new AuthResponseDto
                 {
@@ -291,7 +289,7 @@ namespace sky_webapi.Controllers
             _logger.LogInformation("Clearing cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Path={Path}",
                 cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, cookieOptions.Path);
 
-            Response.Cookies.Delete("jwt", cookieOptions);
+            Response.Cookies.Delete("auth_token", cookieOptions);
             
             if (!string.IsNullOrEmpty(email))
             {
@@ -299,11 +297,9 @@ namespace sky_webapi.Controllers
             }
             
             return Ok(new { Message = "Logged out successfully" });
-        }
-
-        [HttpGet("validate")]
+        }        [HttpGet("validate")]
         [Authorize]
-        public IActionResult ValidateToken()
+        public async Task<IActionResult> ValidateToken()
         {
             try
             {
@@ -312,14 +308,25 @@ namespace sky_webapi.Controllers
                 {
                     _logger.LogWarning("Token validation failed: No user ID claim found");
                     return Unauthorized(new { Message = "Invalid token" });
+                }                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    _logger.LogWarning("Token validation failed: User not found for ID: {UserId}", userId);
+                    return Unauthorized(new { Message = "Invalid token" });
                 }
 
-                _logger.LogInformation("Token validated successfully for user ID: {UserId}", userId);
-                return Ok(new { 
-                    valid = true,
-                    userId = userId,
-                    email = User.FindFirst(ClaimTypes.Email)?.Value,
-                    roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList()
+                var roles = await _userManager.GetRolesAsync(user);
+
+                _logger.LogInformation("Token validated successfully for user ID: {UserId}", userId);                return Ok(new AuthResponseDto
+                {
+                    Id = user.Id,
+                    Email = user.Email ?? string.Empty,
+                    FirstName = user.FirstName ?? string.Empty,
+                    LastName = user.LastName ?? string.Empty,
+                    Roles = roles.ToList(),
+                    IsCustomer = user.IsCustomer,
+                    EmailConfirmed = user.EmailConfirmed,
+                    CustomerId = user.CustomerId
                 });
             }
             catch (Exception ex)
