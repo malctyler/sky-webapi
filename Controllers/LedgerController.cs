@@ -180,6 +180,35 @@ namespace sky_webapi.Controllers
             return NoContent();
         }
 
+        // PUT: api/Ledger/{id}/settle
+        [HttpPut("{id}/settle")]
+        public async Task<IActionResult> SettleLedger(int id)
+        {
+            var ledger = await _context.Ledgers.FindAsync(id);
+
+            if (ledger == null)
+            {
+                return NotFound();
+            }
+
+            ledger.Settled = true;
+            await _context.SaveChangesAsync();
+
+            var ledgerDto = new LedgerDto
+            {
+                Id = ledger.Id,
+                InvoiceDate = ledger.InvoiceDate,
+                CustomerName = ledger.CustomerName,
+                InvoiceRef = ledger.InvoiceRef,
+                SubTotal = ledger.SubTotal,
+                VAT = ledger.VAT,
+                Total = ledger.Total,
+                Settled = ledger.Settled
+            };
+
+            return Ok(ledgerDto);
+        }
+
         private bool LedgerExists(int id)
         {
             return _context.Ledgers.Any(e => e.Id == id);
