@@ -130,17 +130,20 @@ namespace sky_webapi.Controllers
                 }
 
                 var userRoles = await _userManager.GetRolesAsync(user);
-                var userClaims = await _userManager.GetClaimsAsync(user);
-
-                var claims = new List<Claim>
+                var userClaims = await _userManager.GetClaimsAsync(user);                var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id),
                     new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
                     new Claim(ClaimTypes.GivenName, user.FirstName ?? string.Empty),
                     new Claim(ClaimTypes.Surname, user.LastName ?? string.Empty),
-                    new Claim("EmailConfirmed", user.EmailConfirmed.ToString()),
-                    new Claim("IsCustomer", user.IsCustomer.ToString())
+                    new Claim("EmailConfirmed", user.EmailConfirmed.ToString())
+                    // IsCustomer will come from userClaims to avoid duplication
                 };
+                
+                if (user.CustomerId.HasValue)
+                {
+                    claims.Add(new Claim("CustomerId", user.CustomerId.Value.ToString()));
+                }
 
                 foreach (var role in userRoles)
                 {
