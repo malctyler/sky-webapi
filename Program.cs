@@ -40,7 +40,7 @@ builder.Services.AddAuthentication(options =>
 {    options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
-        ValidateAudience = false, // Temporarily disable to test
+        ValidateAudience = true, // Re-enable audience validation
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["JwtSettings:Issuer"],

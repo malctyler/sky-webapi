@@ -186,41 +186,39 @@ namespace sky_webapi.Controllers
                 // Verify the token's expiration time
                 var jwt = new JwtSecurityToken(generatedToken);
                 _logger.LogInformation("JWT nbf (Not Before): {NotBefore}", jwt.ValidFrom.ToString("O"));
-                _logger.LogInformation("JWT exp (Expiration): {Expiration}", jwt.ValidTo.ToString("O"));
-
-                // Get the origin from the request
+                _logger.LogInformation("JWT exp (Expiration): {Expiration}", jwt.ValidTo.ToString("O"));                // Get the origin from the request
                 var origin = Request.Headers["Origin"].ToString();
                 var isLocalhost = origin.Contains("localhost");
-                var isSecure = Request.IsHttps || !isLocalhost;
+                var isAzureStaticWebApp = origin.Contains("azurestaticapps.net") || origin.Contains("wonderfulbay-");
+                
+                _logger.LogInformation("Origin: {Origin}, IsLocalhost: {IsLocalhost}, IsAzureStaticWebApp: {IsAzureStaticWebApp}", 
+                    origin, isLocalhost, isAzureStaticWebApp);
 
-                // Ensure headers are set before cookie
+                // Set CORS headers explicitly
                 Response.Headers.Append("Access-Control-Allow-Credentials", "true");
                 if (!string.IsNullOrEmpty(origin))
                 {
                     Response.Headers.Append("Access-Control-Allow-Origin", origin);
-                }                var cookieOptions = new CookieOptions
-                {
-                    HttpOnly = true, // Re-enable HttpOnly for security
-                    Path = "/",
-                    Secure = true, // Required for cross-domain
-                    SameSite = SameSiteMode.None, // Required for cross-domain
-                    Expires = tokenExpiration.AddMinutes(1)
-                };
-                
-                _logger.LogInformation("Setting HttpOnly cross-domain cookie");
-                  // Set CORS headers explicitly before setting cookie
-                var requestOrigin = Request.Headers["Origin"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(requestOrigin))
-                {
-                    Response.Headers["Access-Control-Allow-Origin"] = requestOrigin;
                 }
-                Response.Headers["Access-Control-Allow-Credentials"] = "true";_logger.LogInformation(
+
+                // For Azure Static Web Apps, we'll rely on Authorization header instead of cookies
+                // due to cross-domain limitations. Still set a cookie for same-domain scenarios.
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = false, // Must be false for cross-domain Azure Static Web Apps
+                    Path = "/",
+                    Secure = true,
+                    SameSite = SameSiteMode.None, // Required for cross-site requests
+                    Expires = tokenExpiration
+                };
+
+                _logger.LogInformation(
                     "Setting cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Path={Path}, TokenExpires={TokenExpires}, CookieExpires={CookieExpires}",
                     cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, cookieOptions.Path, 
                     tokenExpiration.ToString("O"), cookieOptions.Expires?.ToString("O"));
 
-                // Set cookie before sending response
-                Response.Cookies.Append("auth_token", generatedToken, cookieOptions);                var response = new AuthResponseDto
+                // Set cookie (works for same-domain, fallback for cross-domain)
+                Response.Cookies.Append("auth_token", generatedToken, cookieOptions);var response = new AuthResponseDto
                 {
                     Id = user.Id,
                     Email = user.Email ?? string.Empty,
