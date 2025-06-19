@@ -200,11 +200,11 @@ namespace sky_webapi.Controllers
                 {
                     HttpOnly = true,
                     Path = "/",
-                    Secure = true, // Required for SameSite=None
-                    SameSite = SameSiteMode.None, // Required for cross-domain Azure Static Web Apps
-                    Domain = null, // Allow the browser to handle domain matching
-                    Expires = tokenExpiration.AddMinutes(1) // Add 1 minute buffer to ensure cookie outlives the token
-                };                _logger.LogInformation(
+                    Secure = true,
+                    SameSite = SameSiteMode.None,
+                    // Don't set Domain at all for cross-domain cookies with Azure Static Web Apps
+                    Expires = tokenExpiration.AddMinutes(1)
+                };_logger.LogInformation(
                     "Setting cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Path={Path}, TokenExpires={TokenExpires}, CookieExpires={CookieExpires}",
                     cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, cookieOptions.Path, 
                     tokenExpiration.ToString("O"), cookieOptions.Expires?.ToString("O"));
@@ -290,7 +290,7 @@ namespace sky_webapi.Controllers
                 Path = "/",
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Domain = null // Allow the browser to handle domain matching
+                // Don't set Domain for cross-domain cookies with Azure Static Web Apps
             };
 
             _logger.LogInformation("Clearing cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Path={Path}",

@@ -80,8 +80,7 @@ builder.Services.AddAuthentication(options =>
 
 // Add services to the container.
 builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowReactApp", policy =>
+{    options.AddPolicy("AllowReactApp", policy =>
     {
         policy.WithOrigins(
                 "https://witty-plant-0550d6403.6.azurestaticapps.net",
