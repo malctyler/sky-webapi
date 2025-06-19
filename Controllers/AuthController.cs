@@ -162,14 +162,18 @@ namespace sky_webapi.Controllers
                 var tokenDurationMinutes = _configuration["JwtSettings:DurationInMinutes"] != null
                     ? Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"])
                     : 60.0;
-                
-                var currentUtc = DateTime.UtcNow;
-                _logger.LogInformation("Current UTC time: {CurrentUtc}", currentUtc.ToString("O"));
+                  var currentUtc = DateTime.UtcNow;
+                _logger.LogInformation("DEBUG - Current UTC time: {CurrentUtc}", currentUtc.ToString("O"));
+                _logger.LogInformation("DEBUG - Current UTC time (Ticks): {Ticks}", currentUtc.Ticks);
+                _logger.LogInformation("DEBUG - Current UTC time (Unix): {Unix}", ((DateTimeOffset)currentUtc).ToUnixTimeSeconds());
                 _logger.LogInformation("Token duration minutes: {TokenDurationMinutes}", tokenDurationMinutes);
                 _logger.LogInformation("JWT Issuer: {Issuer}", _configuration["JwtSettings:Issuer"]);
                 _logger.LogInformation("JWT Audience: {Audience}", _configuration["JwtSettings:Audience"]);
                 
                 var tokenExpiration = currentUtc.AddMinutes(tokenDurationMinutes);
+                _logger.LogInformation("DEBUG - Token expiration: {TokenExpiration}", tokenExpiration.ToString("O"));
+                _logger.LogInformation("DEBUG - Token expiration (Ticks): {Ticks}", tokenExpiration.Ticks);
+                _logger.LogInformation("DEBUG - Token expiration (Unix): {Unix}", ((DateTimeOffset)tokenExpiration).ToUnixTimeSeconds());
 
                 // Generate JWT token
                 var tokenHandler = new JwtSecurityTokenHandler();                var tokenDescriptor = new SecurityTokenDescriptor
@@ -180,13 +184,27 @@ namespace sky_webapi.Controllers
                     Issuer = _configuration["JwtSettings:Issuer"],
                     Audience = _configuration["JwtSettings:Audience"],
                     SigningCredentials = creds
-                };var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+                };                var securityToken = tokenHandler.CreateToken(tokenDescriptor);
                 var generatedToken = tokenHandler.WriteToken(securityToken);
                 
                 // Verify the token's expiration time
                 var jwt = new JwtSecurityToken(generatedToken);
-                _logger.LogInformation("JWT nbf (Not Before): {NotBefore}", jwt.ValidFrom.ToString("O"));
-                _logger.LogInformation("JWT exp (Expiration): {Expiration}", jwt.ValidTo.ToString("O"));                // Get the origin from the request
+                _logger.LogInformation("DEBUG - JWT nbf (Not Before): {NotBefore}", jwt.ValidFrom.ToString("O"));
+                _logger.LogInformation("DEBUG - JWT exp (Expiration): {Expiration}", jwt.ValidTo.ToString("O"));
+                _logger.LogInformation("DEBUG - JWT exp (Unix): {Unix}", ((DateTimeOffset)jwt.ValidTo).ToUnixTimeSeconds());
+                
+                // Double-check: manually decode the token to see the exp claim
+                var payload = jwt.Payload;
+                if (payload.ContainsKey("exp"))
+                {
+                    var expClaim = payload["exp"];
+                    _logger.LogInformation("DEBUG - JWT exp claim (raw): {ExpClaim}", expClaim);
+                    
+                    // Convert Unix timestamp back to DateTime
+                    var expUnix = Convert.ToInt64(expClaim);
+                    var expDateTime = DateTimeOffset.FromUnixTimeSeconds(expUnix).DateTime;
+                    _logger.LogInformation("DEBUG - JWT exp converted back: {ExpDateTime}", expDateTime.ToString("O"));
+                }// Get the origin from the request
                 var origin = Request.Headers["Origin"].ToString();
                 var isLocalhost = origin.Contains("localhost");
                 var isAzureStaticWebApp = origin.Contains("azurestaticapps.net") || origin.Contains("wonderfulbay-");
@@ -199,9 +217,7 @@ namespace sky_webapi.Controllers
                 if (!string.IsNullOrEmpty(origin))
                 {
                     Response.Headers.Append("Access-Control-Allow-Origin", origin);
-                }
-
-                // For Azure Static Web Apps, we'll rely on Authorization header instead of cookies
+                }                // For Azure Static Web Apps, we'll rely on Authorization header instead of cookies
                 // due to cross-domain limitations. Still set a cookie for same-domain scenarios.
                 var cookieOptions = new CookieOptions
                 {
@@ -211,6 +227,9 @@ namespace sky_webapi.Controllers
                     SameSite = SameSiteMode.None, // Required for cross-site requests
                     Expires = tokenExpiration
                 };
+
+                _logger.LogInformation("DEBUG - Cookie expiration set to: {CookieExpiration}", cookieOptions.Expires?.ToString("O"));
+                _logger.LogInformation("DEBUG - About to set cookie with token length: {TokenLength}", generatedToken.Length);
 
                 _logger.LogInformation(
                     "Setting cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Path={Path}, TokenExpires={TokenExpires}, CookieExpires={CookieExpires}",
