@@ -476,17 +476,16 @@ namespace sky_webapi.Controllers
 
         [HttpGet("validate-cookie")]
         public IActionResult ValidateCookie()
-        {
-            var jwtCookie = Request.Cookies["jwt"];
-            if (string.IsNullOrEmpty(jwtCookie))
+        {            var authCookie = Request.Cookies["auth_token"];
+            if (string.IsNullOrEmpty(authCookie))
             {
-                return BadRequest(new { Message = "No JWT cookie found" });
+                return BadRequest(new { Message = "No auth token cookie found" });
             }
 
             try
             {
                 var handler = new JwtSecurityTokenHandler();
-                var jsonToken = handler.ReadToken(jwtCookie) as JwtSecurityToken;
+                var jsonToken = handler.ReadToken(authCookie) as JwtSecurityToken;
                 
                 if (jsonToken == null) 
                     return BadRequest(new { Message = "Invalid JWT format" });
