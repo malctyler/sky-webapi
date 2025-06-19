@@ -220,8 +220,8 @@ namespace sky_webapi.Controllers
                     Roles = userRoles.ToList(),
                     IsCustomer = user.IsCustomer,
                     EmailConfirmed = user.EmailConfirmed,
-                    CustomerId = user.CustomerId
-                    // Token removed as we're using HttpOnly cookies now
+                    CustomerId = user.CustomerId,
+                    Token = generatedToken // Temporarily add back for debugging
                 };
 
                 return Ok(response);
