@@ -322,18 +322,18 @@ namespace sky_webapi.Controllers
                     return Unauthorized(new { Message = "Invalid token" });
                 }
 
-                var roles = await _userManager.GetRolesAsync(user);
-
-                _logger.LogInformation("Token validated successfully for user ID: {UserId}", userId);                return Ok(new AuthResponseDto
-                {
-                    Id = user.Id,
-                    Email = user.Email ?? string.Empty,
-                    FirstName = user.FirstName ?? string.Empty,
-                    LastName = user.LastName ?? string.Empty,
-                    Roles = roles.ToList(),
-                    IsCustomer = user.IsCustomer,
-                    EmailConfirmed = user.EmailConfirmed,
-                    CustomerId = user.CustomerId
+                var roles = await _userManager.GetRolesAsync(user);                _logger.LogInformation("Token validated successfully for user ID: {UserId}", userId);
+                
+                return Ok(new { 
+                    valid = true,
+                    userId = user.Id,
+                    email = user.Email ?? string.Empty,
+                    firstName = user.FirstName ?? string.Empty,
+                    lastName = user.LastName ?? string.Empty,
+                    roles = roles.ToList(),
+                    isCustomer = user.IsCustomer,
+                    emailConfirmed = user.EmailConfirmed,
+                    customerId = user.CustomerId
                 });
             }
             catch (Exception ex)
