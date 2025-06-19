@@ -189,8 +189,8 @@ namespace sky_webapi.Controllers
                 {
                     HttpOnly = true,
                     Path = "/",
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict,
+                    Secure = true, // Required for SameSite=None
+                    SameSite = SameSiteMode.None, // Required for cross-domain Azure Static Web Apps
                     Expires = DateTime.UtcNow.AddMinutes(
                         Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"]))
                 };
@@ -276,14 +276,12 @@ namespace sky_webapi.Controllers
 
             var origin = Request.Headers["Origin"].ToString();
             var isLocalhost = origin.Contains("localhost");
-            var isSecure = Request.IsHttps || !isLocalhost;
-
-            var cookieOptions = new CookieOptions
+            var isSecure = Request.IsHttps || !isLocalhost;            var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
                 Path = "/",
-                Secure = isSecure,
-                SameSite = isSecure ? SameSiteMode.None : SameSiteMode.Lax
+                Secure = true,
+                SameSite = SameSiteMode.None
             };
 
             _logger.LogInformation("Clearing cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Path={Path}",
