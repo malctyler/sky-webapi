@@ -165,9 +165,11 @@ namespace sky_webapi.Controllers
                 
                 var currentUtc = DateTime.UtcNow;
                 _logger.LogInformation("Current UTC time: {CurrentUtc}", currentUtc.ToString("O"));
+                _logger.LogInformation("Token duration minutes: {TokenDurationMinutes}", tokenDurationMinutes);
+                _logger.LogInformation("JWT Issuer: {Issuer}", _configuration["JwtSettings:Issuer"]);
+                _logger.LogInformation("JWT Audience: {Audience}", _configuration["JwtSettings:Audience"]);
                 
                 var tokenExpiration = currentUtc.AddMinutes(tokenDurationMinutes);
-                _logger.LogInformation("Token duration minutes: {TokenDurationMinutes}", tokenDurationMinutes);
 
                 // Generate JWT token
                 var tokenHandler = new JwtSecurityTokenHandler();                var tokenDescriptor = new SecurityTokenDescriptor

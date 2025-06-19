@@ -37,11 +37,10 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
 .AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+{    options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
-        ValidateAudience = true,
+        ValidateAudience = false, // Temporarily disable to test
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
@@ -50,6 +49,9 @@ builder.Services.AddAuthentication(options =>
             Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!)),
         ClockSkew = TimeSpan.FromSeconds(30) // Reduced from 5 minutes to help identify timing issues
     };
+    
+    // Debug: Print the JWT settings to console for now
+    Console.WriteLine($"JWT Validation - Issuer: {builder.Configuration["JwtSettings:Issuer"]}, Audience: {builder.Configuration["JwtSettings:Audience"]}");
 
     options.Events = new JwtBearerEvents
     {        OnMessageReceived = context =>
@@ -79,12 +81,28 @@ builder.Services.AddAuthentication(options =>
         {
             var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
             logger.LogError("JWT Authentication failed: {Exception}", context.Exception.Message);
+            logger.LogError("JWT Authentication failed - Full exception: {FullException}", context.Exception.ToString());
+              // Log the token that failed (first 20 characters for security)
+            var cookieToken = context.Request.Cookies["auth_token"];
+            if (!string.IsNullOrEmpty(cookieToken))
+            {
+                logger.LogWarning("Failed token (first 20 chars): {Token}", cookieToken.Substring(0, Math.Min(20, cookieToken.Length)));
+            }
             
             if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
             {
                 context.Response.Headers.Append("Token-Expired", "true");
                 logger.LogWarning("JWT token expired");
             }
+            else if (context.Exception.GetType() == typeof(SecurityTokenValidationException))
+            {
+                logger.LogWarning("JWT token validation failed: {ValidationException}", context.Exception.Message);
+            }
+            else if (context.Exception.GetType() == typeof(SecurityTokenInvalidSignatureException))
+            {
+                logger.LogWarning("JWT token has invalid signature");
+            }
+            
             return Task.CompletedTask;
         }
     };
