@@ -191,6 +191,7 @@ namespace sky_webapi.Controllers
                     Path = "/",
                     Secure = true, // Required for SameSite=None
                     SameSite = SameSiteMode.None, // Required for cross-domain Azure Static Web Apps
+                    Domain = null, // Allow the browser to handle domain matching
                     Expires = DateTime.UtcNow.AddMinutes(
                         Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"]))
                 };
@@ -200,9 +201,7 @@ namespace sky_webapi.Controllers
                     cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, cookieOptions.Path);
 
                 // Set cookie before sending response
-                Response.Cookies.Append("auth_token", generatedToken, cookieOptions);
-
-                var response = new AuthResponseDto
+                Response.Cookies.Append("auth_token", generatedToken, cookieOptions);                var response = new AuthResponseDto
                 {
                     Id = user.Id,
                     Email = user.Email ?? string.Empty,
@@ -211,8 +210,8 @@ namespace sky_webapi.Controllers
                     Roles = userRoles.ToList(),
                     IsCustomer = user.IsCustomer,
                     EmailConfirmed = user.EmailConfirmed,
-                    CustomerId = user.CustomerId,
-                    Token = generatedToken // Consider removing this since we're using cookies
+                    CustomerId = user.CustomerId
+                    // Token removed as we're using HttpOnly cookies now
                 };
 
                 return Ok(response);
@@ -281,7 +280,8 @@ namespace sky_webapi.Controllers
                 HttpOnly = true,
                 Path = "/",
                 Secure = true,
-                SameSite = SameSiteMode.None
+                SameSite = SameSiteMode.None,
+                Domain = null // Allow the browser to handle domain matching
             };
 
             _logger.LogInformation("Clearing cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Path={Path}",
