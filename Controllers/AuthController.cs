@@ -200,14 +200,21 @@ namespace sky_webapi.Controllers
                     Response.Headers.Append("Access-Control-Allow-Origin", origin);
                 }                var cookieOptions = new CookieOptions
                 {
-                    HttpOnly = false, // Temporarily disable HttpOnly for debugging
+                    HttpOnly = true, // Re-enable HttpOnly for security
                     Path = "/",
-                    Secure = false, // Temporarily disable for localhost testing
-                    SameSite = SameSiteMode.Lax, // Use Lax for localhost testing
+                    Secure = true, // Required for cross-domain
+                    SameSite = SameSiteMode.None, // Required for cross-domain
                     Expires = tokenExpiration.AddMinutes(1)
                 };
                 
-                _logger.LogInformation("Setting NON-HttpOnly cookie for debugging purposes");_logger.LogInformation(
+                _logger.LogInformation("Setting HttpOnly cross-domain cookie");
+                  // Set CORS headers explicitly before setting cookie
+                var requestOrigin = Request.Headers["Origin"].FirstOrDefault();
+                if (!string.IsNullOrEmpty(requestOrigin))
+                {
+                    Response.Headers["Access-Control-Allow-Origin"] = requestOrigin;
+                }
+                Response.Headers["Access-Control-Allow-Credentials"] = "true";_logger.LogInformation(
                     "Setting cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Path={Path}, TokenExpires={TokenExpires}, CookieExpires={CookieExpires}",
                     cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, cookieOptions.Path, 
                     tokenExpiration.ToString("O"), cookieOptions.Expires?.ToString("O"));
