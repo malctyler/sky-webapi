@@ -158,15 +158,18 @@ namespace sky_webapi.Controllers
                 var key = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"] ?? 
                         throw new InvalidOperationException("JWT SecretKey is not configured")));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);                // Calculate token expiration time (default to 60 minutes if not configured)
+                var tokenDurationMinutes = _configuration["JwtSettings:DurationInMinutes"] != null
+                    ? Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"])
+                    : 60.0;
+                var tokenExpiration = DateTime.UtcNow.AddMinutes(tokenDurationMinutes);
 
                 // Generate JWT token
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(claims),
-                    Expires = DateTime.UtcNow.AddMinutes(
-                        Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"])),
+                    Expires = tokenExpiration,
                     Issuer = _configuration["JwtSettings:Issuer"],
                     Audience = _configuration["JwtSettings:Audience"],
                     SigningCredentials = creds
@@ -192,13 +195,11 @@ namespace sky_webapi.Controllers
                     Secure = true, // Required for SameSite=None
                     SameSite = SameSiteMode.None, // Required for cross-domain Azure Static Web Apps
                     Domain = null, // Allow the browser to handle domain matching
-                    Expires = DateTime.UtcNow.AddMinutes(
-                        Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"]))
-                };
-
-                // Do not set Domain - let the browser use the domain that served the response
-                _logger.LogInformation("Setting cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Path={Path}",
-                    cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, cookieOptions.Path);
+                    Expires = tokenExpiration.AddMinutes(1) // Add 1 minute buffer to ensure cookie outlives the token
+                };                _logger.LogInformation(
+                    "Setting cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Path={Path}, TokenExpires={TokenExpires}, CookieExpires={CookieExpires}",
+                    cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, cookieOptions.Path, 
+                    tokenExpiration.ToString("O"), cookieOptions.Expires?.ToString("O"));
 
                 // Set cookie before sending response
                 Response.Cookies.Append("auth_token", generatedToken, cookieOptions);                var response = new AuthResponseDto
