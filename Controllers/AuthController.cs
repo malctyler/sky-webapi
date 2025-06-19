@@ -219,22 +219,24 @@ namespace sky_webapi.Controllers
                     Response.Headers.Append("Access-Control-Allow-Origin", origin);
                 }                // For Azure Static Web Apps, we'll rely on Authorization header instead of cookies
                 // due to cross-domain limitations. Still set a cookie for same-domain scenarios.
+                // IMPORTANT: Use DateTimeOffset to ensure proper UTC handling for cookie expiration
+                var cookieExpirationUtc = new DateTimeOffset(tokenExpiration, TimeSpan.Zero);
+                
                 var cookieOptions = new CookieOptions
                 {
                     HttpOnly = false, // Must be false for cross-domain Azure Static Web Apps
                     Path = "/",
                     Secure = true,
                     SameSite = SameSiteMode.None, // Required for cross-site requests
-                    Expires = tokenExpiration
+                    Expires = cookieExpirationUtc // Use DateTimeOffset to ensure UTC
                 };
 
-                _logger.LogInformation("DEBUG - Cookie expiration set to: {CookieExpiration}", cookieOptions.Expires?.ToString("O"));
-                _logger.LogInformation("DEBUG - About to set cookie with token length: {TokenLength}", generatedToken.Length);
-
-                _logger.LogInformation(
+                _logger.LogInformation("DEBUG - Token expiration (DateTime): {TokenExpiration}", tokenExpiration.ToString("O"));
+                _logger.LogInformation("DEBUG - Cookie expiration (DateTimeOffset): {CookieExpiration}", cookieExpirationUtc.ToString("O"));
+                _logger.LogInformation("DEBUG - About to set cookie with token length: {TokenLength}", generatedToken.Length);                _logger.LogInformation(
                     "Setting cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Path={Path}, TokenExpires={TokenExpires}, CookieExpires={CookieExpires}",
                     cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, cookieOptions.Path, 
-                    tokenExpiration.ToString("O"), cookieOptions.Expires?.ToString("O"));                // Set cookie (works for same-domain, fallback for cross-domain)
+                    tokenExpiration.ToString("O"), cookieExpirationUtc.ToString("O"));// Set cookie (works for same-domain, fallback for cross-domain)
                 Response.Cookies.Append("auth_token", generatedToken, cookieOptions);
                 
                 // Debug: Log the actual Set-Cookie header that will be sent to the browser
