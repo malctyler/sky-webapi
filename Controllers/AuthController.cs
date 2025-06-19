@@ -198,13 +198,14 @@ namespace sky_webapi.Controllers
                     Response.Headers.Append("Access-Control-Allow-Origin", origin);
                 }                var cookieOptions = new CookieOptions
                 {
-                    HttpOnly = true,
+                    HttpOnly = false, // Temporarily disable HttpOnly for debugging
                     Path = "/",
-                    Secure = true,
-                    SameSite = SameSiteMode.None,
-                    // Don't set Domain at all for cross-domain cookies with Azure Static Web Apps
+                    Secure = false, // Temporarily disable for localhost testing
+                    SameSite = SameSiteMode.Lax, // Use Lax for localhost testing
                     Expires = tokenExpiration.AddMinutes(1)
-                };_logger.LogInformation(
+                };
+                
+                _logger.LogInformation("Setting NON-HttpOnly cookie for debugging purposes");_logger.LogInformation(
                     "Setting cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Path={Path}, TokenExpires={TokenExpires}, CookieExpires={CookieExpires}",
                     cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, cookieOptions.Path, 
                     tokenExpiration.ToString("O"), cookieOptions.Expires?.ToString("O"));
@@ -436,25 +437,36 @@ namespace sky_webapi.Controllers
             #else
             return NotFound();
             #endif
-        }
-
-        [HttpGet("current")]
+        }        [HttpGet("current")]
         [Authorize]
         public async Task<ActionResult<AuthResponseDto>> GetCurrentUser()
         {
             try
             {
+                _logger.LogInformation("GetCurrentUser called");
+                
+                // Log all cookies received
+                foreach (var cookie in Request.Cookies)
+                {
+                    _logger.LogInformation("Cookie received: {Name} = {Value}", cookie.Key, 
+                        string.IsNullOrEmpty(cookie.Value) ? "empty" : cookie.Value.Substring(0, Math.Min(20, cookie.Value.Length)) + "...");
+                }
+                
                 var email = User.FindFirst(ClaimTypes.Email)?.Value;
+                _logger.LogInformation("User email from claims: {Email}", email);
+                
                 if (string.IsNullOrEmpty(email))
                 {
+                    _logger.LogWarning("No email claim found in token");
                     return Unauthorized();
                 }
 
                 var user = await _userManager.FindByEmailAsync(email);
                 if (user == null)
                 {
+                    _logger.LogWarning("User not found in database for email: {Email}", email);
                     return Unauthorized();
-                }                var userRoles = await _userManager.GetRolesAsync(user);                  return Ok(new AuthResponseDto
+                }var userRoles = await _userManager.GetRolesAsync(user);                  return Ok(new AuthResponseDto
                 {
                     Id = user.Id,
                     Email = user.Email ?? string.Empty,

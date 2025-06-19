@@ -52,10 +52,14 @@ builder.Services.AddAuthentication(options =>
     };
 
     options.Events = new JwtBearerEvents
-    {
-        OnMessageReceived = context =>
+    {        OnMessageReceived = context =>
         {            // Try to get the JWT from cookies first
             context.Token = context.Request.Cookies["auth_token"];
+            
+            // Log what we found
+            var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+            logger.LogInformation("JWT OnMessageReceived - Found auth_token cookie: {HasToken}", !string.IsNullOrEmpty(context.Token));
+            
             if (string.IsNullOrEmpty(context.Token))
             {
                 // Fallback to Authorization header
@@ -63,15 +67,23 @@ builder.Services.AddAuthentication(options =>
                 if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
                 {
                     context.Token = authorization.Substring("Bearer ".Length);
+                    logger.LogInformation("JWT OnMessageReceived - Found Bearer token in header");
+                }
+                else
+                {
+                    logger.LogWarning("JWT OnMessageReceived - No token found in cookie or header");
                 }
             }
             return Task.CompletedTask;
-        },
-        OnAuthenticationFailed = context =>
+        },        OnAuthenticationFailed = context =>
         {
+            var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+            logger.LogError("JWT Authentication failed: {Exception}", context.Exception.Message);
+            
             if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
             {
                 context.Response.Headers.Append("Token-Expired", "true");
+                logger.LogWarning("JWT token expired");
             }
             return Task.CompletedTask;
         }
