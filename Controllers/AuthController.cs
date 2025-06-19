@@ -390,19 +390,24 @@ namespace sky_webapi.Controllers
                     claims.AddRange(userClaims.Where(c => 
                         !claims.Any(existingClaim => 
                             existingClaim.Type == c.Type && 
-                            existingClaim.Value == c.Value)));
-
-                    var key = new SymmetricSecurityKey(
+                            existingClaim.Value == c.Value)));                    var key = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"] ?? 
                             throw new InvalidOperationException("JWT SecretKey is not configured")));
                     var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                    var currentUtc = DateTime.UtcNow;
+                    var tokenDurationMinutes = Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"]);
+                    var tokenExpiration = currentUtc.AddMinutes(tokenDurationMinutes);
+                    
+                    _logger.LogInformation("CheckEmailConfirmation - Current UTC: {CurrentUtc}, Token Expiration: {TokenExpiration}", 
+                        currentUtc.ToString("O"), tokenExpiration.ToString("O"));
 
                     var token = new JwtSecurityToken(
                         issuer: _configuration["JwtSettings:Issuer"],
                         audience: _configuration["JwtSettings:Audience"],
                         claims: claims,
-                        expires: DateTime.Now.AddMinutes(
-                            Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"])),
+                        notBefore: currentUtc,
+                        expires: tokenExpiration,
                         signingCredentials: creds
                     );
 
