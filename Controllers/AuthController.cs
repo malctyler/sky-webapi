@@ -234,10 +234,12 @@ namespace sky_webapi.Controllers
                 _logger.LogInformation(
                     "Setting cookie with options: HttpOnly={HttpOnly}, Secure={Secure}, SameSite={SameSite}, Path={Path}, TokenExpires={TokenExpires}, CookieExpires={CookieExpires}",
                     cookieOptions.HttpOnly, cookieOptions.Secure, cookieOptions.SameSite, cookieOptions.Path, 
-                    tokenExpiration.ToString("O"), cookieOptions.Expires?.ToString("O"));
-
-                // Set cookie (works for same-domain, fallback for cross-domain)
-                Response.Cookies.Append("auth_token", generatedToken, cookieOptions);var response = new AuthResponseDto
+                    tokenExpiration.ToString("O"), cookieOptions.Expires?.ToString("O"));                // Set cookie (works for same-domain, fallback for cross-domain)
+                Response.Cookies.Append("auth_token", generatedToken, cookieOptions);
+                
+                // Debug: Let's see what the browser should receive
+                var cookieValue = $"auth_token={generatedToken}; expires={cookieOptions.Expires:r}; path=/; secure; samesite=none";
+                _logger.LogInformation("DEBUG - Full cookie header should be: {CookieHeader}", cookieValue);var response = new AuthResponseDto
                 {
                     Id = user.Id,
                     Email = user.Email ?? string.Empty,
