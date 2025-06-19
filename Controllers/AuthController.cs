@@ -162,21 +162,29 @@ namespace sky_webapi.Controllers
                 var tokenDurationMinutes = _configuration["JwtSettings:DurationInMinutes"] != null
                     ? Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"])
                     : 60.0;
-                var tokenExpiration = DateTime.UtcNow.AddMinutes(tokenDurationMinutes);
+                
+                var currentUtc = DateTime.UtcNow;
+                _logger.LogInformation("Current UTC time: {CurrentUtc}", currentUtc.ToString("O"));
+                
+                var tokenExpiration = currentUtc.AddMinutes(tokenDurationMinutes);
+                _logger.LogInformation("Token duration minutes: {TokenDurationMinutes}", tokenDurationMinutes);
 
                 // Generate JWT token
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var tokenDescriptor = new SecurityTokenDescriptor
+                var tokenHandler = new JwtSecurityTokenHandler();                var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(claims),
+                    NotBefore = currentUtc,
                     Expires = tokenExpiration,
                     Issuer = _configuration["JwtSettings:Issuer"],
                     Audience = _configuration["JwtSettings:Audience"],
                     SigningCredentials = creds
-                };
-
-                var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+                };var securityToken = tokenHandler.CreateToken(tokenDescriptor);
                 var generatedToken = tokenHandler.WriteToken(securityToken);
+                
+                // Verify the token's expiration time
+                var jwt = new JwtSecurityToken(generatedToken);
+                _logger.LogInformation("JWT nbf (Not Before): {NotBefore}", jwt.ValidFrom.ToString("O"));
+                _logger.LogInformation("JWT exp (Expiration): {Expiration}", jwt.ValidTo.ToString("O"));
 
                 // Get the origin from the request
                 var origin = Request.Headers["Origin"].ToString();

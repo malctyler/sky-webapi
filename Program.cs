@@ -48,15 +48,14 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["JwtSettings:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!)),
-        ClockSkew = TimeSpan.FromMinutes(5)
+        ClockSkew = TimeSpan.FromSeconds(30) // Reduced from 5 minutes to help identify timing issues
     };
 
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = context =>
-        {
-            // Try to get the JWT from cookies first
-            context.Token = context.Request.Cookies["jwt"];
+        {            // Try to get the JWT from cookies first
+            context.Token = context.Request.Cookies["auth_token"];
             if (string.IsNullOrEmpty(context.Token))
             {
                 // Fallback to Authorization header
