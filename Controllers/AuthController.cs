@@ -7,27 +7,31 @@ using System.Text;
 using sky_webapi.Data.Entities;
 using sky_webapi.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using sky_webapi.Services;
 
 namespace sky_webapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
-    {
-        private readonly UserManager<ApplicationUser> _userManager;
+    {        private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthController> _logger;
+        private readonly IPasswordSecurityService _passwordSecurity;
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             IConfiguration configuration,
-            ILogger<AuthController> logger)
+            ILogger<AuthController> logger,
+            IPasswordSecurityService passwordSecurity)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _logger = logger;
+            _passwordSecurity = passwordSecurity;
             _logger = logger;
         }
 
@@ -258,15 +262,151 @@ namespace sky_webapi.Controllers
                     EmailConfirmed = user.EmailConfirmed,
                     CustomerId = user.CustomerId,
                     Token = generatedToken // Temporarily add back for debugging
-                };
-
-                return Ok(response);
+                };                return Ok(response);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during login for {Email}", model.Email);
                 return StatusCode(500, new { Message = "An error occurred during login. Please try again later." });
             }
+        }
+
+        [HttpPost("secure-login")]
+        public async Task<IActionResult> SecureLogin([FromBody] SecureLoginDto model)
+        {
+            try
+            {
+                // Handle preflight request
+                if (Request.Method == "OPTIONS")
+                {
+                    Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+                    if (Request.Headers.TryGetValue("Origin", out var preflightOrigin))
+                    {
+                        Response.Headers.Append("Access-Control-Allow-Origin", preflightOrigin.ToString());
+                    }
+                    return Ok();
+                }
+
+                // Validate nonce and timestamp for replay attack prevention
+                if (!_passwordSecurity.ValidateNonce(model.Nonce, model.Timestamp))
+                {
+                    _logger.LogWarning("Secure login attempt with invalid nonce/timestamp for email: {Email}", model.Email);
+                    return BadRequest(new { Message = "Invalid request. Please try again." });
+                }                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    _logger.LogWarning("Secure login attempt with non-existent email: {Email}", model.Email);
+                    return Unauthorized(new { Message = "Invalid email or password." });
+                }                // Verify the secure password hash
+                var isPasswordValid = await _passwordSecurity.VerifySecurePassword(user.Email!, model.PasswordHash, _userManager);
+                if (isPasswordValid)
+                {
+                    // Continue with the same JWT generation logic as regular login
+                    return await GenerateTokenResponse(user);
+                }
+                else
+                {
+                    _logger.LogWarning("Secure login attempt with incorrect password for user: {Email}", model.Email);
+                    return Unauthorized(new { Message = "Invalid email or password." });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during secure login for {Email}", model.Email);
+                return StatusCode(500, new { Message = "An error occurred during login. Please try again later." });
+            }
+        }        private async Task<IActionResult> GenerateTokenResponse(ApplicationUser user)
+        {
+            // Extract the JWT generation logic from the regular login method
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var userClaims = await _userManager.GetClaimsAsync(user);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
+                new Claim(ClaimTypes.GivenName, user.FirstName ?? string.Empty),
+                new Claim(ClaimTypes.Surname, user.LastName ?? string.Empty),
+                new Claim("EmailConfirmed", user.EmailConfirmed.ToString())
+            };
+            
+            if (user.CustomerId.HasValue)
+            {
+                claims.Add(new Claim("CustomerId", user.CustomerId.Value.ToString()));
+            }
+
+            foreach (var role in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            claims.AddRange(userClaims.Where(c => 
+                !claims.Any(existingClaim => 
+                    existingClaim.Type == c.Type && 
+                    existingClaim.Value == c.Value)));
+
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"] ?? 
+                    throw new InvalidOperationException("JWT SecretKey is not configured")));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var tokenDurationMinutes = _configuration["JwtSettings:DurationInMinutes"] != null
+                ? Convert.ToDouble(_configuration["JwtSettings:DurationInMinutes"])
+                : 60.0;
+                
+            var currentUtc = DateTime.UtcNow;
+            var tokenExpiration = currentUtc.AddMinutes(tokenDurationMinutes);
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                NotBefore = currentUtc,
+                Expires = tokenExpiration,
+                Issuer = _configuration["JwtSettings:Issuer"],
+                Audience = _configuration["JwtSettings:Audience"],
+                SigningCredentials = creds
+            };
+
+            var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+            var generatedToken = tokenHandler.WriteToken(securityToken);
+
+            // Set CORS headers
+            var origin = Request.Headers["Origin"].ToString();
+            Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+            if (!string.IsNullOrEmpty(origin))
+            {
+                Response.Headers.Append("Access-Control-Allow-Origin", origin);
+            }
+
+            // Set cookie with secure options
+            var cookieExpirationUtc = new DateTimeOffset(tokenExpiration, TimeSpan.Zero);
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = false,
+                Path = "/",
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = cookieExpirationUtc
+            };
+
+            Response.Cookies.Append("auth_token", generatedToken, cookieOptions);
+
+            var response = new AuthResponseDto
+            {
+                Id = user.Id,
+                Email = user.Email ?? string.Empty,
+                FirstName = user.FirstName ?? string.Empty,
+                LastName = user.LastName ?? string.Empty,
+                Roles = userRoles.ToList(),
+                IsCustomer = user.IsCustomer,
+                EmailConfirmed = user.EmailConfirmed,
+                CustomerId = user.CustomerId,
+                Token = generatedToken
+            };
+
+            _logger.LogInformation("Secure login successful for user: {Email}", user.Email);
+            return Ok(response);
         }
 
         [HttpPost("change-password")]

@@ -1,11 +1,18 @@
 using System;
 
 namespace sky_webapi.DTOs
-{
-    public class LoginDto
+{    public class LoginDto
     {
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
+    }
+
+    public class SecureLoginDto
+    {
+        public string Email { get; set; } = string.Empty;
+        public string PasswordHash { get; set; } = string.Empty;
+        public string Nonce { get; set; } = string.Empty;
+        public long Timestamp { get; set; }
     }
 
     public class RegisterDto
