@@ -67,11 +67,14 @@ namespace sky_webapi.DTOs
     {
         public string Type { get; set; } = string.Empty;
         public string Value { get; set; } = string.Empty;
-    }
-
-    public class ResetUserPasswordDto
+    }    public class ResetUserPasswordDto
     {
         public string Email { get; set; } = string.Empty;
         public string NewPassword { get; set; } = string.Empty;
+    }
+
+    public class ConfirmUserDto
+    {
+        public string Email { get; set; } = string.Empty;
     }
 }

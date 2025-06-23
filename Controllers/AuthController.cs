@@ -45,16 +45,15 @@ namespace sky_webapi.Controllers
                 {
                     _logger.LogWarning("Registration attempt with existing email: {Email}", model.Email);
                     return BadRequest(new { Message = "User with this email already exists." });
-                }
-
-                var user = new ApplicationUser
+                }                var user = new ApplicationUser
                 {
                     UserName = model.Email,
                     Email = model.Email,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     IsCustomer = model.IsCustomer,
-                    CustomerId = model.CustomerId
+                    CustomerId = model.CustomerId,
+                    EmailConfirmed = false // Require admin confirmation
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
@@ -120,14 +119,21 @@ namespace sky_webapi.Controllers
                         Response.Headers.Append("Access-Control-Allow-Origin", preflightOrigin.ToString());
                     }
                     return Ok();
-                }
-
-                var user = await _userManager.FindByEmailAsync(model.Email);
+                }                var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user == null)
                 {
                     _logger.LogWarning("Login attempt with non-existent email: {Email}", model.Email);
                     return Unauthorized(new { Message = "Invalid email or password." });
-                }                if (!await _userManager.CheckPasswordAsync(user, model.Password))
+                }
+
+                // Check if email is confirmed
+                if (!user.EmailConfirmed)
+                {
+                    _logger.LogWarning("Login attempt with unconfirmed email: {Email}", model.Email);
+                    return Unauthorized(new { Message = "Please contact an administrator to confirm your account before logging in." });
+                }
+
+                if (!await _userManager.CheckPasswordAsync(user, model.Password))
                 {
                     _logger.LogWarning("Login attempt with incorrect password for user: {Email}", model.Email);
                     return Unauthorized(new { Message = "Invalid email or password." });
@@ -318,7 +324,16 @@ namespace sky_webapi.Controllers
                 {
                     _logger.LogWarning("Secure login attempt with non-existent email: {Email}", model.Email);
                     return Unauthorized(new { Message = "Invalid email or password." });
-                }                // Verify the secure password hash
+                }
+
+                // Check if email is confirmed
+                if (!user.EmailConfirmed)
+                {
+                    _logger.LogWarning("Secure login attempt with unconfirmed email: {Email}", model.Email);
+                    return Unauthorized(new { Message = "Please contact an administrator to confirm your account before logging in." });
+                }
+
+                // Verify the secure password hash
                 var isPasswordValid = await _passwordSecurity.VerifySecurePassword(user.Email!, model.PasswordHash, _userManager);
                 if (isPasswordValid)
                 {
@@ -700,7 +715,31 @@ namespace sky_webapi.Controllers
             return Ok(new { 
                 Message = $"User {dto.Email} password reset to: {dto.NewPassword}",
                 SecureLoginReady = true,
-                Note = "Password is now compatible with secure login endpoint"
+                Note = "Password is now compatible with secure login endpoint"            });
+            #else
+            return NotFound();
+            #endif
+        }
+
+        [HttpPost("dev/confirm-user")]
+        public async Task<IActionResult> ConfirmUserEmail([FromBody] ConfirmUserDto dto)
+        {
+            #if DEBUG
+            var user = await _userManager.FindByEmailAsync(dto.Email);
+            if (user == null)
+                return NotFound(new { Message = "User not found" });
+
+            user.EmailConfirmed = true;
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+                return BadRequest(new { Errors = result.Errors });
+
+            _logger.LogInformation("User email confirmed successfully for {Email}", dto.Email);
+            return Ok(new { 
+                Message = $"User {dto.Email} email confirmed successfully",
+                EmailConfirmed = true,
+                Note = "User can now log in"
             });
             #else
             return NotFound();
