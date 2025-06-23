@@ -111,11 +111,12 @@ builder.Services.AddAuthentication(options =>
 // Add services to the container.
 builder.Services.AddCors(options =>
 {    options.AddPolicy("AllowReactApp", policy =>
-    {
-        policy.WithOrigins(
+    {        policy.WithOrigins(
                 "https://witty-plant-0550d6403.6.azurestaticapps.net",
                 "http://localhost:3000",
-                "https://localhost:3000"
+                "https://localhost:3000",
+                "http://localhost:3001",
+                "https://localhost:3001"
             )
             .AllowAnyMethod()
             .AllowAnyHeader()

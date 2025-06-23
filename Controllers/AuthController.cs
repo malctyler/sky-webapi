@@ -92,11 +92,13 @@ namespace sky_webapi.Controllers
                 if (model.CustomerId.HasValue)
                 {
                     claims.Add(new Claim("CustomerId", model.CustomerId.Value.ToString()));
-                }
+                }                await _userManager.AddClaimsAsync(user, claims);
 
-                await _userManager.AddClaimsAsync(user, claims);
+                // Store transmission hash for secure login compatibility
+                var transmissionHash = _passwordSecurity.HashPasswordForTransmission(model.Password, user.Email!);
+                await _userManager.AddClaimAsync(user, new Claim("TransmissionPasswordHash", transmissionHash));
 
-                _logger.LogInformation("User registered successfully: {Email}", model.Email);
+                _logger.LogInformation("User registered successfully with secure login compatibility: {Email}", model.Email);
                 return Ok(new { Message = "User created successfully" });
             }
             catch (Exception ex)
@@ -125,16 +127,35 @@ namespace sky_webapi.Controllers
                 {
                     _logger.LogWarning("Login attempt with non-existent email: {Email}", model.Email);
                     return Unauthorized(new { Message = "Invalid email or password." });
-                }
-
-                if (!await _userManager.CheckPasswordAsync(user, model.Password))
+                }                if (!await _userManager.CheckPasswordAsync(user, model.Password))
                 {
                     _logger.LogWarning("Login attempt with incorrect password for user: {Email}", model.Email);
                     return Unauthorized(new { Message = "Invalid email or password." });
                 }
 
+                // MIGRATION: Automatically migrate users to secure login compatibility
+                // Check if user has transmission hash stored
+                var existingClaims = await _userManager.GetClaimsAsync(user);
+                var hasTransmissionHash = existingClaims.Any(c => c.Type == "TransmissionPasswordHash");
+                
+                if (!hasTransmissionHash)
+                {
+                    try
+                    {
+                        // Generate and store transmission hash for future secure logins
+                        var transmissionHash = _passwordSecurity.HashPasswordForTransmission(model.Password, user.Email!);
+                        await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim("TransmissionPasswordHash", transmissionHash));
+                        _logger.LogInformation("Auto-migrated user {Email} for secure login compatibility", model.Email);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Failed to auto-migrate user {Email} for secure login", model.Email);
+                        // Continue with normal login - migration is optional
+                    }
+                }
+
                 var userRoles = await _userManager.GetRolesAsync(user);
-                var userClaims = await _userManager.GetClaimsAsync(user);                var claims = new List<Claim>
+                var userClaims = await _userManager.GetClaimsAsync(user);var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id),
                     new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
@@ -269,13 +290,13 @@ namespace sky_webapi.Controllers
                 _logger.LogError(ex, "Error during login for {Email}", model.Email);
                 return StatusCode(500, new { Message = "An error occurred during login. Please try again later." });
             }
-        }
-
-        [HttpPost("secure-login")]
+        }        [HttpPost("secure-login")]
         public async Task<IActionResult> SecureLogin([FromBody] SecureLoginDto model)
         {
             try
             {
+                _logger.LogInformation("Secure login attempt for email: {Email}", model.Email);
+                
                 // Handle preflight request
                 if (Request.Method == "OPTIONS")
                 {
@@ -430,9 +451,7 @@ namespace sky_webapi.Controllers
                 if (user == null)
                 {
                     return BadRequest(new { Message = "User not found." });
-                }
-
-                var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+                }                var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
                 if (!changePasswordResult.Succeeded)
                 {
                     var errors = changePasswordResult.Errors.Select(e => e.Description);
@@ -441,7 +460,21 @@ namespace sky_webapi.Controllers
                     return BadRequest(new { Errors = errors });
                 }
 
-                _logger.LogInformation("Password changed successfully for user: {Email}", email);
+                // Update transmission hash for secure login compatibility
+                var transmissionHash = _passwordSecurity.HashPasswordForTransmission(model.NewPassword, user.Email!);
+                
+                // Remove existing transmission hash claim if it exists
+                var existingClaims = await _userManager.GetClaimsAsync(user);
+                var existingHashClaim = existingClaims.FirstOrDefault(c => c.Type == "TransmissionPasswordHash");
+                if (existingHashClaim != null)
+                {
+                    await _userManager.RemoveClaimAsync(user, existingHashClaim);
+                }
+                
+                // Add new transmission hash claim
+                await _userManager.AddClaimAsync(user, new Claim("TransmissionPasswordHash", transmissionHash));
+
+                _logger.LogInformation("Password changed successfully with secure login compatibility for user: {Email}", email);
                 return Ok(new { Message = "Password changed successfully." });
             }
             catch (Exception ex)
@@ -596,9 +629,7 @@ namespace sky_webapi.Controllers
                 _logger.LogError(ex, "Error checking email confirmation status for {Email}", email);
                 return StatusCode(500, new { Message = "An error occurred while checking email confirmation status." });
             }
-        }
-
-        [HttpPost("dev/reset-admin")]
+        }        [HttpPost("dev/reset-admin")]
         public async Task<IActionResult> ResetAdminPassword()
         {
             #if DEBUG
@@ -613,12 +644,70 @@ namespace sky_webapi.Controllers
             if (!result.Succeeded)
                 return BadRequest(new { Errors = result.Errors });
 
-            _logger.LogInformation("Admin password reset successfully");
-            return Ok(new { Message = "Admin password reset to: " + newPassword });
+            // Store the transmission hash for secure login compatibility
+            var transmissionHash = _passwordSecurity.HashPasswordForTransmission(newPassword, admin.Email!);
+            
+            // Remove existing transmission hash claim if it exists
+            var existingClaims = await _userManager.GetClaimsAsync(admin);
+            var existingHashClaim = existingClaims.FirstOrDefault(c => c.Type == "TransmissionPasswordHash");
+            if (existingHashClaim != null)
+            {
+                await _userManager.RemoveClaimAsync(admin, existingHashClaim);
+            }
+            
+            // Add new transmission hash claim
+            await _userManager.AddClaimAsync(admin, new System.Security.Claims.Claim("TransmissionPasswordHash", transmissionHash));
+
+            _logger.LogInformation("Admin password reset successfully with secure login compatibility");
+            return Ok(new { 
+                Message = "Admin password reset to: " + newPassword,
+                SecureLoginReady = true,
+                Note = "Password is now compatible with secure login endpoint"            });
             #else
             return NotFound();
             #endif
-        }        [HttpGet("current")]
+        }
+
+        [HttpPost("dev/reset-user")]
+        public async Task<IActionResult> ResetUserPassword([FromBody] ResetUserPasswordDto dto)
+        {
+            #if DEBUG
+            var user = await _userManager.FindByEmailAsync(dto.Email);
+            if (user == null)
+                return NotFound(new { Message = "User not found" });
+
+            string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, resetToken, dto.NewPassword);
+
+            if (!result.Succeeded)
+                return BadRequest(new { Errors = result.Errors });
+
+            // Store the transmission hash for secure login compatibility
+            var transmissionHash = _passwordSecurity.HashPasswordForTransmission(dto.NewPassword, user.Email!);
+            
+            // Remove existing transmission hash claim if it exists
+            var existingClaims = await _userManager.GetClaimsAsync(user);
+            var existingHashClaim = existingClaims.FirstOrDefault(c => c.Type == "TransmissionPasswordHash");
+            if (existingHashClaim != null)
+            {
+                await _userManager.RemoveClaimAsync(user, existingHashClaim);
+            }
+            
+            // Add new transmission hash claim
+            await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim("TransmissionPasswordHash", transmissionHash));
+
+            _logger.LogInformation("User password reset successfully with secure login compatibility for {Email}", dto.Email);
+            return Ok(new { 
+                Message = $"User {dto.Email} password reset to: {dto.NewPassword}",
+                SecureLoginReady = true,
+                Note = "Password is now compatible with secure login endpoint"
+            });
+            #else
+            return NotFound();
+            #endif
+        }
+
+        [HttpGet("current")]
         [Authorize]
         public async Task<ActionResult<AuthResponseDto>> GetCurrentUser()
         {

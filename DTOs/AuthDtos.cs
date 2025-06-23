@@ -63,11 +63,15 @@ namespace sky_webapi.DTOs
     {
         public required string Id { get; set; }
         public required string Name { get; set; }
-    }
-
-    public class ClaimDto
+    }    public class ClaimDto
     {
         public string Type { get; set; } = string.Empty;
         public string Value { get; set; } = string.Empty;
+    }
+
+    public class ResetUserPasswordDto
+    {
+        public string Email { get; set; } = string.Empty;
+        public string NewPassword { get; set; } = string.Empty;
     }
 }
