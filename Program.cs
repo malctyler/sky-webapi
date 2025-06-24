@@ -47,7 +47,7 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["JwtSettings:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!)),
-        ClockSkew = TimeSpan.FromSeconds(30) // Reduced from 5 minutes to help identify timing issues
+        ClockSkew = TimeSpan.FromSeconds(5) // Minimal clock skew for security while allowing for minor timing differences
     };
     
     // Debug: Print the JWT settings to console for now
