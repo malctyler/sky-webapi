@@ -109,6 +109,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 // Add services to the container.
+// Updated CORS configuration to fix production deployment
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
