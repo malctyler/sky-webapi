@@ -110,8 +110,10 @@ builder.Services.AddAuthentication(options =>
 
 // Add services to the container.
 builder.Services.AddCors(options =>
-{    options.AddPolicy("AllowReactApp", policy =>
-    {        policy.WithOrigins(
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins(
                 "https://witty-plant-0550d6403.6.azurestaticapps.net",
                 "http://localhost:3000",
                 "https://localhost:3000",
@@ -120,8 +122,7 @@ builder.Services.AddCors(options =>
             )
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .AllowCredentials()
-            .SetIsOriginAllowedToAllowWildcardSubdomains();
+            .AllowCredentials();
 
         // Add specific headers we want to allow
         policy.WithExposedHeaders("Token-Expired");
