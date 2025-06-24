@@ -165,6 +165,7 @@ builder.Services.AddScoped<IInspectionDueDateService, InspectionDueDateService>(
 builder.Services.AddScoped<IScheduledInspectionService, ScheduledInspectionService>();
 builder.Services.AddScoped<IScheduledInspectionRepository, ScheduledInspectionRepository>();
 builder.Services.AddScoped<IPasswordSecurityService, PasswordSecurityService>();
+builder.Services.AddScoped<ITokenRevocationService, TokenRevocationService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -217,6 +218,7 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 app.UseCors("AllowReactApp"); // Must be after UseRouting and before Authorization
 app.UseAuthentication();
+app.UseMiddleware<TokenRevocationMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();

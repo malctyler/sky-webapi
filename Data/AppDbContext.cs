@@ -10,6 +10,13 @@ namespace sky_webapi.Data
         {
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            // Temporarily suppress the pending model changes warning
+            optionsBuilder.ConfigureWarnings(warnings => warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+        }
+
         public DbSet<Summary> Summaries { get; set; }
         public DbSet<CustomerEntity> Customers { get; set; }
         public DbSet<NoteEntity> Notes { get; set; }
@@ -21,6 +28,7 @@ namespace sky_webapi.Data
         public DbSet<InspectorEntity> Inspectors { get; set; }
         public DbSet<ScheduledInspection> ScheduledInspections { get; set; }
         public DbSet<Ledger> Ledgers { get; set; }
+        public DbSet<RevokedToken> RevokedTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -164,6 +172,17 @@ namespace sky_webapi.Data
                 .HasIndex(l => l.ReferenceWithoutInitials)
                 .IsUnique()
                 .HasFilter(null);
+
+            // Configure RevokedToken entity
+            modelBuilder.Entity<RevokedToken>()
+                .HasIndex(rt => rt.TokenId)
+                .IsUnique();
+                
+            modelBuilder.Entity<RevokedToken>()
+                .HasIndex(rt => rt.UserId);
+                
+            modelBuilder.Entity<RevokedToken>()
+                .HasIndex(rt => rt.ExpiresAt);
         }
     }
 }

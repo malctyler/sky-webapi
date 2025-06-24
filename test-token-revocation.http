@@ -1,0 +1,41 @@
+### Token Revocation System Test
+### This file demonstrates the token revocation functionality
+
+@baseUrl = http://localhost:5207
+@email = test@example.com
+@password = TestPassword123!
+
+### 1. Login to get a JWT token with JTI claim
+POST {{baseUrl}}/Auth/secure-login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}",
+  "hashedPassword": "hashed_password_here",
+  "fingerprint": "test_fingerprint",
+  "timestamp": "2025-06-24T10:00:00Z"
+}
+
+### Store the token from response and use it below
+
+### 2. Test authenticated endpoint with valid token
+GET {{baseUrl}}/api/Status
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### 3. Logout to revoke the token
+POST {{baseUrl}}/Auth/logout
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### 4. Try to use the same token after logout (should return 401)
+GET {{baseUrl}}/api/Status
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### 5. Check revoked tokens in database
+### Query: SELECT * FROM RevokedTokens ORDER BY RevokedAt DESC;
+
+### Expected Results:
+### - Step 2: Should return 200 OK with status data
+### - Step 3: Should return 200 OK (successful logout)
+### - Step 4: Should return 401 Unauthorized (token revoked)
+### - Step 5: Should show the revoked token in database

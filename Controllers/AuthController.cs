@@ -158,16 +158,22 @@ namespace sky_webapi.Controllers
                         _logger.LogWarning(ex, "Failed to auto-migrate user {Email} for secure login", model.Email);
                         // Continue with normal login - migration is optional
                     }
-                }
+                }                var userRoles = await _userManager.GetRolesAsync(user);
+                var userClaims = await _userManager.GetClaimsAsync(user);
 
-                var userRoles = await _userManager.GetRolesAsync(user);
-                var userClaims = await _userManager.GetClaimsAsync(user);var claims = new List<Claim>
+                // Generate unique token ID for revocation tracking
+                var tokenId = Guid.NewGuid().ToString();
+
+                var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id),
                     new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
                     new Claim(ClaimTypes.GivenName, user.FirstName ?? string.Empty),
                     new Claim(ClaimTypes.Surname, user.LastName ?? string.Empty),
-                    new Claim("EmailConfirmed", user.EmailConfirmed.ToString())
+                    new Claim("EmailConfirmed", user.EmailConfirmed.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Jti, tokenId), // Add token ID for revocation
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                    new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
                     // IsCustomer will come from userClaims to avoid duplication
                 };
                 
@@ -357,13 +363,19 @@ namespace sky_webapi.Controllers
             var userRoles = await _userManager.GetRolesAsync(user);
             var userClaims = await _userManager.GetClaimsAsync(user);
 
+            // Generate unique token ID for revocation tracking
+            var tokenId = Guid.NewGuid().ToString();
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
                 new Claim(ClaimTypes.GivenName, user.FirstName ?? string.Empty),
                 new Claim(ClaimTypes.Surname, user.LastName ?? string.Empty),
-                new Claim("EmailConfirmed", user.EmailConfirmed.ToString())
+                new Claim("EmailConfirmed", user.EmailConfirmed.ToString()),
+                new Claim(JwtRegisteredClaimNames.Jti, tokenId), // Add token ID for revocation
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
             };
             
             if (user.CustomerId.HasValue)
@@ -499,12 +511,31 @@ namespace sky_webapi.Controllers
             }
         }        [HttpPost("logout")]
         [Authorize]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout([FromServices] ITokenRevocationService tokenRevocationService)
         {
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var tokenId = User.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+
             if (!string.IsNullOrEmpty(email))
             {
                 _logger.LogInformation("User logout attempt: {Email}", email);
+            }
+
+            // Revoke the current token
+            if (!string.IsNullOrEmpty(tokenId) && !string.IsNullOrEmpty(userId))
+            {
+                try
+                {
+                    var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+                    await tokenRevocationService.RevokeTokenAsync(tokenId, userId, "logout", clientIp);
+                    _logger.LogInformation("Token {TokenId} revoked during logout for user {Email}", tokenId, email);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to revoke token during logout for user {Email}", email);
+                    // Continue with logout even if token revocation fails
+                }
             }
 
             var origin = Request.Headers["Origin"].ToString();
@@ -529,7 +560,7 @@ namespace sky_webapi.Controllers
             }
             
             return Ok(new { Message = "Logged out successfully" });
-        }        [HttpGet("validate")]
+        }[HttpGet("validate")]
         [Authorize]
         public async Task<IActionResult> ValidateToken()
         {
