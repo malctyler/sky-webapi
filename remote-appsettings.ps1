@@ -1,5 +1,9 @@
 # Get the Azure app settings
 $resourceId = "/subscriptions/34db2036-2044-4833-b3e1-394f18589d31/resourceGroups/app-service-rg/providers/Microsoft.Web/sites/sky-webapi"
+$appConfigName = "mt-core-appconfig"
+$appConfigResourceGroup = "mt-core-services-rg"
+$appConfigEndpoint = "https://mt-core-appconfig.azconfig.io"
+
 # detrmine resource group and app name from resourceId
 if ($resourceId -match "/resourceGroups/([^/]+)/providers/Microsoft.Web/sites/([^/]+)") {
     $resourceGroup = $matches[1]
@@ -12,6 +16,23 @@ else {
 
 $azureSettings = (az webapp config appsettings list --resource-group $resourceGroup --name $appName | ConvertFrom-Json)
 $azureConnectionStrings = (az webapp config connection-string list --resource-group $resourceGroup --name $appName | ConvertFrom-Json)
+
+# Get App Configuration settings
+Write-Host "Retrieving App Configuration settings..." -ForegroundColor Cyan
+$appConfigSettings = @{}
+try {
+    $configList = az appconfig kv list --name $appConfigName --auth-mode login --query "[].{key:key, value:value, label:label}" -o json | ConvertFrom-Json
+    foreach ($config in $configList) {
+        if ($config.key) {
+            $fullKey = if ($config.label) { "$($config.label):$($config.key)" } else { $config.key }
+            $appConfigSettings[$fullKey] = $config.value
+        }
+    }
+    Write-Host "Retrieved $($appConfigSettings.Count) settings from App Configuration" -ForegroundColor Green
+} catch {
+    Write-Host "Warning: Could not retrieve App Configuration settings." -ForegroundColor Yellow
+    Write-Host "Note: You need 'App Configuration Data Reader' role for read access" -ForegroundColor Yellow
+}
 
 # Clean up any malformed connection strings
 $malformedConnString = $azureConnectionStrings | Where-Object { $_.name -like "{*" }
@@ -36,10 +57,11 @@ foreach ($setting in $azureSettings) {
     $azureLookup[$originalKey] = $setting.value
 }
 
-Write-Host "`nComparing local settings with Azure...`n" -ForegroundColor Cyan
+Write-Host "`nComparing local settings with Azure and App Configuration...`n" -ForegroundColor Cyan
 
 $settingsToUpdate = @()
 $connectionStringsToUpdate = @()
+$appConfigSettingsToUpdate = @()
 
 # Compare settings
 foreach ($setting in $localSettings) {
@@ -55,11 +77,11 @@ foreach ($setting in $localSettings) {
             $normalizedAzure = $azureConnection.value.TrimEnd(';') -replace ';(?! )', '; '
             
             if ($normalizedAzure -eq $normalizedLocal) {
-                Write-Host "✓ Connection string '$connectionStringName' exists in Azure with matching value" -ForegroundColor Green
+                Write-Host "Connection string '$connectionStringName' exists in Azure with matching value" -ForegroundColor Green
             } else {
-                Write-Host "⚠ Connection string '$connectionStringName' exists in Azure but values differ:" -ForegroundColor Yellow
-                Write-Host "  Local: $($setting.Value)" -ForegroundColor Yellow
-                Write-Host "  Azure: $($azureConnection.value)" -ForegroundColor Yellow
+                Write-Host "Connection string '$connectionStringName' exists in Azure but values differ:" -ForegroundColor Yellow
+                Write-Host "Local: $($setting.Value)" -ForegroundColor Yellow
+                Write-Host "Azure: $($azureConnection.value)" -ForegroundColor Yellow
                 $connectionStringsToUpdate += @{
                     name = $connectionStringName
                     value = $setting.Value
@@ -67,7 +89,7 @@ foreach ($setting in $localSettings) {
                 }
             }
         } else {
-            Write-Host "✕ Connection string '$connectionStringName' does not exist in Azure" -ForegroundColor Red
+            Write-Host "Connection string '$connectionStringName' does not exist in Azure" -ForegroundColor Red
             $connectionStringsToUpdate += @{
                 name = $connectionStringName
                 value = $setting.Value
@@ -78,28 +100,62 @@ foreach ($setting in $localSettings) {
     else {
         $key = $setting.Key
         $value = $setting.Value
+        $isKeyVaultEnabled = $setting.keyvaultenabled -eq $true
     
         # Convert key format to Azure style
         $azureKey = $key -replace ':', '__'
-    
-        if ($azureLookup.ContainsKey($key)) {
-            if ($azureLookup[$key] -eq $value) {
-                Write-Host "✓ Setting '$key' exists in Azure with matching value" -ForegroundColor Green
+        
+        if ($isKeyVaultEnabled) {
+            # For Key Vault enabled settings, check Azure App Settings
+            if ($azureLookup.ContainsKey($key)) {
+                if ($azureLookup[$key] -eq $value) {
+                    Write-Host "Setting '$key' exists in Azure with matching value (Key Vault enabled)" -ForegroundColor Green
+                } else {
+                    Write-Host "Setting '$key' exists in Azure but values differ (Key Vault enabled):" -ForegroundColor Yellow
+                    Write-Host "Local: $value" -ForegroundColor Yellow
+                    Write-Host "Azure: $($azureLookup[$key])" -ForegroundColor Yellow
+                    $settingsToUpdate += "$azureKey=$value"
+                }
             } else {
-                Write-Host "⚠ Setting '$key' exists in Azure but values differ:" -ForegroundColor Yellow
-                Write-Host "  Local: $value" -ForegroundColor Yellow
-                Write-Host "  Azure: $($azureLookup[$key])" -ForegroundColor Yellow
+                Write-Host "Setting '$key' does not exist in Azure (Key Vault enabled)" -ForegroundColor Red
                 $settingsToUpdate += "$azureKey=$value"
             }
-        }
-        else {
-            Write-Host "✕ Setting '$key' does not exist in Azure" -ForegroundColor Red
-            $settingsToUpdate += "$azureKey=$value"
+        } else {
+            # For non-Key Vault settings, check App Configuration first
+            if ($appConfigSettings.ContainsKey($key)) {
+                if ($appConfigSettings[$key] -eq $value) {
+                    Write-Host "Setting '$key' exists in App Configuration with matching value" -ForegroundColor Green
+                } else {
+                    Write-Host "Setting '$key' exists in App Configuration but values differ:" -ForegroundColor Yellow
+                    Write-Host "  Local: $value" -ForegroundColor Yellow
+                    Write-Host "  App Config: $($appConfigSettings[$key])" -ForegroundColor Yellow
+                    # Parse key into label and setting name
+                    $parts = $key.Split(':')
+                    $appConfigSettingsToUpdate += @{
+                        label = $parts[0]
+                        key = $parts[1]
+                        value = $value
+                    }
+                }
+            } elseif ($azureLookup.ContainsKey($key)) {
+                # Setting exists in Azure, suggest migration to App Configuration
+                Write-Host "Setting '$key' exists in Azure App Settings (consider migrating to App Configuration)" -ForegroundColor Cyan
+                Write-Host "Value: $($azureLookup[$key])" -ForegroundColor Cyan
+            } else {
+                Write-Host "Setting '$key' does not exist in App Configuration or Azure" -ForegroundColor Red
+                # Parse key into label and setting name
+                $parts = $key.Split(':')
+                $appConfigSettingsToUpdate += @{
+                    label = $parts[0]
+                    key = $parts[1]
+                    value = $value
+                }
+            }
         }
     }
 }
 
-if ($settingsToUpdate.Count -eq 0 -and $connectionStringsToUpdate.Count -eq 0) {
+if ($settingsToUpdate.Count -eq 0 -and $connectionStringsToUpdate.Count -eq 0 -and $appConfigSettingsToUpdate.Count -eq 0) {
     Write-Host "`nAll settings are in sync! No updates needed." -ForegroundColor Green
 }
 else {
@@ -119,7 +175,14 @@ else {
         }
     }
     
-    $confirmation = Read-Host "`nDo you want to update these settings in Azure? (y/n)"
+    if ($appConfigSettingsToUpdate.Count -gt 0) {
+        Write-Host "`nApp Configuration Settings to add:" -ForegroundColor Yellow
+        $appConfigSettingsToUpdate | ForEach-Object {
+            Write-Host "  $($_.key) (label: $($_.label)) = $($_.value)"
+        }
+    }
+    
+    $confirmation = Read-Host "`nDo you want to update these settings in Azure and App Configuration? (y/n)"
     if ($confirmation -eq 'y') {
         if ($settingsToUpdate.Count -gt 0) {
             Write-Host "`nUpdating App Settings..." -ForegroundColor Cyan
@@ -146,6 +209,38 @@ else {
             }
             else {
                 Write-Host "Failed to update Connection Strings" -ForegroundColor Red
+            }
+        }
+        
+        if ($appConfigSettingsToUpdate.Count -gt 0) {
+            Write-Host "`nUpdating App Configuration Settings..." -ForegroundColor Cyan
+            $successCount = 0
+            $failCount = 0
+            
+            foreach ($configSetting in $appConfigSettingsToUpdate) {
+                try {
+                    Write-Host "  Adding: $($configSetting.key) with label '$($configSetting.label)'" -ForegroundColor Gray
+                    
+                    $result = az appconfig kv set --name $appConfigName --key $configSetting.key --value $configSetting.value --label $configSetting.label --auth-mode login --yes
+                    if ($LASTEXITCODE -eq 0) {
+                        $successCount++
+                        Write-Host "Successfully added: $($configSetting.key)" -ForegroundColor Green
+                    } else {
+                        $failCount++
+                        Write-Host "Failed to add: $($configSetting.key)" -ForegroundColor Red
+                    }
+                } catch {
+                    $failCount++
+                    Write-Host "Error adding $($configSetting.key): $($_.Exception.Message)" -ForegroundColor Red
+                }
+            }
+            
+            if ($successCount -gt 0) {
+                Write-Host "Successfully added $successCount settings to App Configuration!" -ForegroundColor Green
+            }
+            if ($failCount -gt 0) {
+                Write-Host "Failed to add $failCount settings to App Configuration" -ForegroundColor Red
+                Write-Host "Note: You need 'App Configuration Data Owner' role for write access" -ForegroundColor Yellow
             }
         }
     }
