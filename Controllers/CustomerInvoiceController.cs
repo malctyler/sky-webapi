@@ -10,7 +10,7 @@ namespace sky_webapi.Controllers
 {
     [ApiController]
     [Route("api/customers")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class CustomerInvoiceController : ControllerBase
     {
         private readonly ICustomerInvoiceService _invoiceService;

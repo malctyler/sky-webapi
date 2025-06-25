@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace sky_webapi.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/[controller]")]
     public class LedgerController : ControllerBase
