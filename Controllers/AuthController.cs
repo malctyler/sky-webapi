@@ -19,20 +19,22 @@ namespace sky_webapi.Controllers
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthController> _logger;
         private readonly IPasswordSecurityService _passwordSecurity;
+        private readonly IEmailService _emailService;
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             IConfiguration configuration,
             ILogger<AuthController> logger,
-            IPasswordSecurityService passwordSecurity)
+            IPasswordSecurityService passwordSecurity,
+            IEmailService emailService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
             _logger = logger;
             _passwordSecurity = passwordSecurity;
-            _logger = logger;
+            _emailService = emailService;
         }
 
         [HttpPost("register")]
@@ -855,6 +857,90 @@ namespace sky_webapi.Controllers
             {
                 _logger.LogError(ex, "Error validating JWT cookie");
                 return BadRequest(new { Message = "Invalid JWT token", Error = ex.Message });
+            }
+        }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto model)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    // For security, don't reveal if the email exists or not
+                    // Always return success to prevent email enumeration
+                    _logger.LogWarning("Password reset attempt for non-existent email: {Email}", model.Email);
+                    return Ok(new { Message = "If the email exists in our system, a password reset link has been sent." });
+                }
+
+                // Generate password reset token
+                var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+                
+                // Create reset URL (should point to frontend, not backend)
+                var frontendBaseUrl = _configuration["Frontend:BaseUrl"] ?? "http://localhost:3000";
+                _logger.LogInformation("Frontend base URL configuration: {FrontendBaseUrl}", frontendBaseUrl);
+                var resetUrl = $"{frontendBaseUrl}/reset-password?email={Uri.EscapeDataString(user.Email!)}&token={Uri.EscapeDataString(resetToken)}";
+                _logger.LogInformation("Generated reset URL: {ResetUrl}", resetUrl);
+
+                // Send email
+                await _emailService.SendPasswordResetEmailAsync(user.Email!, resetToken, resetUrl);
+
+                _logger.LogInformation("Password reset email sent to: {Email}", model.Email);
+                
+                return Ok(new { Message = "If the email exists in our system, a password reset link has been sent." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sending password reset email for {Email}", model.Email);
+                return StatusCode(500, new { Message = "An error occurred while processing your request." });
+            }
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    return BadRequest(new { Message = "Invalid reset request." });
+                }
+
+                // Verify the reset token
+                var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
+                
+                if (result.Succeeded)
+                {
+                    // Update transmission hash for secure login compatibility
+                    var transmissionHash = _passwordSecurity.HashPasswordForTransmission(model.NewPassword, user.Email!);
+                    
+                    // Remove existing transmission hash claim if it exists
+                    var existingClaims = await _userManager.GetClaimsAsync(user);
+                    var existingHashClaim = existingClaims.FirstOrDefault(c => c.Type == "TransmissionPasswordHash");
+                    if (existingHashClaim != null)
+                    {
+                        await _userManager.RemoveClaimAsync(user, existingHashClaim);
+                    }
+                    
+                    // Add new transmission hash claim
+                    await _userManager.AddClaimAsync(user, new Claim("TransmissionPasswordHash", transmissionHash));
+
+                    _logger.LogInformation("Password successfully reset for user: {Email} with secure login compatibility", model.Email);
+                    return Ok(new { Message = "Password has been reset successfully." });
+                }
+                else
+                {
+                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                    _logger.LogWarning("Password reset failed for {Email}: {Errors}", model.Email, errors);
+                    return BadRequest(new { Message = "Password reset failed.", Errors = result.Errors.Select(e => e.Description) });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error resetting password for {Email}", model.Email);
+                return StatusCode(500, new { Message = "An error occurred while resetting your password." });
             }
         }
     }
