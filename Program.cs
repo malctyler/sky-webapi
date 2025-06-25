@@ -119,7 +119,8 @@ builder.Services.AddCors(options =>
                 "http://localhost:3000",
                 "https://localhost:3000",
                 "http://localhost:3001",
-                "https://localhost:3001"
+                "https://localhost:3001",
+                "http://localhost:4173" // For Vite production preview
             )
             .AllowAnyMethod()
             .AllowAnyHeader()
