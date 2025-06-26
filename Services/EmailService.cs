@@ -13,40 +13,95 @@ namespace sky_webapi.Services
     public class EmailService : IEmailService
     {
         private readonly EmailSettings _emailSettings;
+        private readonly ILogger<EmailService> _logger;
 
-        public EmailService(IOptions<EmailSettings> emailSettings)
+        public EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailService> logger)
         {
             _emailSettings = emailSettings.Value;
+            _logger = logger;
         }
 
         public async Task SendCertificateEmailAsync(byte[] pdfBytes, string toEmail, string filename = "certificate.pdf")
         {
-            var fromAddress = new MailAddress(_emailSettings.FromEmail, _emailSettings.FromName);
-            var toAddress = new MailAddress("malcolm@thetylers.co.uk", "Malcolm"); // Hardcoded for development
-            const string subject = "Plant Inspection Certificate";
-            const string body = "Please find attached your plant inspection certificate.";
-
-            using var smtp = new SmtpClient
+            try
             {
-                Host = _emailSettings.SmtpServer,
-                Port = _emailSettings.SmtpPort,
-                EnableSsl = _emailSettings.EnableSsl,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(_emailSettings.SmtpUsername, _emailSettings.SmtpPassword)
-            };
+                _logger.LogInformation("Starting certificate email send to {ToEmail}, filename: {Filename}, size: {Size} bytes", 
+                    toEmail, filename, pdfBytes.Length);
 
-            using var message = new MailMessage(fromAddress, toAddress)
+                // Validate email settings
+                ValidateEmailSettings();
+
+                var fromAddress = new MailAddress(_emailSettings.FromEmail, _emailSettings.FromName);
+                var toAddress = new MailAddress("malcolm@thetylers.co.uk", "Malcolm"); // Hardcoded for development
+                const string subject = "Plant Inspection Certificate";
+                const string body = "Please find attached your plant inspection certificate.";
+
+                _logger.LogInformation("Creating SMTP client for server {SmtpServer}:{SmtpPort}, SSL: {EnableSsl}", 
+                    _emailSettings.SmtpServer, _emailSettings.SmtpPort, _emailSettings.EnableSsl);
+
+                using var smtp = new SmtpClient
+                {
+                    Host = _emailSettings.SmtpServer,
+                    Port = _emailSettings.SmtpPort,
+                    EnableSsl = _emailSettings.EnableSsl,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(_emailSettings.SmtpUsername, _emailSettings.SmtpPassword)
+                };
+
+                using var message = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = subject,
+                    Body = body
+                };
+
+                // Attach the PDF with the provided filename
+                using var ms = new MemoryStream(pdfBytes);
+                message.Attachments.Add(new Attachment(ms, filename, "application/pdf"));
+
+                _logger.LogInformation("Sending email via SMTP...");
+                await smtp.SendMailAsync(message);
+                _logger.LogInformation("Certificate email sent successfully to {ToEmail}", toEmail);
+            }
+            catch (SmtpException ex)
             {
-                Subject = subject,
-                Body = body
-            };
+                _logger.LogError(ex, "SMTP error sending certificate email to {ToEmail}: {Message}", toEmail, ex.Message);
+                throw new InvalidOperationException($"SMTP error: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "General error sending certificate email to {ToEmail}: {Message}", toEmail, ex.Message);
+                throw new InvalidOperationException($"Email sending failed: {ex.Message}", ex);
+            }
+        }
 
-            // Attach the PDF with the provided filename
-            using var ms = new MemoryStream(pdfBytes);
-            message.Attachments.Add(new Attachment(ms, filename, "application/pdf"));
+        private void ValidateEmailSettings()
+        {
+            if (string.IsNullOrEmpty(_emailSettings.SmtpServer))
+            {
+                _logger.LogError("SMTP server not configured");
+                throw new InvalidOperationException("SMTP server not configured");
+            }
+            
+            if (string.IsNullOrEmpty(_emailSettings.FromEmail))
+            {
+                _logger.LogError("From email not configured");
+                throw new InvalidOperationException("From email not configured");
+            }
 
-            await smtp.SendMailAsync(message);
+            if (string.IsNullOrEmpty(_emailSettings.SmtpUsername))
+            {
+                _logger.LogError("SMTP username not configured");
+                throw new InvalidOperationException("SMTP username not configured");
+            }
+
+            if (string.IsNullOrEmpty(_emailSettings.SmtpPassword))
+            {
+                _logger.LogError("SMTP password not configured");
+                throw new InvalidOperationException("SMTP password not configured");
+            }
+
+            _logger.LogInformation("Email settings validation passed");
         }
 
         public async Task SendPasswordResetEmailAsync(string toEmail, string resetToken, string resetUrl)

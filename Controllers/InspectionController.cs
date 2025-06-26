@@ -12,11 +12,13 @@ namespace sky_webapi.Controllers
     {
         private readonly IInspectionService _service;
         private readonly IEmailService _emailService;
+        private readonly ILogger<InspectionController> _logger;
 
-        public InspectionController(IInspectionService service, IEmailService emailService)
+        public InspectionController(IInspectionService service, IEmailService emailService, ILogger<InspectionController> logger)
         {
             _service = service;
             _emailService = emailService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -68,24 +70,57 @@ namespace sky_webapi.Controllers
         [HttpPost("{id}/email")]
         public async Task<IActionResult> EmailCertificate(int id, IFormFile pdf)
         {
-            var inspection = await _service.GetInspectionByIdAsync(id);
-            if (inspection == null)
+            try
             {
-                return NotFound();
-            }
+                _logger.LogInformation("Attempting to send certificate email for inspection {InspectionId}", id);
 
-            if (pdf == null || pdf.Length == 0)
+                var inspection = await _service.GetInspectionByIdAsync(id);
+                if (inspection == null)
+                {
+                    _logger.LogWarning("Inspection {InspectionId} not found", id);
+                    return NotFound($"Inspection with ID {id} not found");
+                }
+
+                if (pdf == null || pdf.Length == 0)
+                {
+                    _logger.LogWarning("No PDF file received or file is empty for inspection {InspectionId}", id);
+                    return BadRequest("No PDF file received or file is empty");
+                }
+
+                // Validate PDF file type
+                if (!pdf.ContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase))
+                {
+                    _logger.LogWarning("Invalid file type {ContentType} for inspection {InspectionId}", pdf.ContentType, id);
+                    return BadRequest("Only PDF files are allowed");
+                }
+
+                // Limit file size (e.g., 10MB)
+                if (pdf.Length > 10 * 1024 * 1024)
+                {
+                    _logger.LogWarning("File size {FileSize} exceeds limit for inspection {InspectionId}", pdf.Length, id);
+                    return BadRequest("File size exceeds the maximum limit of 10MB");
+                }
+
+                using var ms = new MemoryStream();
+                await pdf.CopyToAsync(ms);
+                var pdfBytes = ms.ToArray();
+
+                _logger.LogInformation("Sending certificate email for inspection {InspectionId}, file size: {FileSize} bytes", id, pdfBytes.Length);
+
+                await _emailService.SendCertificateEmailAsync(pdfBytes, "malcolm@thetylers.co.uk", pdf.FileName);
+                
+                _logger.LogInformation("Certificate email sent successfully for inspection {InspectionId}", id);
+                return Ok(new { Message = "Certificate email sent successfully" });
+            }
+            catch (Exception ex)
             {
-                return BadRequest("No PDF file received");
+                _logger.LogError(ex, "Error sending certificate email for inspection {InspectionId}", id);
+                
+                return StatusCode(500, new { 
+                    Message = "An error occurred while sending the certificate email", 
+                    Error = ex.Message 
+                });
             }
-
-            using var ms = new MemoryStream();
-            await pdf.CopyToAsync(ms);
-            var pdfBytes = ms.ToArray();
-
-            await _emailService.SendCertificateEmailAsync(pdfBytes, "malcolm@thetylers.co.uk", pdf.FileName);
-            
-            return Ok();
         }
     }
 }
