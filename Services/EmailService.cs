@@ -46,7 +46,8 @@ namespace sky_webapi.Services
                     EnableSsl = _emailSettings.EnableSsl,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
                     UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(_emailSettings.SmtpUsername, _emailSettings.SmtpPassword)
+                    Credentials = new NetworkCredential(_emailSettings.SmtpUsername, _emailSettings.SmtpPassword),
+                    Timeout = 30000 // 30 second timeout
                 };
 
                 using var message = new MailMessage(fromAddress, toAddress)
@@ -57,7 +58,8 @@ namespace sky_webapi.Services
 
                 // Attach the PDF with the provided filename
                 using var ms = new MemoryStream(pdfBytes);
-                message.Attachments.Add(new Attachment(ms, filename, "application/pdf"));
+                var attachment = new Attachment(ms, filename, "application/pdf");
+                message.Attachments.Add(attachment);
 
                 _logger.LogInformation("Sending email via SMTP...");
                 await smtp.SendMailAsync(message);
@@ -68,6 +70,16 @@ namespace sky_webapi.Services
                 _logger.LogError(ex, "SMTP error sending certificate email to {ToEmail}: {Message}", toEmail, ex.Message);
                 throw new InvalidOperationException($"SMTP error: {ex.Message}", ex);
             }
+            catch (ArgumentException ex)
+            {
+                _logger.LogError(ex, "Argument error sending certificate email to {ToEmail}: {Message}", toEmail, ex.Message);
+                throw new InvalidOperationException($"Email configuration error: {ex.Message}", ex);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Configuration error sending certificate email to {ToEmail}: {Message}", toEmail, ex.Message);
+                throw; // Re-throw as is
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "General error sending certificate email to {ToEmail}: {Message}", toEmail, ex.Message);
@@ -77,28 +89,28 @@ namespace sky_webapi.Services
 
         private void ValidateEmailSettings()
         {
+            var errors = new List<string>();
+
             if (string.IsNullOrEmpty(_emailSettings.SmtpServer))
-            {
-                _logger.LogError("SMTP server not configured");
-                throw new InvalidOperationException("SMTP server not configured");
-            }
+                errors.Add("SMTP server not configured");
             
             if (string.IsNullOrEmpty(_emailSettings.FromEmail))
-            {
-                _logger.LogError("From email not configured");
-                throw new InvalidOperationException("From email not configured");
-            }
+                errors.Add("From email not configured");
 
             if (string.IsNullOrEmpty(_emailSettings.SmtpUsername))
-            {
-                _logger.LogError("SMTP username not configured");
-                throw new InvalidOperationException("SMTP username not configured");
-            }
+                errors.Add("SMTP username not configured");
 
             if (string.IsNullOrEmpty(_emailSettings.SmtpPassword))
+                errors.Add("SMTP password not configured");
+
+            if (_emailSettings.SmtpPort <= 0 || _emailSettings.SmtpPort > 65535)
+                errors.Add($"Invalid SMTP port: {_emailSettings.SmtpPort}");
+
+            if (errors.Any())
             {
-                _logger.LogError("SMTP password not configured");
-                throw new InvalidOperationException("SMTP password not configured");
+                var errorMessage = string.Join(", ", errors);
+                _logger.LogError("Email settings validation failed: {Errors}", errorMessage);
+                throw new InvalidOperationException($"Email settings validation failed: {errorMessage}");
             }
 
             _logger.LogInformation("Email settings validation passed");

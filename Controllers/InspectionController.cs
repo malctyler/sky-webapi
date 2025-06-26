@@ -107,10 +107,28 @@ namespace sky_webapi.Controllers
 
                 _logger.LogInformation("Sending certificate email for inspection {InspectionId}, file size: {FileSize} bytes", id, pdfBytes.Length);
 
-                await _emailService.SendCertificateEmailAsync(pdfBytes, "malcolm@thetylers.co.uk", pdf.FileName);
-                
-                _logger.LogInformation("Certificate email sent successfully for inspection {InspectionId}", id);
-                return Ok(new { Message = "Certificate email sent successfully" });
+                try
+                {
+                    await _emailService.SendCertificateEmailAsync(pdfBytes, "malcolm@thetylers.co.uk", pdf.FileName);
+                    _logger.LogInformation("Certificate email sent successfully for inspection {InspectionId}", id);
+                    return Ok(new { Message = "Certificate email sent successfully" });
+                }
+                catch (Exception emailEx)
+                {
+                    _logger.LogError(emailEx, "Failed to send email for inspection {InspectionId}, attempting fallback", id);
+                    
+                    // Development fallback - save to disk
+                    var fallbackPath = Path.Combine(Path.GetTempPath(), $"certificate_{id}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+                    await System.IO.File.WriteAllBytesAsync(fallbackPath, pdfBytes);
+                    
+                    _logger.LogWarning("Certificate saved to fallback location: {Path}", fallbackPath);
+                    
+                    return StatusCode(500, new { 
+                        Message = "Email sending failed but certificate saved locally", 
+                        Error = emailEx.Message,
+                        FallbackPath = fallbackPath
+                    });
+                }
             }
             catch (Exception ex)
             {
