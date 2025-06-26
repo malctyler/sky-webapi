@@ -80,49 +80,16 @@ namespace sky_webapi.Services
                 // 
                 // For now, let's implement a brute-force approach for common passwords
                 // and add a mechanism to store transmission hashes for new users.
-                  // Check if user has a stored transmission hash claim
-                var claims = await userManager.GetClaimsAsync(user);
+                  var claims = await userManager.GetClaimsAsync(user);
                 var storedTransmissionHash = claims.FirstOrDefault(c => c.Type == "TransmissionPasswordHash")?.Value;
-                
-                Console.WriteLine($"[DEBUG] Claims count: {claims?.Count ?? 0}");
-                Console.WriteLine($"[DEBUG] Stored transmission hash: {storedTransmissionHash?.Substring(0, Math.Min(20, storedTransmissionHash?.Length ?? 0))}...");
                 
                 if (!string.IsNullOrEmpty(storedTransmissionHash))
                 {
                     var hashMatch = string.Equals(storedTransmissionHash, receivedHash, StringComparison.Ordinal);
-                    Console.WriteLine($"[DEBUG] Direct hash comparison result: {hashMatch}");
                     return hashMatch;
                 }
 
-                // If no transmission hash is stored, we need to try common passwords
-                // This is a temporary solution - in production, you'd want to migrate all users
-                // to store transmission hashes when they next login with the old method
-                  // Try common test passwords that might be in the system
-                var testPasswords = new[] { 
-                    "Admin123!",      // Default admin password
-                    "password", 
-                    "Password123!", 
-                    "123456", 
-                    "admin", 
-                    "test" 
-                };
-                
-                foreach (var testPassword in testPasswords)
-                {
-                    var isCorrectPassword = await userManager.CheckPasswordAsync(user, testPassword);
-                    if (isCorrectPassword)
-                    {
-                        var expectedHash = HashPasswordForTransmission(testPassword, email);
-                        var isHashMatch = string.Equals(expectedHash, receivedHash, StringComparison.Ordinal);
-                        
-                        if (isHashMatch)
-                        {                            // Store the transmission hash for future use
-                            await userManager.AddClaimAsync(user, new System.Security.Claims.Claim("TransmissionPasswordHash", receivedHash ?? string.Empty));
-                            return true;
-                        }
-                    }
-                }
-
+                // User has no transmission hash stored - secure login not available
                 return false;
             }            catch
             {

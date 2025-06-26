@@ -256,9 +256,8 @@ app.Use(async (context, next) =>
     }
 });
 
-// Configure routing and endpoints
-app.UseRouting();
-app.MapControllers();
+// Configure routing and endpoints - REMOVED DUPLICATES
+// Note: UseRouting() and MapControllers() already called above
 
 // Enable serving static files and set default files
 app.UseDefaultFiles();
@@ -274,7 +273,7 @@ app.UseStaticFiles(new StaticFileOptions
 
 app.MapGet("/", () => Results.Redirect("/swagger"));
 
-app.MapControllers();
+// Note: MapControllers() already called above - removed duplicate
 
 app.Run();
 
