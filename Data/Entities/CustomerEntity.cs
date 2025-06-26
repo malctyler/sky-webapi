@@ -7,41 +7,48 @@ namespace sky_webapi.Data.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CustID { get; set; }        [Required]
-        [MaxLength(50)]
+        public int CustID { get; set; }
+
+        [Required]
+        [MaxLength(100)]
         public string CompanyName { get; set; } = string.Empty;
 
-        [MaxLength(50)]
+        [MaxLength(20)]
         public string? ContactTitle { get; set; }
 
+        [Required]
         [MaxLength(50)]
-        public string? ContactFirstNames { get; set; }
+        public string ContactFirstNames { get; set; } = string.Empty;
 
+        [Required]
         [MaxLength(50)]
-        public string? ContactSurname { get; set; }
+        public string ContactSurname { get; set; } = string.Empty;
 
-        [MaxLength(50)]
-        public string? Line1 { get; set; }
+        [Required]
+        [MaxLength(100)]
+        public string Line1 { get; set; } = string.Empty;
 
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string? Line2 { get; set; }
 
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string? Line3 { get; set; }
 
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string? Line4 { get; set; }
 
-        [MaxLength(50)]
-        public string? Postcode { get; set; }
+        [Required]
+        [MaxLength(10)]  // UK postcodes are max 8 chars but allowing some buffer
+        public string Postcode { get; set; } = string.Empty;
 
-        [MaxLength(50)]
-        public string? Telephone { get; set; }
+        [Required]
+        [MaxLength(20)]  // UK phone numbers with formatting
+        public string Telephone { get; set; } = string.Empty;
 
-        [MaxLength(50)]
+        [MaxLength(20)]  // UK fax numbers with formatting
         public string? Fax { get; set; }
 
-        [MaxLength(50)]
+        [MaxLength(254)]  // RFC compliant email length
         public string? Email { get; set; }
 
         public virtual ICollection<NoteEntity>? Notes { get; set; }
