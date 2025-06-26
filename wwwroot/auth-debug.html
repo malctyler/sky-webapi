@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .result { background: #f4f4f4; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .error { background: #ffe6e6; border: 1px solid #ff9999; }
+        .success { background: #e6ffe6; border: 1px solid #99ff99; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { background: #f9f9f9; padding: 10px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <h1>Sky WebAPI Authentication Debug</h1>
+    
+    <div>
+        <button onclick="testDebugAuth()">Test Debug Auth (No Auth Required)</button>
+        <button onclick="testCurrentUser()">Test Current User (Auth Required)</button>
+        <button onclick="testSignature()">Test Signature (Staff Role Required)</button>
+        <button onclick="showCookies()">Show Browser Cookies</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script>
+        const API_BASE = 'https://sky-webapi-hna3fdbegqcqhuf9.uksouth-01.azurewebsites.net';
+        
+        function addResult(title, content, isError = false) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `result ${isError ? 'error' : 'success'}`;
+            div.innerHTML = `<h3>${title}</h3><pre>${JSON.stringify(content, null, 2)}</pre>`;
+            results.appendChild(div);
+        }
+
+        async function testDebugAuth() {
+            try {
+                const response = await fetch(`${API_BASE}/api/Signature/debug-auth`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                addResult('Debug Auth (No Auth Required)', {
+                    status: response.status,
+                    data: data
+                }, response.status !== 200);
+            } catch (error) {
+                addResult('Debug Auth Error', error.message, true);
+            }
+        }
+
+        async function testCurrentUser() {
+            try {
+                const response = await fetch(`${API_BASE}/api/Auth/current`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                addResult('Current User (Auth Required)', {
+                    status: response.status,
+                    data: data
+                }, response.status !== 200);
+            } catch (error) {
+                addResult('Current User Error', error.message, true);
+            }
+        }
+
+        async function testSignature() {
+            try {
+                const response = await fetch(`${API_BASE}/api/Signature/aidan_lee`, {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    addResult('Signature Test (Staff Role Required)', {
+                        status: response.status,
+                        message: 'Signature loaded successfully',
+                        contentType: response.headers.get('content-type')
+                    });
+                } else {
+                    const text = await response.text();
+                    addResult('Signature Test Failed', {
+                        status: response.status,
+                        statusText: response.statusText,
+                        response: text
+                    }, true);
+                }
+            } catch (error) {
+                addResult('Signature Test Error', error.message, true);
+            }
+        }
+
+        function showCookies() {
+            addResult('Browser Cookies', {
+                allCookies: document.cookie,
+                parsedCookies: document.cookie.split(';').reduce((acc, cookie) => {
+                    const [name, value] = cookie.trim().split('=');
+                    if (name) acc[name] = value;
+                    return acc;
+                }, {})
+            });
+        }
+
+        // Auto-run debug test on page load
+        window.onload = () => {
+            testDebugAuth();
+            showCookies();
+        };
+    </script>
+</body>
+</html>
