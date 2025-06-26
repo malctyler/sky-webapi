@@ -309,6 +309,20 @@ namespace sky_webapi.Controllers
         {
             try
             {
+                // Check model validation first
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState
+                        .Where(x => x.Value?.Errors.Count > 0)
+                        .Select(x => new { Field = x.Key, Errors = x.Value?.Errors.Select(e => e.ErrorMessage).ToArray() ?? new string[0] })
+                        .ToArray();
+                    
+                    _logger.LogWarning("Secure login validation failed for {Email}: {Errors}", 
+                        model.Email ?? "null", string.Join("; ", errors.SelectMany(e => e.Errors)));
+                    
+                    return BadRequest(new { Message = "Validation failed", Errors = errors });
+                }
+
                 _logger.LogInformation("Secure login attempt for email: {Email}", model.Email);
                 
                 // Handle preflight request

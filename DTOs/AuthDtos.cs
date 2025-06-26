@@ -23,8 +23,8 @@ namespace sky_webapi.DTOs
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Password hash is required")]
-        [StringLength(128, MinimumLength = 64, ErrorMessage = "Password hash must be between 64 and 128 characters")]
-        [RegularExpression(@"^[A-Fa-f0-9]+$", ErrorMessage = "Password hash must be a valid hexadecimal string")]
+        [StringLength(128, MinimumLength = 16, ErrorMessage = "Password hash must be between 16 and 128 characters")]
+        [RegularExpression(@"^[A-Za-z0-9+/=]+$", ErrorMessage = "Password hash must be a valid Base64 string")]
         public string PasswordHash { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Nonce is required")]
