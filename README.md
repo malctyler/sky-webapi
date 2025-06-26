@@ -1,1 +1,1 @@
-# Secure password enabled
+# switch to app config
