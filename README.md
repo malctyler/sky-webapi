@@ -1,1 +1,1 @@
-# Basic auth working in frontend and backend
+# Secure password enabled
