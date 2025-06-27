@@ -6,7 +6,6 @@ namespace sky_webapi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Staff,Admin")]  // Allow both Staff and Admin roles
     public class SignatureController : ControllerBase
     {
         private readonly IWebHostEnvironment _environment;
@@ -18,7 +17,15 @@ namespace sky_webapi.Controllers
             _logger = logger;
         }
 
+        [HttpGet("test")]
+        [AllowAnonymous]
+        public IActionResult Test()
+        {
+            return Ok(new { message = "SignatureController is working", timestamp = DateTime.UtcNow });
+        }
+
         [HttpGet("{inspectorName}")]
+        [Authorize(Roles = "Staff,Admin")]
         public IActionResult GetSignature(string inspectorName)
         {
             try
