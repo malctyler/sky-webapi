@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace sky_webapi.Controllers
 {
-    [Authorize(Roles = "Staff")]  // Only staff members can access inspector endpoints
     [ApiController]
     [Route("api/[controller]")]
     public class InspectionController : ControllerBase
@@ -24,6 +23,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Staff")]
         public async Task<ActionResult<IEnumerable<InspectionReadDto>>> GetAllInspections()
         {
             var inspections = await _service.GetAllInspectionsAsync();
@@ -31,6 +31,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Staff")]
         public async Task<ActionResult<InspectionReadDto>> GetInspection(int id)
         {
             var inspection = await _service.GetInspectionByIdAsync(id);
@@ -85,6 +86,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Staff")]
         public async Task<ActionResult<InspectionReadDto>> CreateInspection(CreateUpdateInspectionDto createDto)
         {
             var createdInspection = await _service.CreateInspectionAsync(createDto);
@@ -92,6 +94,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Staff")]
         public async Task<ActionResult<InspectionReadDto>> UpdateInspection(int id, CreateUpdateInspectionDto updateDto)
         {
             var updatedInspection = await _service.UpdateInspectionAsync(id, updateDto);
@@ -99,6 +102,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Staff")]
         public async Task<IActionResult> DeleteInspection(int id)
         {
             await _service.DeleteInspectionAsync(id);
@@ -106,6 +110,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpPost("{id}/email")]
+        [Authorize(Roles = "Staff")]
         public async Task<IActionResult> EmailCertificate(int id, IFormFile pdf)
         {
             try
