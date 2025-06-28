@@ -12,12 +12,14 @@ namespace sky_webapi.Controllers
     {
         private readonly IInspectionService _service;
         private readonly IEmailService _emailService;
+        private readonly IPlantHoldingService _plantHoldingService;
         private readonly ILogger<InspectionController> _logger;
 
-        public InspectionController(IInspectionService service, IEmailService emailService, ILogger<InspectionController> logger)
+        public InspectionController(IInspectionService service, IEmailService emailService, IPlantHoldingService plantHoldingService, ILogger<InspectionController> logger)
         {
             _service = service;
             _emailService = emailService;
+            _plantHoldingService = plantHoldingService;
             _logger = logger;
         }
 
@@ -40,8 +42,32 @@ namespace sky_webapi.Controllers
         }
 
         [HttpGet("plantholding/{holdingId}")]
+        [Authorize(Roles = "Staff,Customer")] // Allow both Staff and Customers
         public async Task<ActionResult<IEnumerable<InspectionReadDto>>> GetByPlantHolding(int holdingId)
         {
+            // If user is a customer, verify they own this plant holding
+            if (User.IsInRole("Customer") && !User.IsInRole("Staff"))
+            {
+                var customerIdClaim = User.FindFirst("CustomerId")?.Value;
+                if (customerIdClaim == null || !int.TryParse(customerIdClaim, out int customerId))
+                {
+                    return Forbid("Customer ID not found in token");
+                }
+
+                // Get the plant holding to verify ownership
+                var plantHolding = await _plantHoldingService.GetPlantHoldingByIdAsync(holdingId);
+                if (plantHolding == null)
+                {
+                    return NotFound("Plant holding not found");
+                }
+
+                // Verify the customer owns this plant holding
+                if (plantHolding.CustID != customerId)
+                {
+                    return Forbid("Access denied: You can only view inspections for your own plant holdings");
+                }
+            }
+
             var inspections = await _service.GetInspectionsByPlantHoldingAsync(holdingId);
             return Ok(inspections);
         }
