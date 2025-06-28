@@ -37,8 +37,9 @@ namespace sky_webapi.Controllers
                 _logger.LogInformation($"User roles: {string.Join(", ", User.Claims.Where(c => c.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").Select(c => c.Value))}");
                 _logger.LogInformation($"All user claims: {string.Join(", ", User.Claims.Select(c => $"{c.Type}={c.Value}"))}");
                 
-                var wwwrootPath = _environment.WebRootPath ?? _environment.ContentRootPath;
-                var signaturePath = Path.Combine(wwwrootPath, "SecureFiles", "Signatures", $"{inspectorName.ToLower().Replace(" ", "_")}.jpg");
+                // Use ContentRootPath instead of WebRootPath since SecureFiles is at the project root, not in wwwroot
+                var contentRootPath = _environment.ContentRootPath;
+                var signaturePath = Path.Combine(contentRootPath, "SecureFiles", "Signatures", $"{inspectorName.ToLower().Replace(" ", "_")}.jpg");
                 
                 _logger.LogInformation($"Attempting to find signature at path: {signaturePath}");
                 _logger.LogInformation($"WebRootPath: {_environment.WebRootPath}");
