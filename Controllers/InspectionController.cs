@@ -45,12 +45,17 @@ namespace sky_webapi.Controllers
         [Authorize(Roles = "Staff,Customer")] // Allow both Staff and Customers
         public async Task<ActionResult<IEnumerable<InspectionReadDto>>> GetByPlantHolding(int holdingId)
         {
+            _logger.LogInformation("GetByPlantHolding called for holdingId: {HoldingId} by user: {User}", holdingId, User.Identity?.Name);
+            
             // If user is a customer, verify they own this plant holding
             if (User.IsInRole("Customer") && !User.IsInRole("Staff"))
             {
                 var customerIdClaim = User.FindFirst("CustomerId")?.Value;
+                _logger.LogInformation("Customer access attempt - CustomerIdClaim: {CustomerIdClaim}", customerIdClaim);
+                
                 if (customerIdClaim == null || !int.TryParse(customerIdClaim, out int customerId))
                 {
+                    _logger.LogWarning("Customer ID not found in token for user: {User}", User.Identity?.Name);
                     return Forbid("Customer ID not found in token");
                 }
 
@@ -58,17 +63,24 @@ namespace sky_webapi.Controllers
                 var plantHolding = await _plantHoldingService.GetPlantHoldingByIdAsync(holdingId);
                 if (plantHolding == null)
                 {
+                    _logger.LogWarning("Plant holding {HoldingId} not found", holdingId);
                     return NotFound("Plant holding not found");
                 }
 
+                _logger.LogInformation("Ownership check - PlantHolding.CustID: {PlantCustId}, Customer.Id: {CustomerId}", plantHolding.CustID, customerId);
+                
                 // Verify the customer owns this plant holding
                 if (plantHolding.CustID != customerId)
                 {
+                    _logger.LogWarning("Access denied - Customer {CustomerId} attempted to access plant holding {HoldingId} owned by {PlantCustId}", customerId, holdingId, plantHolding.CustID);
                     return Forbid("Access denied: You can only view inspections for your own plant holdings");
                 }
+                
+                _logger.LogInformation("Access granted - Customer {CustomerId} owns plant holding {HoldingId}", customerId, holdingId);
             }
 
             var inspections = await _service.GetInspectionsByPlantHoldingAsync(holdingId);
+            _logger.LogInformation("Returning {Count} inspections for plant holding {HoldingId}", inspections.Count(), holdingId);
             return Ok(inspections);
         }
 
