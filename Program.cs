@@ -205,16 +205,18 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// In development, enable Swagger
+// Enable Swagger (both development and production for API testing)
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sky API V1");
+    c.DocExpansion(DocExpansion.None);
+});
+
+// Additional development-only features
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sky API V1");
-        c.DocExpansion(DocExpansion.None);
-    });
 }
 
 // Order is important here
