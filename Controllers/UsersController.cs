@@ -86,8 +86,6 @@ namespace sky_webapi.Controllers
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim("IsCustomer", model.IsCustomer.ToString().ToLower()));
-
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, new UserDto
             {
                 Id = user.Id,

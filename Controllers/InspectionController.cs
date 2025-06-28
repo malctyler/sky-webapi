@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using sky_webapi.DTOs;
 using sky_webapi.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using sky_webapi.Data.Entities;
 
 namespace sky_webapi.Controllers
 {
@@ -12,13 +14,20 @@ namespace sky_webapi.Controllers
         private readonly IInspectionService _service;
         private readonly IEmailService _emailService;
         private readonly IPlantHoldingService _plantHoldingService;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<InspectionController> _logger;
 
-        public InspectionController(IInspectionService service, IEmailService emailService, IPlantHoldingService plantHoldingService, ILogger<InspectionController> logger)
+        public InspectionController(
+            IInspectionService service, 
+            IEmailService emailService, 
+            IPlantHoldingService plantHoldingService, 
+            UserManager<ApplicationUser> userManager,
+            ILogger<InspectionController> logger)
         {
             _service = service;
             _emailService = emailService;
             _plantHoldingService = plantHoldingService;
+            _userManager = userManager;
             _logger = logger;
         }
 
@@ -51,14 +60,22 @@ namespace sky_webapi.Controllers
             // If user is a customer, verify they own this plant holding
             if (User.IsInRole("Customer") && !User.IsInRole("Staff"))
             {
-                var customerIdClaim = User.FindFirst("CustomerId")?.Value;
-                _logger.LogInformation("Customer access attempt - CustomerIdClaim: {CustomerIdClaim}", customerIdClaim);
-                
-                if (customerIdClaim == null || !int.TryParse(customerIdClaim, out int customerId))
+                // Get the current user from UserManager
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser == null)
                 {
-                    _logger.LogWarning("Customer ID not found in token for user: {User}", User.Identity?.Name);
-                    return Forbid("Customer ID not found in token");
+                    _logger.LogWarning("Could not find user for: {User}", User.Identity?.Name);
+                    return Unauthorized("User not found");
                 }
+
+                if (!currentUser.IsCustomer || !currentUser.CustomerId.HasValue)
+                {
+                    _logger.LogWarning("Customer access denied - User {UserId} is not a customer or has no CustomerId", currentUser.Id);
+                    return Forbid("Customer access denied");
+                }
+
+                var customerId = currentUser.CustomerId.Value;
+                _logger.LogInformation("Customer access attempt - CustomerId: {CustomerId}", customerId);
 
                 // Get the plant holding to verify ownership
                 var plantHolding = await _plantHoldingService.GetPlantHoldingByIdAsync(holdingId);

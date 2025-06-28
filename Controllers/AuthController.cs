@@ -84,17 +84,6 @@ namespace sky_webapi.Controllers
 
                 await _userManager.AddToRoleAsync(user, roleName);
 
-                // Add claims
-                var claims = new List<Claim>
-                {
-                    new Claim("IsCustomer", model.IsCustomer.ToString())
-                };
-
-                if (model.CustomerId.HasValue)
-                {
-                    claims.Add(new Claim("CustomerId", model.CustomerId.Value.ToString()));
-                }                await _userManager.AddClaimsAsync(user, claims);
-
                 // Store transmission hash for secure login compatibility
                 var transmissionHash = _passwordSecurity.HashPasswordForTransmission(model.Password, user.Email!);
                 await _userManager.AddClaimAsync(user, new Claim("TransmissionPasswordHash", transmissionHash));
@@ -176,13 +165,7 @@ namespace sky_webapi.Controllers
                     new Claim(JwtRegisteredClaimNames.Jti, tokenId), // Add token ID for revocation
                     new Claim(JwtRegisteredClaimNames.Sub, user.Id),
                     new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
-                    // IsCustomer will come from userClaims to avoid duplication
                 };
-                
-                if (user.CustomerId.HasValue)
-                {
-                    claims.Add(new Claim("CustomerId", user.CustomerId.Value.ToString()));
-                }
 
                 foreach (var role in userRoles)
                 {
@@ -393,11 +376,6 @@ namespace sky_webapi.Controllers
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
             };
-            
-            if (user.CustomerId.HasValue)
-            {
-                claims.Add(new Claim("CustomerId", user.CustomerId.Value.ToString()));
-            }
 
             foreach (var role in userRoles)
             {
@@ -636,14 +614,8 @@ namespace sky_webapi.Controllers
                     {
                         new Claim(ClaimTypes.NameIdentifier, user.Id),
                         new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
-                        new Claim("EmailConfirmed", user.EmailConfirmed.ToString()),
-                        new Claim("IsCustomer", user.IsCustomer.ToString())
+                        new Claim("EmailConfirmed", user.EmailConfirmed.ToString())
                     };
-
-                    if (user.CustomerId.HasValue)
-                    {
-                        claims.Add(new Claim("CustomerId", user.CustomerId.Value.ToString()));
-                    }
 
                     // Add roles as claims
                     foreach (var role in userRoles)
