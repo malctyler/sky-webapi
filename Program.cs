@@ -236,7 +236,9 @@ app.Use(async (context, next) =>
         await next();
 
         // If we get here, no error occurred
-        if (context.Response.StatusCode == 404 && !context.Response.HasStarted)
+        // Don't override 404s for Swagger routes
+        if (context.Response.StatusCode == 404 && !context.Response.HasStarted && 
+            !context.Request.Path.StartsWithSegments("/swagger"))
         {
             context.Response.ContentType = "application/json";
             await context.Response.WriteAsJsonAsync(new { Message = "Endpoint not found" });
