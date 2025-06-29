@@ -38,7 +38,8 @@ namespace sky_webapi.Data
             // Seed Identity Roles
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole { Id = "1", Name = "Administrator", NormalizedName = "ADMINISTRATOR", ConcurrencyStamp = "00000000-0000-0000-0000-000000000001" },
-                new IdentityRole { Id = "2", Name = "User", NormalizedName = "USER", ConcurrencyStamp = "00000000-0000-0000-0000-000000000002" }
+                new IdentityRole { Id = "2", Name = "User", NormalizedName = "USER", ConcurrencyStamp = "00000000-0000-0000-0000-000000000002" },
+                new IdentityRole { Id = "3", Name = "Staff", NormalizedName = "STAFF", ConcurrencyStamp = "00000000-0000-0000-0000-000000000003" }
             );
 
             // Create admin user with hashed password (Password123!)
@@ -58,9 +59,10 @@ namespace sky_webapi.Data
 
             modelBuilder.Entity<ApplicationUser>().HasData(adminUser);
 
-            // Assign Admin Role
+            // Assign Admin and Staff Roles
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(
-                new IdentityUserRole<string> { UserId = "1", RoleId = "1" }
+                new IdentityUserRole<string> { UserId = "1", RoleId = "1" },
+                new IdentityUserRole<string> { UserId = "1", RoleId = "3" }
             );
 
             // Configure entity relationships
