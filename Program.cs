@@ -19,6 +19,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
 
+// Add startup logging for email configuration
+var emailSection = builder.Configuration.GetSection("EmailSettings");
+Console.WriteLine("=== EMAIL CONFIGURATION CHECK AT STARTUP ===");
+Console.WriteLine($"SmtpServer: {(string.IsNullOrEmpty(emailSection["SmtpServer"]) ? "NOT SET" : emailSection["SmtpServer"])}");
+Console.WriteLine($"SmtpPort: {emailSection["SmtpPort"] ?? "NOT SET"}");
+Console.WriteLine($"FromEmail: {(string.IsNullOrEmpty(emailSection["FromEmail"]) ? "NOT SET" : emailSection["FromEmail"])}");
+Console.WriteLine($"FromName: {(string.IsNullOrEmpty(emailSection["FromName"]) ? "NOT SET" : emailSection["FromName"])}");
+Console.WriteLine($"SmtpUsername: {(string.IsNullOrEmpty(emailSection["SmtpUsername"]) ? "NOT SET" : emailSection["SmtpUsername"])}");
+Console.WriteLine($"SmtpPassword: {(string.IsNullOrEmpty(emailSection["SmtpPassword"]) ? "NOT SET" : "***SET***")}");
+Console.WriteLine($"EnableSsl: {emailSection["EnableSsl"] ?? "NOT SET"}");
+Console.WriteLine("=== END EMAIL CONFIGURATION CHECK ===");
+
 // Add Identity services
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
     options.Password.RequireDigit = true;

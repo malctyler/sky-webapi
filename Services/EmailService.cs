@@ -89,6 +89,16 @@ namespace sky_webapi.Services
 
         private void ValidateEmailSettings()
         {
+            _logger.LogInformation("=== Email Settings Validation ===");
+            _logger.LogInformation("SmtpServer: {SmtpServer}", string.IsNullOrEmpty(_emailSettings.SmtpServer) ? "NOT SET" : _emailSettings.SmtpServer);
+            _logger.LogInformation("SmtpPort: {SmtpPort}", _emailSettings.SmtpPort);
+            _logger.LogInformation("FromEmail: {FromEmail}", string.IsNullOrEmpty(_emailSettings.FromEmail) ? "NOT SET" : _emailSettings.FromEmail);
+            _logger.LogInformation("FromName: {FromName}", string.IsNullOrEmpty(_emailSettings.FromName) ? "NOT SET" : _emailSettings.FromName);
+            _logger.LogInformation("SmtpUsername: {SmtpUsername}", string.IsNullOrEmpty(_emailSettings.SmtpUsername) ? "NOT SET" : _emailSettings.SmtpUsername);
+            _logger.LogInformation("SmtpPassword: {SmtpPassword}", string.IsNullOrEmpty(_emailSettings.SmtpPassword) ? "NOT SET" : "***SET***");
+            _logger.LogInformation("EnableSsl: {EnableSsl}", _emailSettings.EnableSsl);
+            _logger.LogInformation("=== End Email Settings ===");
+
             var errors = new List<string>();
 
             if (string.IsNullOrEmpty(_emailSettings.SmtpServer))
