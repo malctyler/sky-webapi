@@ -870,9 +870,27 @@ namespace sky_webapi.Controllers
                 _logger.LogInformation("Generated reset URL: {ResetUrl}", resetUrl);
 
                 // Send email
-                await _emailService.SendPasswordResetEmailAsync(user.Email!, resetToken, resetUrl);
-
-                _logger.LogInformation("Password reset email sent to: {Email}", model.Email);
+                try
+                {
+                    await _emailService.SendPasswordResetEmailAsync(user.Email!, resetToken, resetUrl);
+                    _logger.LogInformation("Password reset email sent to: {Email}", model.Email);
+                }
+                catch (InvalidOperationException ex) when (ex.Message.Contains("Email settings validation failed"))
+                {
+                    _logger.LogError(ex, "Email service not properly configured for password reset");
+                    return StatusCode(503, new { 
+                        Message = "Email service is currently unavailable. Please contact an administrator to reset your password.",
+                        Error = "EMAIL_SERVICE_UNAVAILABLE"
+                    });
+                }
+                catch (InvalidOperationException ex) when (ex.Message.Contains("SMTP error"))
+                {
+                    _logger.LogError(ex, "SMTP error during password reset email");
+                    return StatusCode(503, new { 
+                        Message = "Email service is experiencing technical difficulties. Please try again later or contact an administrator.",
+                        Error = "EMAIL_DELIVERY_FAILED"
+                    });
+                }
                 
                 return Ok(new { Message = "If the email exists in our system, a password reset link has been sent." });
             }

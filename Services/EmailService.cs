@@ -118,11 +118,18 @@ namespace sky_webapi.Services
 
         public async Task SendPasswordResetEmailAsync(string toEmail, string resetToken, string resetUrl)
         {
-            var fromAddress = new MailAddress(_emailSettings.FromEmail, _emailSettings.FromName);
-            var toAddress = new MailAddress(toEmail);
-            const string subject = "Password Reset Request - SKY Technical Services";
-            
-            var body = $@"
+            try
+            {
+                _logger.LogInformation("Starting password reset email send to {ToEmail}", toEmail);
+
+                // Validate email settings
+                ValidateEmailSettings();
+
+                var fromAddress = new MailAddress(_emailSettings.FromEmail, _emailSettings.FromName);
+                var toAddress = new MailAddress(toEmail);
+                const string subject = "Password Reset Request - SKY Technical Services";
+                
+                var body = $@"
 <html>
 <body>
     <h2>Password Reset Request</h2>
@@ -138,24 +145,51 @@ namespace sky_webapi.Services
 </body>
 </html>";
 
-            using var smtp = new SmtpClient
-            {
-                Host = _emailSettings.SmtpServer,
-                Port = _emailSettings.SmtpPort,
-                EnableSsl = _emailSettings.EnableSsl,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(_emailSettings.SmtpUsername, _emailSettings.SmtpPassword)
-            };
+                _logger.LogInformation("Creating SMTP client for password reset email to server {SmtpServer}:{SmtpPort}, SSL: {EnableSsl}", 
+                    _emailSettings.SmtpServer, _emailSettings.SmtpPort, _emailSettings.EnableSsl);
 
-            using var message = new MailMessage(fromAddress, toAddress)
-            {
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = true
-            };
+                using var smtp = new SmtpClient
+                {
+                    Host = _emailSettings.SmtpServer,
+                    Port = _emailSettings.SmtpPort,
+                    EnableSsl = _emailSettings.EnableSsl,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(_emailSettings.SmtpUsername, _emailSettings.SmtpPassword),
+                    Timeout = 30000 // 30 second timeout
+                };
 
-            await smtp.SendMailAsync(message);
+                using var message = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = true
+                };
+
+                _logger.LogInformation("Sending password reset email via SMTP...");
+                await smtp.SendMailAsync(message);
+                _logger.LogInformation("Password reset email sent successfully to {ToEmail}", toEmail);
+            }
+            catch (SmtpException ex)
+            {
+                _logger.LogError(ex, "SMTP error sending password reset email to {ToEmail}: {Message}", toEmail, ex.Message);
+                throw new InvalidOperationException($"SMTP error: {ex.Message}", ex);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogError(ex, "Argument error sending password reset email to {ToEmail}: {Message}", toEmail, ex.Message);
+                throw new InvalidOperationException($"Email configuration error: {ex.Message}", ex);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Configuration error sending password reset email to {ToEmail}: {Message}", toEmail, ex.Message);
+                throw; // Re-throw as is
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "General error sending password reset email to {ToEmail}: {Message}", toEmail, ex.Message);
+                throw new InvalidOperationException($"Email sending failed: {ex.Message}", ex);
+            }
         }
     }
 }
