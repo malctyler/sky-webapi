@@ -8,11 +8,120 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace sky_webapi.Migrations
 {
     /// <inheritdoc />
-    public partial class SeedAllDataWithIdentity : Migration
+    public partial class SeedAllData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // Seed Identity Roles
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "Name", "NormalizedName", "ConcurrencyStamp" },
+                values: new object[,]
+                {
+                    { "1", "Administrator", "ADMINISTRATOR", "00000000-0000-0000-0000-000000000001" },
+                    { "2", "User", "USER", "00000000-0000-0000-0000-000000000002" }
+                });
+
+            // Seed Admin User
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "UserName", "NormalizedUserName", "Email", "NormalizedEmail", "EmailConfirmed", "PasswordHash", "SecurityStamp", "ConcurrencyStamp", "PhoneNumber", "PhoneNumberConfirmed", "TwoFactorEnabled", "LockoutEnd", "LockoutEnabled", "AccessFailedCount" },
+                values: new object[] { "1", "admin@skyapp.com", "ADMIN@SKYAPP.COM", "admin@skyapp.com", "ADMIN@SKYAPP.COM", true, "AQAAAAIAAYagAAAAEDbB7Z6CYSHpWgN2cTnAA4Wkr2Z9KmFN5mCyDe6bBD9zEGjRhJ8gKnLmN2MqPtVwRy==", "00000000-0000-0000-0000-000000000001", "00000000-0000-0000-0000-000000000001", null, false, false, null, true, 0 });
+
+            // Assign Admin Role
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "UserId", "RoleId" },
+                values: new object[] { "1", "1" });
+
+            // Seed Plant Categories
+            migrationBuilder.InsertData(
+                table: "PlantCategories",
+                columns: new[] { "CategoryID", "CategoryDescription" },
+                values: new object[,]
+                {
+                    { 1, "Heavy Plant" },
+                    { 2, "Small Plant" },
+                    { 3, "Access Equipment" },
+                    { 4, "Power Tools" },
+                    { 5, "Safety Equipment" }
+                });
+
+            // Seed Status
+            migrationBuilder.InsertData(
+                table: "Status",
+                columns: new[] { "StatusID", "StatusDescription" },
+                values: new object[,]
+                {
+                    { 1, "Available" },
+                    { 2, "In Use" },
+                    { 3, "Under Maintenance" },
+                    { 4, "Out of Service" },
+                    { 5, "Reserved" }
+                });
+
+            // Seed Inspectors
+            migrationBuilder.InsertData(
+                table: "Inspectors",
+                columns: new[] { "InspectorID", "InspectorsName" },
+                values: new object[,]
+                {
+                    { 1, "Allen Lee" },
+                    { 2, "Aidan Lee" }
+                });
+
+            // Seed All Plant
+            migrationBuilder.InsertData(
+                table: "AllPlant",
+                columns: new[] { "PlantNameID", "NormalPrice", "PlantCategory", "PlantDescription" },
+                values: new object[,]
+                {
+                    { 1, "150.00", 1, "Excavator 2T" },
+                    { 2, "95.00", 3, "Scissor Lift" },
+                    { 3, "45.00", 2, "Concrete Mixer" },
+                    { 4, "25.00", 4, "Power Drill" },
+                    { 5, "15.00", 5, "Safety Harness" }
+                });
+
+            // Seed Summaries
+            migrationBuilder.InsertData(
+                table: "Summaries",
+                columns: new[] { "Id", "Description", "Title" },
+                values: new object[,]
+                {
+                    { 1, "Freezing", null },
+                    { 2, "Bracing", null },
+                    { 3, "Chilly", null },
+                    { 4, "Cool", null },
+                    { 5, "Mild", null },
+                    { 6, "Warm", null },
+                    { 7, "Balmy", null },
+                    { 8, "Hot", null },
+                    { 9, "Sweltering", null },
+                    { 10, "Scorching", null }
+                });
+
+            migrationBuilder.DeleteData(
+                table: "Inspections",
+                keyColumn: "UniqueRef",
+                keyValue: 2);
+
+            migrationBuilder.DeleteData(
+                table: "Inspections",
+                keyColumn: "UniqueRef",
+                keyValue: 3);
+
+            migrationBuilder.DeleteData(
+                table: "Inspections",
+                keyColumn: "UniqueRef",
+                keyValue: 4);
+
+            migrationBuilder.DeleteData(
+                table: "Inspections",
+                keyColumn: "UniqueRef",
+                keyValue: 5);
+
             migrationBuilder.DeleteData(
                 table: "Inspections",
                 keyColumn: "UniqueRef",
@@ -489,6 +598,116 @@ namespace sky_webapi.Migrations
                 keyValue: 100);
 
             migrationBuilder.DeleteData(
+                table: "Summaries",
+                keyColumn: "Id",
+                keyValue: 1);
+
+            migrationBuilder.DeleteData(
+                table: "Summaries",
+                keyColumn: "Id",
+                keyValue: 2);
+
+            migrationBuilder.DeleteData(
+                table: "Summaries",
+                keyColumn: "Id",
+                keyValue: 3);
+
+            migrationBuilder.DeleteData(
+                table: "Summaries",
+                keyColumn: "Id",
+                keyValue: 4);
+
+            migrationBuilder.DeleteData(
+                table: "Summaries",
+                keyColumn: "Id",
+                keyValue: 5);
+
+            migrationBuilder.DeleteData(
+                table: "Summaries",
+                keyColumn: "Id",
+                keyValue: 6);
+
+            migrationBuilder.DeleteData(
+                table: "Summaries",
+                keyColumn: "Id",
+                keyValue: 7);
+
+            migrationBuilder.DeleteData(
+                table: "Summaries",
+                keyColumn: "Id",
+                keyValue: 8);
+
+            migrationBuilder.DeleteData(
+                table: "Summaries",
+                keyColumn: "Id",
+                keyValue: 9);
+
+            migrationBuilder.DeleteData(
+                table: "Summaries",
+                keyColumn: "Id",
+                keyValue: 10);
+
+            migrationBuilder.DeleteData(
+                table: "Inspectors",
+                keyColumn: "InspectorID",
+                keyValue: 1);
+
+            migrationBuilder.DeleteData(
+                table: "Inspectors",
+                keyColumn: "InspectorID",
+                keyValue: 2);
+
+            migrationBuilder.DeleteData(
+                table: "PlantHoldings",
+                keyColumn: "HoldingID",
+                keyValue: 1);
+
+            migrationBuilder.DeleteData(
+                table: "PlantHoldings",
+                keyColumn: "HoldingID",
+                keyValue: 2);
+
+            migrationBuilder.DeleteData(
+                table: "PlantHoldings",
+                keyColumn: "HoldingID",
+                keyValue: 3);
+
+            migrationBuilder.DeleteData(
+                table: "PlantHoldings",
+                keyColumn: "HoldingID",
+                keyValue: 4);
+
+            migrationBuilder.DeleteData(
+                table: "PlantHoldings",
+                keyColumn: "HoldingID",
+                keyValue: 5);
+
+            migrationBuilder.DeleteData(
+                table: "PlantHoldings",
+                keyColumn: "HoldingID",
+                keyValue: 6);
+
+            migrationBuilder.DeleteData(
+                table: "PlantHoldings",
+                keyColumn: "HoldingID",
+                keyValue: 7);
+
+            migrationBuilder.DeleteData(
+                table: "PlantHoldings",
+                keyColumn: "HoldingID",
+                keyValue: 8);
+
+            migrationBuilder.DeleteData(
+                table: "PlantHoldings",
+                keyColumn: "HoldingID",
+                keyValue: 9);
+
+            migrationBuilder.DeleteData(
+                table: "PlantHoldings",
+                keyColumn: "HoldingID",
+                keyValue: 10);
+
+            migrationBuilder.DeleteData(
                 table: "PlantHoldings",
                 keyColumn: "HoldingID",
                 keyValue: 11);
@@ -939,6 +1158,81 @@ namespace sky_webapi.Migrations
                 keyValue: 100);
 
             migrationBuilder.DeleteData(
+                table: "AllPlant",
+                keyColumn: "PlantNameID",
+                keyValue: 1);
+
+            migrationBuilder.DeleteData(
+                table: "AllPlant",
+                keyColumn: "PlantNameID",
+                keyValue: 2);
+
+            migrationBuilder.DeleteData(
+                table: "AllPlant",
+                keyColumn: "PlantNameID",
+                keyValue: 3);
+
+            migrationBuilder.DeleteData(
+                table: "AllPlant",
+                keyColumn: "PlantNameID",
+                keyValue: 4);
+
+            migrationBuilder.DeleteData(
+                table: "AllPlant",
+                keyColumn: "PlantNameID",
+                keyValue: 5);
+
+            migrationBuilder.DeleteData(
+                table: "Customers",
+                keyColumn: "CustID",
+                keyValue: 1);
+
+            migrationBuilder.DeleteData(
+                table: "Customers",
+                keyColumn: "CustID",
+                keyValue: 2);
+
+            migrationBuilder.DeleteData(
+                table: "Customers",
+                keyColumn: "CustID",
+                keyValue: 3);
+
+            migrationBuilder.DeleteData(
+                table: "Customers",
+                keyColumn: "CustID",
+                keyValue: 4);
+
+            migrationBuilder.DeleteData(
+                table: "Customers",
+                keyColumn: "CustID",
+                keyValue: 5);
+
+            migrationBuilder.DeleteData(
+                table: "Customers",
+                keyColumn: "CustID",
+                keyValue: 6);
+
+            migrationBuilder.DeleteData(
+                table: "Customers",
+                keyColumn: "CustID",
+                keyValue: 7);
+
+            migrationBuilder.DeleteData(
+                table: "Customers",
+                keyColumn: "CustID",
+                keyValue: 8);
+
+            migrationBuilder.DeleteData(
+                table: "Customers",
+                keyColumn: "CustID",
+                keyValue: 9);
+
+            migrationBuilder.DeleteData(
+                table: "Customers",
+                keyColumn: "CustID",
+                keyValue: 10);
+
+            migrationBuilder.DeleteData(
                 table: "Customers",
                 keyColumn: "CustID",
                 keyValue: 11);
@@ -1388,203 +1682,75 @@ namespace sky_webapi.Migrations
                 keyColumn: "CustID",
                 keyValue: 100);
 
-            migrationBuilder.CreateTable(
-                name: "IdentityUser",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_IdentityUser", x => x.Id);
-                });
+            migrationBuilder.DeleteData(
+                table: "Status",
+                keyColumn: "StatusID",
+                keyValue: 1);
 
-            migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[,]
-                {
-                    { "1", "00000000-0000-0000-0000-000000000001", "Administrator", "ADMINISTRATOR" },
-                    { "2", "00000000-0000-0000-0000-000000000002", "User", "USER" }
-                });
+            migrationBuilder.DeleteData(
+                table: "Status",
+                keyColumn: "StatusID",
+                keyValue: 2);
 
-            migrationBuilder.UpdateData(
-                table: "Customers",
-                keyColumn: "CustID",
-                keyValue: 2,
-                columns: new[] { "ContactFirstNames", "ContactSurname", "ContactTitle", "Email", "Fax", "Line1", "Telephone" },
-                values: new object[] { "Jane", "Smith", "Ms.", "jane.smith@companyb.com", "123-456-7893", "456 Oak Ave", "123-456-7892" });
+            migrationBuilder.DeleteData(
+                table: "Status",
+                keyColumn: "StatusID",
+                keyValue: 3);
 
-            migrationBuilder.UpdateData(
-                table: "Customers",
-                keyColumn: "CustID",
-                keyValue: 3,
-                columns: new[] { "ContactFirstNames", "ContactSurname", "Email", "Fax", "Line1", "Telephone" },
-                values: new object[] { "Mike", "Johnson", "mike.johnson@companyc.com", "123-456-7895", "789 Pine Rd", "123-456-7894" });
+            migrationBuilder.DeleteData(
+                table: "Status",
+                keyColumn: "StatusID",
+                keyValue: 4);
 
-            migrationBuilder.UpdateData(
-                table: "Customers",
-                keyColumn: "CustID",
-                keyValue: 4,
-                columns: new[] { "ContactFirstNames", "ContactSurname", "ContactTitle", "Email", "Fax", "Line1", "Telephone" },
-                values: new object[] { "Sarah", "Williams", "Mrs.", "sarah.williams@companyd.com", "123-456-7897", "321 Elm St", "123-456-7896" });
+            migrationBuilder.DeleteData(
+                table: "Status",
+                keyColumn: "StatusID",
+                keyValue: 5);
 
-            migrationBuilder.UpdateData(
-                table: "Customers",
-                keyColumn: "CustID",
-                keyValue: 5,
-                columns: new[] { "ContactFirstNames", "ContactSurname", "Email", "Fax", "Line1", "Telephone" },
-                values: new object[] { "David", "Brown", "david.brown@companye.com", "123-456-7899", "654 Maple Dr", "123-456-7898" });
+            migrationBuilder.DeleteData(
+                table: "PlantCategories",
+                keyColumn: "CategoryID",
+                keyValue: 1);
 
-            migrationBuilder.UpdateData(
-                table: "Customers",
-                keyColumn: "CustID",
-                keyValue: 6,
-                columns: new[] { "ContactFirstNames", "ContactSurname", "ContactTitle", "Email", "Fax", "Line1", "Telephone" },
-                values: new object[] { "Lisa", "Davis", "Ms.", "lisa.davis@companyf.com", "123-456-7801", "987 Cedar Ln", "123-456-7800" });
+            migrationBuilder.DeleteData(
+                table: "PlantCategories",
+                keyColumn: "CategoryID",
+                keyValue: 2);
 
-            migrationBuilder.UpdateData(
-                table: "Customers",
-                keyColumn: "CustID",
-                keyValue: 7,
-                columns: new[] { "ContactFirstNames", "ContactSurname", "Email", "Fax", "Line1", "Telephone" },
-                values: new object[] { "Robert", "Miller", "robert.miller@companyg.com", "123-456-7803", "147 Birch Way", "123-456-7802" });
+            migrationBuilder.DeleteData(
+                table: "PlantCategories",
+                keyColumn: "CategoryID",
+                keyValue: 3);
 
-            migrationBuilder.UpdateData(
-                table: "Customers",
-                keyColumn: "CustID",
-                keyValue: 8,
-                columns: new[] { "ContactFirstNames", "ContactSurname", "ContactTitle", "Email", "Fax", "Line1", "Telephone" },
-                values: new object[] { "Jennifer", "Wilson", "Mrs.", "jennifer.wilson@companyh.com", "123-456-7805", "258 Spruce St", "123-456-7804" });
+            migrationBuilder.DeleteData(
+                table: "PlantCategories",
+                keyColumn: "CategoryID",
+                keyValue: 4);
 
-            migrationBuilder.UpdateData(
-                table: "Customers",
-                keyColumn: "CustID",
-                keyValue: 9,
-                columns: new[] { "ContactFirstNames", "ContactSurname", "Email", "Fax", "Line1", "Telephone" },
-                values: new object[] { "Michael", "Moore", "michael.moore@companyi.com", "123-456-7807", "369 Willow Ave", "123-456-7806" });
-
-            migrationBuilder.UpdateData(
-                table: "Customers",
-                keyColumn: "CustID",
-                keyValue: 10,
-                columns: new[] { "ContactFirstNames", "ContactSurname", "ContactTitle", "Email", "Fax", "Line1", "Telephone" },
-                values: new object[] { "Amanda", "Taylor", "Ms.", "amanda.taylor@companyj.com", "123-456-7809", "741 Poplar Rd", "123-456-7808" });
-
-            migrationBuilder.InsertData(
-                table: "IdentityUser",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "1", 0, "00000000-0000-0000-0000-000000000001", "admin@skyapp.com", true, false, null, "ADMIN@SKYAPP.COM", "ADMIN@SKYAPP.COM", "AQAAAAIAAYagAAAAEDKWZmA052yBvl2Ns608EW7HFmmKQOHvhQ1Aqt4Ptkzs47fhtZnNmVRyX82yh2rHRQ==", null, false, "00000000-0000-0000-0000-000000000001", false, "admin@skyapp.com" });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUserRoles",
-                columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "1", "1" });
+            migrationBuilder.DeleteData(
+                table: "PlantCategories",
+                keyColumn: "CategoryID",
+                keyValue: 5);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "IdentityUser");
-
-            migrationBuilder.DeleteData(
-                table: "AspNetRoles",
-                keyColumn: "Id",
-                keyValue: "2");
-
-            migrationBuilder.DeleteData(
-                table: "AspNetUserRoles",
-                keyColumns: new[] { "RoleId", "UserId" },
-                keyValues: new object[] { "1", "1" });
-
-            migrationBuilder.DeleteData(
-                table: "AspNetRoles",
-                keyColumn: "Id",
-                keyValue: "1");
-
-            migrationBuilder.UpdateData(
-                table: "Customers",
-                keyColumn: "CustID",
-                keyValue: 2,
-                columns: new[] { "ContactFirstNames", "ContactSurname", "ContactTitle", "Email", "Fax", "Line1", "Telephone" },
-                values: new object[] { "John", "Doe", "Mr.", "john.doe@companya.com", "123-456-7891", "123 Main St", "123-456-7890" });
-
-            migrationBuilder.UpdateData(
-                table: "Customers",
-                keyColumn: "CustID",
-                keyValue: 3,
-                columns: new[] { "ContactFirstNames", "ContactSurname", "Email", "Fax", "Line1", "Telephone" },
-                values: new object[] { "John", "Doe", "john.doe@companya.com", "123-456-7891", "123 Main St", "123-456-7890" });
-
-            migrationBuilder.UpdateData(
-                table: "Customers",
-                keyColumn: "CustID",
-                keyValue: 4,
-                columns: new[] { "ContactFirstNames", "ContactSurname", "ContactTitle", "Email", "Fax", "Line1", "Telephone" },
-                values: new object[] { "John", "Doe", "Mr.", "john.doe@companya.com", "123-456-7891", "123 Main St", "123-456-7890" });
-
-            migrationBuilder.UpdateData(
-                table: "Customers",
-                keyColumn: "CustID",
-                keyValue: 5,
-                columns: new[] { "ContactFirstNames", "ContactSurname", "Email", "Fax", "Line1", "Telephone" },
-                values: new object[] { "John", "Doe", "john.doe@companya.com", "123-456-7891", "123 Main St", "123-456-7890" });
-
-            migrationBuilder.UpdateData(
-                table: "Customers",
-                keyColumn: "CustID",
-                keyValue: 6,
-                columns: new[] { "ContactFirstNames", "ContactSurname", "ContactTitle", "Email", "Fax", "Line1", "Telephone" },
-                values: new object[] { "John", "Doe", "Mr.", "john.doe@companya.com", "123-456-7891", "123 Main St", "123-456-7890" });
-
-            migrationBuilder.UpdateData(
-                table: "Customers",
-                keyColumn: "CustID",
-                keyValue: 7,
-                columns: new[] { "ContactFirstNames", "ContactSurname", "Email", "Fax", "Line1", "Telephone" },
-                values: new object[] { "John", "Doe", "john.doe@companya.com", "123-456-7891", "123 Main St", "123-456-7890" });
-
-            migrationBuilder.UpdateData(
-                table: "Customers",
-                keyColumn: "CustID",
-                keyValue: 8,
-                columns: new[] { "ContactFirstNames", "ContactSurname", "ContactTitle", "Email", "Fax", "Line1", "Telephone" },
-                values: new object[] { "John", "Doe", "Mr.", "john.doe@companya.com", "123-456-7891", "123 Main St", "123-456-7890" });
-
-            migrationBuilder.UpdateData(
-                table: "Customers",
-                keyColumn: "CustID",
-                keyValue: 9,
-                columns: new[] { "ContactFirstNames", "ContactSurname", "Email", "Fax", "Line1", "Telephone" },
-                values: new object[] { "John", "Doe", "john.doe@companya.com", "123-456-7891", "123 Main St", "123-456-7890" });
-
-            migrationBuilder.UpdateData(
-                table: "Customers",
-                keyColumn: "CustID",
-                keyValue: 10,
-                columns: new[] { "ContactFirstNames", "ContactSurname", "ContactTitle", "Email", "Fax", "Line1", "Telephone" },
-                values: new object[] { "John", "Doe", "Mr.", "john.doe@companya.com", "123-456-7891", "123 Main St", "123-456-7890" });
-
             migrationBuilder.InsertData(
                 table: "Customers",
                 columns: new[] { "CustID", "CompanyName", "ContactFirstNames", "ContactSurname", "ContactTitle", "Email", "Fax", "Line1", "Line2", "Line3", "Line4", "Postcode", "Telephone" },
                 values: new object[,]
                 {
+                    { 1, "Company A", "John", "Doe", "Mr.", "john.doe@companya.com", "123-456-7891", "123 Main St", "", "", "", "SO14 1KX", "123-456-7890" },
+                    { 2, "Company B", "John", "Doe", "Mr.", "john.doe@companya.com", "123-456-7891", "123 Main St", "", "", "", "PL4 6LU", "123-456-7890" },
+                    { 3, "Company C", "John", "Doe", "Mr.", "john.doe@companya.com", "123-456-7891", "123 Main St", "", "", "", "PO1 8VI", "123-456-7890" },
+                    { 4, "Company D", "John", "Doe", "Mr.", "john.doe@companya.com", "123-456-7891", "123 Main St", "", "", "", "CT3 8AB", "123-456-7890" },
+                    { 5, "Company E", "John", "Doe", "Mr.", "john.doe@companya.com", "123-456-7891", "123 Main St", "", "", "", "TR2 7VM", "123-456-7890" },
+                    { 6, "Company F", "John", "Doe", "Mr.", "john.doe@companya.com", "123-456-7891", "123 Main St", "", "", "", "SW1 5RZ", "123-456-7890" },
+                    { 7, "Company G", "John", "Doe", "Mr.", "john.doe@companya.com", "123-456-7891", "123 Main St", "", "", "", "SW9 1JP", "123-456-7890" },
+                    { 8, "Company H", "John", "Doe", "Mr.", "john.doe@companya.com", "123-456-7891", "123 Main St", "", "", "", "SW2 9FA", "123-456-7890" },
+                    { 9, "Company I", "John", "Doe", "Mr.", "john.doe@companya.com", "123-456-7891", "123 Main St", "", "", "", "PO3 8UT", "123-456-7890" },
+                    { 10, "Company J", "John", "Doe", "Mr.", "john.doe@companya.com", "123-456-7891", "123 Main St", "", "", "", "PL4 9DV", "123-456-7890" },
                     { 11, "Company K", "John", "Doe", "Mr.", "john.doe@companya.com", "123-456-7891", "123 Main St", "", "", "", "N8 8DH", "123-456-7890" },
                     { 12, "Company L", "John", "Doe", "Mr.", "john.doe@companya.com", "123-456-7891", "123 Main St", "", "", "", "SO17 3OP", "123-456-7890" },
                     { 13, "Company M", "John", "Doe", "Mr.", "john.doe@companya.com", "123-456-7891", "123 Main St", "", "", "", "EX3 4MB", "123-456-7890" },
@@ -1678,15 +1844,65 @@ namespace sky_webapi.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Inspections",
-                columns: new[] { "UniqueRef", "Defects", "HoldingID", "InspectionDate", "InspectorID", "LatestDate", "Location", "MiscNotes", "PreviousCheck", "RecentCheck", "Rectified", "SafeWorking", "TestDetails" },
+                table: "Inspectors",
+                columns: new[] { "InspectorID", "InspectorsName" },
                 values: new object[,]
                 {
-                    { 6, "None", 6, new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Site 6", "Annual inspection for plant holding 6", "N/A", "Completed", "N/A", "Yes", "Standard inspection completed" },
-                    { 7, "None", 7, new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Site 7", "Annual inspection for plant holding 7", "N/A", "Completed", "N/A", "Yes", "Standard inspection completed" },
-                    { 8, "None", 8, new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Site 8", "Annual inspection for plant holding 8", "N/A", "Completed", "N/A", "Yes", "Standard inspection completed" },
-                    { 9, "None", 9, new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Site 9", "Annual inspection for plant holding 9", "N/A", "Completed", "N/A", "Yes", "Standard inspection completed" },
-                    { 10, "None", 10, new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Site 10", "Annual inspection for plant holding 10", "N/A", "Completed", "N/A", "Yes", "Standard inspection completed" }
+                    { 1, "Allen Lee" },
+                    { 2, "Aidan Lee" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "PlantCategories",
+                columns: new[] { "CategoryID", "CategoryDescription" },
+                values: new object[,]
+                {
+                    { 1, "Heavy Plant" },
+                    { 2, "Small Plant" },
+                    { 3, "Access Equipment" },
+                    { 4, "Power Tools" },
+                    { 5, "Safety Equipment" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Status",
+                columns: new[] { "StatusID", "StatusDescription" },
+                values: new object[,]
+                {
+                    { 1, "Available" },
+                    { 2, "In Use" },
+                    { 3, "Under Maintenance" },
+                    { 4, "Out of Service" },
+                    { 5, "Reserved" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Summaries",
+                columns: new[] { "Id", "Description", "Title" },
+                values: new object[,]
+                {
+                    { 1, "Freezing", null },
+                    { 2, "Bracing", null },
+                    { 3, "Chilly", null },
+                    { 4, "Cool", null },
+                    { 5, "Mild", null },
+                    { 6, "Warm", null },
+                    { 7, "Balmy", null },
+                    { 8, "Hot", null },
+                    { 9, "Sweltering", null },
+                    { 10, "Scorching", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AllPlant",
+                columns: new[] { "PlantNameID", "NormalPrice", "PlantCategory", "PlantDescription" },
+                values: new object[,]
+                {
+                    { 1, "150.00", 1, "Excavator 2T" },
+                    { 2, "95.00", 3, "Scissor Lift" },
+                    { 3, "45.00", 2, "Concrete Mixer" },
+                    { 4, "25.00", 4, "Power Drill" },
+                    { 5, "15.00", 5, "Safety Harness" }
                 });
 
             migrationBuilder.InsertData(
@@ -1694,6 +1910,16 @@ namespace sky_webapi.Migrations
                 columns: new[] { "HoldingID", "CustID", "InspectionFee", "InspectionFrequency", "PlantNameID", "SWL", "SerialNumber", "StatusID" },
                 values: new object[,]
                 {
+                    { 1, 1, 105m, 12, 2, "500kg", "B2D4F6H8J0", 2 },
+                    { 2, 2, 170m, 12, 3, "300kg", "C3E5G7I9K1", 3 },
+                    { 3, 3, 110m, 12, 4, "N/A", "D4F6H8J0L2", 4 },
+                    { 4, 4, 175m, 12, 5, "150kg", "E5G7I9K1M3", 5 },
+                    { 5, 5, 115m, 12, 1, "2000kg", "F6H8J0L2N4", 1 },
+                    { 6, 6, 180m, 12, 2, "500kg", "G7I9K1M3O5", 2 },
+                    { 7, 7, 120m, 12, 3, "300kg", "H8J0L2N4P6", 3 },
+                    { 8, 8, 185m, 12, 4, "N/A", "I9K1M3O5Q7", 4 },
+                    { 9, 9, 125m, 12, 5, "150kg", "J0L2N4P6R8", 5 },
+                    { 10, 10, 190m, 12, 1, "2000kg", "K1M3O5Q7S9", 1 },
                     { 11, 11, 130m, 12, 2, "500kg", "L2N4P6R8T0", 2 },
                     { 12, 12, 200m, 12, 3, "300kg", "M3O5Q7S9U1", 3 },
                     { 13, 13, 140m, 12, 4, "N/A", "N4P6R8T0V2", 4 },
@@ -1791,6 +2017,16 @@ namespace sky_webapi.Migrations
                 columns: new[] { "UniqueRef", "Defects", "HoldingID", "InspectionDate", "InspectorID", "LatestDate", "Location", "MiscNotes", "PreviousCheck", "RecentCheck", "Rectified", "SafeWorking", "TestDetails" },
                 values: new object[,]
                 {
+                    { 1, "None", 1, new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Site 1", "Annual inspection for plant holding 1", "N/A", "Completed", "N/A", "Yes", "Standard inspection completed" },
+                    { 2, "None", 2, new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Site 2", "Annual inspection for plant holding 2", "N/A", "Completed", "N/A", "Yes", "Standard inspection completed" },
+                    { 3, "None", 3, new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Site 3", "Annual inspection for plant holding 3", "N/A", "Completed", "N/A", "Yes", "Standard inspection completed" },
+                    { 4, "None", 4, new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Site 4", "Annual inspection for plant holding 4", "N/A", "Completed", "N/A", "Yes", "Standard inspection completed" },
+                    { 5, "None", 5, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Site 5", "Annual inspection for plant holding 5", "N/A", "Completed", "N/A", "Yes", "Standard inspection completed" },
+                    { 6, "None", 6, new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, new DateTime(2024, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Site 6", "Annual inspection for plant holding 6", "N/A", "Completed", "N/A", "Yes", "Standard inspection completed" },
+                    { 7, "None", 7, new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, new DateTime(2024, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Site 7", "Annual inspection for plant holding 7", "N/A", "Completed", "N/A", "Yes", "Standard inspection completed" },
+                    { 8, "None", 8, new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Site 8", "Annual inspection for plant holding 8", "N/A", "Completed", "N/A", "Yes", "Standard inspection completed" },
+                    { 9, "None", 9, new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Site 9", "Annual inspection for plant holding 9", "N/A", "Completed", "N/A", "Yes", "Standard inspection completed" },
+                    { 10, "None", 10, new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Site 10", "Annual inspection for plant holding 10", "N/A", "Completed", "N/A", "Yes", "Standard inspection completed" },
                     { 11, "None", 11, new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Site 11", "Annual inspection for plant holding 11", "N/A", "Completed", "N/A", "Yes", "Standard inspection completed" },
                     { 12, "None", 12, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Site 12", "Annual inspection for plant holding 12", "N/A", "Completed", "N/A", "Yes", "Standard inspection completed" },
                     { 13, "None", 13, new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Site 13", "Annual inspection for plant holding 13", "N/A", "Completed", "N/A", "Yes", "Standard inspection completed" },

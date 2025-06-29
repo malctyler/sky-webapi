@@ -42,8 +42,8 @@ namespace sky_webapi.Data
             );
 
             // Create admin user with hashed password (Password123!)
-            var hasher = new PasswordHasher<IdentityUser>();
-            var adminUser = new IdentityUser
+            var hasher = new PasswordHasher<ApplicationUser>();
+            var adminUser = new ApplicationUser
             {
                 Id = "1",
                 UserName = "admin@skyapp.com",
@@ -56,7 +56,7 @@ namespace sky_webapi.Data
             };
             adminUser.PasswordHash = hasher.HashPassword(adminUser, "Password123!");
 
-            modelBuilder.Entity<IdentityUser>().HasData(adminUser);
+            modelBuilder.Entity<ApplicationUser>().HasData(adminUser);
 
             // Assign Admin Role
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(

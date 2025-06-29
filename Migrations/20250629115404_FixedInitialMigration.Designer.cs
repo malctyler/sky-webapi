@@ -12,8 +12,8 @@ using sky_webapi.Data;
 namespace sky_webapi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250629075749_UpdateTelephoneFaxLength")]
-    partial class UpdateTelephoneFaxLength
+    [Migration("20250629115404_FixedInitialMigration")]
+    partial class FixedInitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,22 @@ namespace sky_webapi.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            ConcurrencyStamp = "00000000-0000-0000-0000-000000000001",
+                            Name = "Administrator",
+                            NormalizedName = "ADMINISTRATOR"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            ConcurrencyStamp = "00000000-0000-0000-0000-000000000002",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -137,6 +153,13 @@ namespace sky_webapi.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "1",
+                            RoleId = "1"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -186,6 +209,43 @@ namespace sky_webapi.Migrations
                         .HasFilter("[PlantDescription] IS NOT NULL");
 
                     b.ToTable("AllPlant");
+
+                    b.HasData(
+                        new
+                        {
+                            PlantNameID = 1,
+                            NormalPrice = "150.00",
+                            PlantCategory = 1,
+                            PlantDescription = "Excavator 2T"
+                        },
+                        new
+                        {
+                            PlantNameID = 2,
+                            NormalPrice = "95.00",
+                            PlantCategory = 3,
+                            PlantDescription = "Scissor Lift"
+                        },
+                        new
+                        {
+                            PlantNameID = 3,
+                            NormalPrice = "45.00",
+                            PlantCategory = 2,
+                            PlantDescription = "Concrete Mixer"
+                        },
+                        new
+                        {
+                            PlantNameID = 4,
+                            NormalPrice = "25.00",
+                            PlantCategory = 4,
+                            PlantDescription = "Power Drill"
+                        },
+                        new
+                        {
+                            PlantNameID = 5,
+                            NormalPrice = "15.00",
+                            PlantCategory = 5,
+                            PlantDescription = "Safety Harness"
+                        });
                 });
 
             modelBuilder.Entity("sky_webapi.Data.Entities.ApplicationUser", b =>
@@ -263,6 +323,25 @@ namespace sky_webapi.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "00000000-0000-0000-0000-000000000001",
+                            Email = "admin@skyapp.com",
+                            EmailConfirmed = true,
+                            IsCustomer = false,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@SKYAPP.COM",
+                            NormalizedUserName = "ADMIN@SKYAPP.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELGL2lkp7s2nk8eQVUDtZFjZ5b+cL+Z2klExMBPkzOtqTiNn2Fr2tg++R5BVtS5rsQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "00000000-0000-0000-0000-000000000001",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@skyapp.com"
+                        });
                 });
 
             modelBuilder.Entity("sky_webapi.Data.Entities.CustomerEntity", b =>
@@ -330,6 +409,168 @@ namespace sky_webapi.Migrations
                     b.HasKey("CustID");
 
                     b.ToTable("Customers");
+
+                    b.HasData(
+                        new
+                        {
+                            CustID = 1,
+                            CompanyName = "Company A",
+                            ContactFirstNames = "John",
+                            ContactSurname = "Doe",
+                            ContactTitle = "Mr.",
+                            Email = "john.doe@companya.com",
+                            Fax = "123-456-7891",
+                            Line1 = "123 Main St",
+                            Line2 = "",
+                            Line3 = "",
+                            Line4 = "",
+                            Postcode = "SO14 1KX",
+                            Telephone = "123-456-7890"
+                        },
+                        new
+                        {
+                            CustID = 2,
+                            CompanyName = "Company B",
+                            ContactFirstNames = "Jane",
+                            ContactSurname = "Smith",
+                            ContactTitle = "Ms.",
+                            Email = "jane.smith@companyb.com",
+                            Fax = "123-456-7893",
+                            Line1 = "456 Oak Ave",
+                            Line2 = "",
+                            Line3 = "",
+                            Line4 = "",
+                            Postcode = "PL4 6LU",
+                            Telephone = "123-456-7892"
+                        },
+                        new
+                        {
+                            CustID = 3,
+                            CompanyName = "Company C",
+                            ContactFirstNames = "Mike",
+                            ContactSurname = "Johnson",
+                            ContactTitle = "Mr.",
+                            Email = "mike.johnson@companyc.com",
+                            Fax = "123-456-7895",
+                            Line1 = "789 Pine Rd",
+                            Line2 = "",
+                            Line3 = "",
+                            Line4 = "",
+                            Postcode = "PO1 8VI",
+                            Telephone = "123-456-7894"
+                        },
+                        new
+                        {
+                            CustID = 4,
+                            CompanyName = "Company D",
+                            ContactFirstNames = "Sarah",
+                            ContactSurname = "Williams",
+                            ContactTitle = "Mrs.",
+                            Email = "sarah.williams@companyd.com",
+                            Fax = "123-456-7897",
+                            Line1 = "321 Elm St",
+                            Line2 = "",
+                            Line3 = "",
+                            Line4 = "",
+                            Postcode = "CT3 8AB",
+                            Telephone = "123-456-7896"
+                        },
+                        new
+                        {
+                            CustID = 5,
+                            CompanyName = "Company E",
+                            ContactFirstNames = "David",
+                            ContactSurname = "Brown",
+                            ContactTitle = "Mr.",
+                            Email = "david.brown@companye.com",
+                            Fax = "123-456-7899",
+                            Line1 = "654 Maple Dr",
+                            Line2 = "",
+                            Line3 = "",
+                            Line4 = "",
+                            Postcode = "TR2 7VM",
+                            Telephone = "123-456-7898"
+                        },
+                        new
+                        {
+                            CustID = 6,
+                            CompanyName = "Company F",
+                            ContactFirstNames = "Lisa",
+                            ContactSurname = "Davis",
+                            ContactTitle = "Ms.",
+                            Email = "lisa.davis@companyf.com",
+                            Fax = "123-456-7801",
+                            Line1 = "987 Cedar Ln",
+                            Line2 = "",
+                            Line3 = "",
+                            Line4 = "",
+                            Postcode = "SW1 5RZ",
+                            Telephone = "123-456-7800"
+                        },
+                        new
+                        {
+                            CustID = 7,
+                            CompanyName = "Company G",
+                            ContactFirstNames = "Robert",
+                            ContactSurname = "Miller",
+                            ContactTitle = "Mr.",
+                            Email = "robert.miller@companyg.com",
+                            Fax = "123-456-7803",
+                            Line1 = "147 Birch Way",
+                            Line2 = "",
+                            Line3 = "",
+                            Line4 = "",
+                            Postcode = "SW9 1JP",
+                            Telephone = "123-456-7802"
+                        },
+                        new
+                        {
+                            CustID = 8,
+                            CompanyName = "Company H",
+                            ContactFirstNames = "Jennifer",
+                            ContactSurname = "Wilson",
+                            ContactTitle = "Mrs.",
+                            Email = "jennifer.wilson@companyh.com",
+                            Fax = "123-456-7805",
+                            Line1 = "258 Spruce St",
+                            Line2 = "",
+                            Line3 = "",
+                            Line4 = "",
+                            Postcode = "SW2 9FA",
+                            Telephone = "123-456-7804"
+                        },
+                        new
+                        {
+                            CustID = 9,
+                            CompanyName = "Company I",
+                            ContactFirstNames = "Michael",
+                            ContactSurname = "Moore",
+                            ContactTitle = "Mr.",
+                            Email = "michael.moore@companyi.com",
+                            Fax = "123-456-7807",
+                            Line1 = "369 Willow Ave",
+                            Line2 = "",
+                            Line3 = "",
+                            Line4 = "",
+                            Postcode = "PO3 8UT",
+                            Telephone = "123-456-7806"
+                        },
+                        new
+                        {
+                            CustID = 10,
+                            CompanyName = "Company J",
+                            ContactFirstNames = "Amanda",
+                            ContactSurname = "Taylor",
+                            ContactTitle = "Ms.",
+                            Email = "amanda.taylor@companyj.com",
+                            Fax = "123-456-7809",
+                            Line1 = "741 Poplar Rd",
+                            Line2 = "",
+                            Line3 = "",
+                            Line4 = "",
+                            Postcode = "PL4 9DV",
+                            Telephone = "123-456-7808"
+                        });
                 });
 
             modelBuilder.Entity("sky_webapi.Data.Entities.Inspection", b =>
@@ -383,6 +624,88 @@ namespace sky_webapi.Migrations
                     b.HasIndex("InspectorID");
 
                     b.ToTable("Inspections");
+
+                    b.HasData(
+                        new
+                        {
+                            UniqueRef = 1,
+                            Defects = "None",
+                            HoldingID = 1,
+                            InspectionDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectorID = 2,
+                            LatestDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Location = "Site 1",
+                            MiscNotes = "Annual inspection for plant holding 1",
+                            PreviousCheck = "N/A",
+                            RecentCheck = "Completed",
+                            Rectified = "N/A",
+                            SafeWorking = "Yes",
+                            TestDetails = "Standard inspection completed"
+                        },
+                        new
+                        {
+                            UniqueRef = 2,
+                            Defects = "None",
+                            HoldingID = 2,
+                            InspectionDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectorID = 1,
+                            LatestDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Location = "Site 2",
+                            MiscNotes = "Annual inspection for plant holding 2",
+                            PreviousCheck = "N/A",
+                            RecentCheck = "Completed",
+                            Rectified = "N/A",
+                            SafeWorking = "Yes",
+                            TestDetails = "Standard inspection completed"
+                        },
+                        new
+                        {
+                            UniqueRef = 3,
+                            Defects = "None",
+                            HoldingID = 3,
+                            InspectionDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectorID = 2,
+                            LatestDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Location = "Site 3",
+                            MiscNotes = "Annual inspection for plant holding 3",
+                            PreviousCheck = "N/A",
+                            RecentCheck = "Completed",
+                            Rectified = "N/A",
+                            SafeWorking = "Yes",
+                            TestDetails = "Standard inspection completed"
+                        },
+                        new
+                        {
+                            UniqueRef = 4,
+                            Defects = "None",
+                            HoldingID = 4,
+                            InspectionDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectorID = 1,
+                            LatestDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Location = "Site 4",
+                            MiscNotes = "Annual inspection for plant holding 4",
+                            PreviousCheck = "N/A",
+                            RecentCheck = "Completed",
+                            Rectified = "N/A",
+                            SafeWorking = "Yes",
+                            TestDetails = "Standard inspection completed"
+                        },
+                        new
+                        {
+                            UniqueRef = 5,
+                            Defects = "None",
+                            HoldingID = 5,
+                            InspectionDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InspectorID = 2,
+                            LatestDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Location = "Site 5",
+                            MiscNotes = "Annual inspection for plant holding 5",
+                            PreviousCheck = "N/A",
+                            RecentCheck = "Completed",
+                            Rectified = "N/A",
+                            SafeWorking = "Yes",
+                            TestDetails = "Standard inspection completed"
+                        });
                 });
 
             modelBuilder.Entity("sky_webapi.Data.Entities.InspectorEntity", b =>
@@ -401,6 +724,18 @@ namespace sky_webapi.Migrations
                     b.HasKey("InspectorID");
 
                     b.ToTable("Inspectors");
+
+                    b.HasData(
+                        new
+                        {
+                            InspectorID = 1,
+                            InspectorsName = "Allen Lee"
+                        },
+                        new
+                        {
+                            InspectorID = 2,
+                            InspectorsName = "Aidan Lee"
+                        });
                 });
 
             modelBuilder.Entity("sky_webapi.Data.Entities.Ledger", b =>
@@ -492,6 +827,33 @@ namespace sky_webapi.Migrations
                     b.HasKey("CategoryID");
 
                     b.ToTable("PlantCategories");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryID = 1,
+                            CategoryDescription = "Heavy Plant"
+                        },
+                        new
+                        {
+                            CategoryID = 2,
+                            CategoryDescription = "Small Plant"
+                        },
+                        new
+                        {
+                            CategoryID = 3,
+                            CategoryDescription = "Access Equipment"
+                        },
+                        new
+                        {
+                            CategoryID = 4,
+                            CategoryDescription = "Power Tools"
+                        },
+                        new
+                        {
+                            CategoryID = 5,
+                            CategoryDescription = "Safety Equipment"
+                        });
                 });
 
             modelBuilder.Entity("sky_webapi.Data.Entities.PlantHolding", b =>
@@ -532,6 +894,118 @@ namespace sky_webapi.Migrations
                     b.HasIndex("StatusID");
 
                     b.ToTable("PlantHoldings");
+
+                    b.HasData(
+                        new
+                        {
+                            HoldingID = 1,
+                            CustID = 1,
+                            InspectionFee = 105m,
+                            InspectionFrequency = 12,
+                            PlantNameID = 2,
+                            SWL = "500kg",
+                            SerialNumber = "B2D4F6H8J0",
+                            StatusID = 2
+                        },
+                        new
+                        {
+                            HoldingID = 2,
+                            CustID = 2,
+                            InspectionFee = 170m,
+                            InspectionFrequency = 12,
+                            PlantNameID = 3,
+                            SWL = "300kg",
+                            SerialNumber = "C3E5G7I9K1",
+                            StatusID = 3
+                        },
+                        new
+                        {
+                            HoldingID = 3,
+                            CustID = 3,
+                            InspectionFee = 110m,
+                            InspectionFrequency = 12,
+                            PlantNameID = 4,
+                            SWL = "N/A",
+                            SerialNumber = "D4F6H8J0L2",
+                            StatusID = 4
+                        },
+                        new
+                        {
+                            HoldingID = 4,
+                            CustID = 4,
+                            InspectionFee = 175m,
+                            InspectionFrequency = 12,
+                            PlantNameID = 5,
+                            SWL = "150kg",
+                            SerialNumber = "E5G7I9K1M3",
+                            StatusID = 5
+                        },
+                        new
+                        {
+                            HoldingID = 5,
+                            CustID = 5,
+                            InspectionFee = 115m,
+                            InspectionFrequency = 12,
+                            PlantNameID = 1,
+                            SWL = "2000kg",
+                            SerialNumber = "F6H8J0L2N4",
+                            StatusID = 1
+                        },
+                        new
+                        {
+                            HoldingID = 6,
+                            CustID = 6,
+                            InspectionFee = 180m,
+                            InspectionFrequency = 12,
+                            PlantNameID = 2,
+                            SWL = "500kg",
+                            SerialNumber = "G7I9K1M3O5",
+                            StatusID = 2
+                        },
+                        new
+                        {
+                            HoldingID = 7,
+                            CustID = 7,
+                            InspectionFee = 120m,
+                            InspectionFrequency = 12,
+                            PlantNameID = 3,
+                            SWL = "300kg",
+                            SerialNumber = "H8J0L2N4P6",
+                            StatusID = 3
+                        },
+                        new
+                        {
+                            HoldingID = 8,
+                            CustID = 8,
+                            InspectionFee = 185m,
+                            InspectionFrequency = 12,
+                            PlantNameID = 4,
+                            SWL = "N/A",
+                            SerialNumber = "I9K1M3O5Q7",
+                            StatusID = 4
+                        },
+                        new
+                        {
+                            HoldingID = 9,
+                            CustID = 9,
+                            InspectionFee = 125m,
+                            InspectionFrequency = 12,
+                            PlantNameID = 5,
+                            SWL = "150kg",
+                            SerialNumber = "J0L2N4P6R8",
+                            StatusID = 5
+                        },
+                        new
+                        {
+                            HoldingID = 10,
+                            CustID = 10,
+                            InspectionFee = 190m,
+                            InspectionFrequency = 12,
+                            PlantNameID = 1,
+                            SWL = "2000kg",
+                            SerialNumber = "K1M3O5Q7S9",
+                            StatusID = 1
+                        });
                 });
 
             modelBuilder.Entity("sky_webapi.Data.Entities.RevokedToken", b =>
@@ -624,6 +1098,33 @@ namespace sky_webapi.Migrations
                     b.HasKey("StatusID");
 
                     b.ToTable("Status");
+
+                    b.HasData(
+                        new
+                        {
+                            StatusID = 1,
+                            StatusDescription = "Available"
+                        },
+                        new
+                        {
+                            StatusID = 2,
+                            StatusDescription = "In Use"
+                        },
+                        new
+                        {
+                            StatusID = 3,
+                            StatusDescription = "Under Maintenance"
+                        },
+                        new
+                        {
+                            StatusID = 4,
+                            StatusDescription = "Out of Service"
+                        },
+                        new
+                        {
+                            StatusID = 5,
+                            StatusDescription = "Reserved"
+                        });
                 });
 
             modelBuilder.Entity("sky_webapi.Data.Entities.Summary", b =>
@@ -643,6 +1144,58 @@ namespace sky_webapi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Summaries");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Freezing"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Bracing"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Chilly"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Cool"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Mild"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "Warm"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Description = "Balmy"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Description = "Hot"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Description = "Sweltering"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Description = "Scorching"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
