@@ -217,22 +217,6 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// Seed identity data programmatically
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<AppDbContext>();
-        await DatabaseSeeder.SeedIdentityData(context, services);
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding identity data");
-    }
-}
-
 // Enable Swagger (both development and production for API testing)
 app.UseSwagger();
 app.UseSwaggerUI(c =>

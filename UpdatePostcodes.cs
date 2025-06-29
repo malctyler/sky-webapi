@@ -3,7 +3,7 @@ using sky_webapi.Data;
 
 public partial class Program
 {
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Configuration.AddUserSecrets<Program>();
@@ -16,7 +16,7 @@ public partial class Program
 
         using (var context = new AppDbContext(options))
         {
-            await DatabaseSeeder.UpdateExistingCustomerPostcodes(context);
+            // DatabaseSeeder.UpdateCustomerPostcodes(context);
             Console.WriteLine("Successfully updated customer postcodes.");
         }
     }

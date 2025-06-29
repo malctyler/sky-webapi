@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using sky_webapi.Data.Entities;
@@ -33,6 +34,34 @@ namespace sky_webapi.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Seed Identity Roles
+            modelBuilder.Entity<IdentityRole>().HasData(
+                new IdentityRole { Id = "1", Name = "Administrator", NormalizedName = "ADMINISTRATOR", ConcurrencyStamp = "00000000-0000-0000-0000-000000000001" },
+                new IdentityRole { Id = "2", Name = "User", NormalizedName = "USER", ConcurrencyStamp = "00000000-0000-0000-0000-000000000002" }
+            );
+
+            // Create admin user with hashed password (Password123!)
+            var hasher = new PasswordHasher<IdentityUser>();
+            var adminUser = new IdentityUser
+            {
+                Id = "1",
+                UserName = "admin@skyapp.com",
+                NormalizedUserName = "ADMIN@SKYAPP.COM",
+                Email = "admin@skyapp.com",
+                NormalizedEmail = "ADMIN@SKYAPP.COM",
+                EmailConfirmed = true,
+                SecurityStamp = "00000000-0000-0000-0000-000000000001",
+                ConcurrencyStamp = "00000000-0000-0000-0000-000000000001"
+            };
+            adminUser.PasswordHash = hasher.HashPassword(adminUser, "Password123!");
+
+            modelBuilder.Entity<IdentityUser>().HasData(adminUser);
+
+            // Assign Admin Role
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+                new IdentityUserRole<string> { UserId = "1", RoleId = "1" }
+            );
 
             // Configure entity relationships
             modelBuilder.Entity<AllPlantEntity>()
@@ -82,7 +111,7 @@ namespace sky_webapi.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Call the DatabaseSeeder to seed all data
-            DatabaseSeeder.SeedData(modelBuilder);
+            sky_webapi.Data.DatabaseSeeder.SeedData(modelBuilder);
 
             modelBuilder.Entity<ScheduledInspection>()
                 .HasOne(si => si.PlantHolding)

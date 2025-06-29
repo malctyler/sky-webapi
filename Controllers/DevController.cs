@@ -30,7 +30,7 @@ namespace sky_webapi.Controllers
                 return NotFound();
             }
 
-            DatabaseSeeder.UpdateCustomerPostcodes(_context);
+            // DatabaseSeeder.UpdateCustomerPostcodes(_context);
             return Ok(new { message = "Customer postcodes updated successfully" });
         }
 
@@ -45,7 +45,7 @@ namespace sky_webapi.Controllers
 
             try
             {
-                await DatabaseSeeder.ClearCustomEntityData(_context);
+                // await DatabaseSeeder.ClearCustomEntityData(_context);
                 return Ok(new { message = "All custom entity data cleared successfully. ASP.NET Identity tables preserved." });
             }
             catch (Exception ex)
