@@ -319,5 +319,49 @@ namespace sky_webapi.Data
 
             return $"{district} {number}{letters}";
         }
+
+        /// <summary>
+        /// Clears all custom entity data while preserving ASP.NET Identity tables (Users, Roles, Claims, etc.)
+        /// </summary>
+        public static async Task ClearCustomEntityData(AppDbContext context)
+        {
+            // Clear in order to respect foreign key constraints
+            
+            // Clear dependent entities first
+            await context.Database.ExecuteSqlRawAsync("DELETE FROM Inspections");
+            await context.Database.ExecuteSqlRawAsync("DELETE FROM ScheduledInspections");
+            await context.Database.ExecuteSqlRawAsync("DELETE FROM Ledgers");
+            await context.Database.ExecuteSqlRawAsync("DELETE FROM Notes");
+            await context.Database.ExecuteSqlRawAsync("DELETE FROM PlantHoldings");
+            
+            // Clear plant and category data
+            await context.Database.ExecuteSqlRawAsync("DELETE FROM Allplant");
+            await context.Database.ExecuteSqlRawAsync("DELETE FROM PlantCategories");
+            
+            // Clear other reference data
+            await context.Database.ExecuteSqlRawAsync("DELETE FROM Customers");
+            await context.Database.ExecuteSqlRawAsync("DELETE FROM Inspectors");
+            await context.Database.ExecuteSqlRawAsync("DELETE FROM Status");
+            await context.Database.ExecuteSqlRawAsync("DELETE FROM Summaries");
+            
+            // Clear revoked tokens (authentication related but not core identity)
+            await context.Database.ExecuteSqlRawAsync("DELETE FROM RevokedTokens");
+            
+            // Reset identity columns to start from 1
+            await context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Summaries', RESEED, 0)");
+            await context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('PlantCategories', RESEED, 0)");
+            await context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Status', RESEED, 0)");
+            await context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Inspectors', RESEED, 0)");
+            await context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Customers', RESEED, 0)");
+            await context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Notes', RESEED, 0)");
+            await context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Allplant', RESEED, 0)");
+            await context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('PlantHoldings', RESEED, 0)");
+            await context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Inspections', RESEED, 0)");
+            await context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('ScheduledInspections', RESEED, 0)");
+            await context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Ledgers', RESEED, 0)");
+            await context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('RevokedTokens', RESEED, 0)");
+            
+            await context.SaveChangesAsync();
+        }
     }
 }

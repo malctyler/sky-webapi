@@ -81,53 +81,8 @@ namespace sky_webapi.Data
                 .HasForeignKey(n => n.CustID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Call the DatabaseSeeder to seed all data
-            DatabaseSeeder.SeedData(modelBuilder);
-
-            modelBuilder.Entity<AllPlantEntity>()
-                .HasOne(p => p.Category)
-                .WithMany(c => c.plant)
-                .HasForeignKey(p => p.PlantCategory)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<PlantHolding>()
-                .HasOne(p => p.Customer)
-                .WithMany()
-                .HasForeignKey(p => p.CustID)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<PlantHolding>()
-                .HasOne(p => p.Plant)
-                .WithMany()
-                .HasForeignKey(p => p.PlantNameID)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<PlantHolding>()
-                .HasOne(p => p.Status)
-                .WithMany(s => s.PlantHoldings)
-                .HasForeignKey(p => p.StatusID)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            // Configure Inspection relationship
-            modelBuilder.Entity<Inspection>()
-                .HasOne(i => i.PlantHolding)
-                .WithMany()
-                .HasForeignKey(i => i.HoldingID)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            // Configure Inspection relationship with InspectedByEntity
-            modelBuilder.Entity<Inspection>()
-                .HasOne(i => i.Inspector)
-                .WithMany(inspector => inspector.Inspections)
-                .HasForeignKey(i => i.InspectorID)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // Configure cascade delete for Notes when Customer is deleted
-            modelBuilder.Entity<NoteEntity>()
-                .HasOne(n => n.Customer)
-                .WithMany(c => c.Notes)
-                .HasForeignKey(n => n.CustID)
-                .OnDelete(DeleteBehavior.Cascade);
+            // Call the DatabaseSeeder to seed all data - DISABLED FOR CLEAN CANVAS
+            // DatabaseSeeder.SeedData(modelBuilder);
 
             modelBuilder.Entity<ScheduledInspection>()
                 .HasOne(si => si.PlantHolding)

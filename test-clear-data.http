@@ -1,0 +1,7 @@
+@sky_webapi_HostAddress = http://localhost:5207
+
+### Test Clear Entity Data Endpoint
+POST {{sky_webapi_HostAddress}}/Dev/clear-entity-data
+Content-Type: application/json
+
+###
