@@ -411,3 +411,4 @@ envsettings.json
 .github/copilot/prompts/security-audit-prompt.md
 .github/copilot/prompts/security-audit-report.md
 temp.json
+dbMigration/
