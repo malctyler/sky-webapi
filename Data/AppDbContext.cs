@@ -81,8 +81,8 @@ namespace sky_webapi.Data
                 .HasForeignKey(n => n.CustID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Call the DatabaseSeeder to seed all data - DISABLED FOR CLEAN CANVAS
-            // DatabaseSeeder.SeedData(modelBuilder);
+            // Call the DatabaseSeeder to seed all data
+            DatabaseSeeder.SeedData(modelBuilder);
 
             modelBuilder.Entity<ScheduledInspection>()
                 .HasOne(si => si.PlantHolding)

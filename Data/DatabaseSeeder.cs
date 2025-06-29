@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using sky_webapi.Data.Entities;
 using System;
 using System.Collections.Generic;
@@ -191,74 +192,8 @@ namespace sky_webapi.Data
 
             modelBuilder.Entity<CustomerEntity>().HasData(customers);
 
-            // Seed initial roles with static GUIDs
-            modelBuilder.Entity<IdentityRole>().HasData(
-                new IdentityRole
-                {
-                    Id = AdminRoleId,
-                    Name = "Admin",
-                    NormalizedName = "ADMIN",
-                    ConcurrencyStamp = AdminRoleConcurrencyStamp
-                },
-                new IdentityRole
-                {
-                    Id = StaffRoleId,
-                    Name = "Staff",
-                    NormalizedName = "STAFF",
-                    ConcurrencyStamp = StaffRoleConcurrencyStamp
-                },
-                new IdentityRole
-                {
-                    Id = CustomerRoleId,
-                    Name = "Customer",
-                    NormalizedName = "CUSTOMER",
-                    ConcurrencyStamp = CustomerRoleConcurrencyStamp
-                }
-            );
-
-            // Seed initial admin user with static values
-            var adminUser = new ApplicationUser
-            {
-                Id = AdminUserId,
-                UserName = "admin@example.com",
-                NormalizedUserName = "ADMIN@EXAMPLE.COM",
-                Email = "admin@example.com",
-                NormalizedEmail = "ADMIN@EXAMPLE.COM",
-                EmailConfirmed = true,
-                PasswordHash = AdminPasswordHash,
-                SecurityStamp = AdminUserSecurityStamp,
-                ConcurrencyStamp = AdminUserConcurrencyStamp,
-                FirstName = "Admin",
-                LastName = "User",
-                IsCustomer = false
-            };
-
-            modelBuilder.Entity<ApplicationUser>().HasData(adminUser);
-
-            // Assign admin role to admin user (now using AdminRoleId)
-            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
-                new IdentityUserRole<string>
-                {
-                    UserId = AdminUserId,
-                    RoleId = AdminRoleId  // Note: Changed from Staff to Admin role
-                },
-                new IdentityUserRole<string>
-                {
-                    UserId = AdminUserId,
-                    RoleId = StaffRoleId
-                }
-            );
-
-            // Add admin user claims
-            modelBuilder.Entity<IdentityUserClaim<string>>().HasData(
-                new IdentityUserClaim<string>
-                {
-                    Id = 1,
-                    UserId = AdminUserId,
-                    ClaimType = "IsCustomer",
-                    ClaimValue = "False"
-                }
-            );
+            // Note: Identity entities (roles, users) are now seeded programmatically via SeedIdentityData method
+            // This prevents duplicate key errors during migrations
         }
 
         public static async Task UpdateExistingCustomerPostcodes(AppDbContext context)
@@ -362,6 +297,73 @@ namespace sky_webapi.Data
             await context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('RevokedTokens', RESEED, 0)");
             
             await context.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Seeds Identity data (roles, users, claims) programmatically to avoid migration conflicts
+        /// </summary>
+        public static async Task SeedIdentityData(AppDbContext context, IServiceProvider serviceProvider)
+        {
+            using var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            using var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+            // Create roles if they don't exist
+            var roles = new[]
+            {
+                new { Id = AdminRoleId, Name = "Admin", ConcurrencyStamp = AdminRoleConcurrencyStamp },
+                new { Id = StaffRoleId, Name = "Staff", ConcurrencyStamp = StaffRoleConcurrencyStamp },
+                new { Id = CustomerRoleId, Name = "Customer", ConcurrencyStamp = CustomerRoleConcurrencyStamp }
+            };
+
+            foreach (var roleInfo in roles)
+            {
+                var existingRole = await roleManager.FindByIdAsync(roleInfo.Id);
+                if (existingRole == null)
+                {
+                    var role = new IdentityRole
+                    {
+                        Id = roleInfo.Id,
+                        Name = roleInfo.Name,
+                        NormalizedName = roleInfo.Name.ToUpperInvariant(),
+                        ConcurrencyStamp = roleInfo.ConcurrencyStamp
+                    };
+                    await roleManager.CreateAsync(role);
+                }
+            }
+
+            // Create admin user if it doesn't exist
+            var adminUser = await userManager.FindByIdAsync(AdminUserId);
+            if (adminUser == null)
+            {
+                adminUser = new ApplicationUser
+                {
+                    Id = AdminUserId,
+                    UserName = "admin@example.com",
+                    NormalizedUserName = "ADMIN@EXAMPLE.COM",
+                    Email = "admin@example.com",
+                    NormalizedEmail = "ADMIN@EXAMPLE.COM",
+                    EmailConfirmed = true,
+                    SecurityStamp = AdminUserSecurityStamp,
+                    ConcurrencyStamp = AdminUserConcurrencyStamp,
+                    FirstName = "Admin",
+                    LastName = "User",
+                    IsCustomer = false
+                };
+
+                // Set the password hash directly to avoid validation
+                adminUser.PasswordHash = AdminPasswordHash;
+                
+                var result = await userManager.CreateAsync(adminUser);
+                if (result.Succeeded)
+                {
+                    // Assign roles to admin user
+                    await userManager.AddToRoleAsync(adminUser, "Admin");
+                    await userManager.AddToRoleAsync(adminUser, "Staff");
+                    
+                    // Add claims
+                    await userManager.AddClaimAsync(adminUser, new System.Security.Claims.Claim("IsCustomer", "False"));
+                }
+            }
         }
     }
 }

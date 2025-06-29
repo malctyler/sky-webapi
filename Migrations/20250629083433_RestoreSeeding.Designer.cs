@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using sky_webapi.Data;
 
@@ -11,9 +12,11 @@ using sky_webapi.Data;
 namespace sky_webapi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250629083433_RestoreSeeding")]
+    partial class RestoreSeeding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,6 +50,29 @@ namespace sky_webapi.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "d4b74547-1385-4c44-88ab-1b3dd647be9c",
+                            ConcurrencyStamp = "79202516-5691-4c00-8fdc-5c472cc112a1",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "64f2f5e1-e472-4e90-8158-9d60b5b7d0fe",
+                            ConcurrencyStamp = "8920f4b6-7671-4c8b-9c5d-1f23fe76f236",
+                            Name = "Staff",
+                            NormalizedName = "STAFF"
+                        },
+                        new
+                        {
+                            Id = "7f3d65e1-e472-4e90-8158-9d60b5b7d123",
+                            ConcurrencyStamp = "55f53c36-8b15-4ef1-a7d2-94946c14c716",
+                            Name = "Customer",
+                            NormalizedName = "CUSTOMER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -97,6 +123,15 @@ namespace sky_webapi.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("AspNetUserClaims", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ClaimType = "IsCustomer",
+                            ClaimValue = "False",
+                            UserId = "6aa33e39-8591-4bff-9001-bc58c0313c89"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -134,6 +169,18 @@ namespace sky_webapi.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "6aa33e39-8591-4bff-9001-bc58c0313c89",
+                            RoleId = "d4b74547-1385-4c44-88ab-1b3dd647be9c"
+                        },
+                        new
+                        {
+                            UserId = "6aa33e39-8591-4bff-9001-bc58c0313c89",
+                            RoleId = "64f2f5e1-e472-4e90-8158-9d60b5b7d0fe"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -297,6 +344,27 @@ namespace sky_webapi.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "6aa33e39-8591-4bff-9001-bc58c0313c89",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "42a75722-9d32-4242-9eac-0d0c5a80e63a",
+                            Email = "admin@example.com",
+                            EmailConfirmed = true,
+                            FirstName = "Admin",
+                            IsCustomer = false,
+                            LastName = "User",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@EXAMPLE.COM",
+                            NormalizedUserName = "ADMIN@EXAMPLE.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELPDyn6G7TKxOvThBltjPcf3ieDXUmVaZlKK3Q4Qf3jTIgyCFjPXDSOixax8c/UHVg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "JIRVGNRNQ7Z3TPFRS4YPFN5QVMPXQY2K",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@example.com"
+                        });
                 });
 
             modelBuilder.Entity("sky_webapi.Data.Entities.CustomerEntity", b =>
@@ -379,7 +447,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SO14 1KX",
+                            Postcode = "CT3 6FN",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -395,7 +463,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "PL4 6LU",
+                            Postcode = "ME3 8BS",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -411,7 +479,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "PO1 8VI",
+                            Postcode = "N8 4DX",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -427,7 +495,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "CT3 8AB",
+                            Postcode = "E9 5XN",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -443,7 +511,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "TR2 7VM",
+                            Postcode = "N10 9SV",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -459,7 +527,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SW1 5RZ",
+                            Postcode = "CT2 4LN",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -475,7 +543,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SW9 1JP",
+                            Postcode = "PL3 6WE",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -491,7 +559,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SW2 9FA",
+                            Postcode = "N9 7QI",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -507,7 +575,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "PO3 8UT",
+                            Postcode = "TN4 5MQ",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -523,7 +591,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "PL4 9DV",
+                            Postcode = "CT1 9QG",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -539,7 +607,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "N8 8DH",
+                            Postcode = "SW1 5UE",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -555,7 +623,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SO17 3OP",
+                            Postcode = "SW8 7ZD",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -571,7 +639,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "EX3 4MB",
+                            Postcode = "TR1 1YQ",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -587,7 +655,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "EX1 8CU",
+                            Postcode = "SO15 8VG",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -603,7 +671,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SW4 9ZX",
+                            Postcode = "ME4 4NE",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -619,7 +687,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "TR1 8GM",
+                            Postcode = "PO1 6JK",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -635,7 +703,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SW6 1FH",
+                            Postcode = "CT4 1NY",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -651,7 +719,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "CT2 8OT",
+                            Postcode = "N1 6VI",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -667,7 +735,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "E9 9KT",
+                            Postcode = "TN4 4VV",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -683,7 +751,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "N5 6DD",
+                            Postcode = "EX2 3ZD",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -699,7 +767,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "PL2 6EE",
+                            Postcode = "ME4 1NF",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -715,7 +783,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "PL3 2GR",
+                            Postcode = "SW5 9GA",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -731,7 +799,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SW5 9VJ",
+                            Postcode = "PO4 2IM",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -747,7 +815,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "BS3 6BF",
+                            Postcode = "EX2 9GA",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -763,7 +831,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "ME2 3SF",
+                            Postcode = "E7 2BK",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -779,7 +847,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SW5 4QA",
+                            Postcode = "EX4 3SX",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -795,7 +863,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "ME3 3FP",
+                            Postcode = "PO4 4SB",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -811,7 +879,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "BS3 7YL",
+                            Postcode = "TN2 2LU",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -827,7 +895,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SW10 7PL",
+                            Postcode = "SO14 7AU",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -843,7 +911,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SO17 9GO",
+                            Postcode = "TN2 8XK",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -859,7 +927,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "N10 6RD",
+                            Postcode = "EX4 2AO",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -875,7 +943,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SW2 2ZD",
+                            Postcode = "CT1 5LV",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -891,7 +959,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "N5 6PK",
+                            Postcode = "BS4 9RM",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -907,7 +975,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SW6 6TP",
+                            Postcode = "N7 4EU",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -923,7 +991,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "TR2 6UW",
+                            Postcode = "N3 4JY",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -939,7 +1007,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "N2 8EH",
+                            Postcode = "TR4 8PZ",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -955,7 +1023,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "EX2 2GK",
+                            Postcode = "SW6 1LZ",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -971,7 +1039,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "E4 1AX",
+                            Postcode = "BN3 5HR",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -987,7 +1055,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "TN4 6UF",
+                            Postcode = "BS2 1SP",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1003,7 +1071,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "PL3 4XA",
+                            Postcode = "EX2 9SX",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1019,7 +1087,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "N10 3AH",
+                            Postcode = "SW3 3NT",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1035,7 +1103,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "CT4 1DP",
+                            Postcode = "BS4 5DH",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1051,7 +1119,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "CT3 4PX",
+                            Postcode = "ME4 9ZB",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1067,7 +1135,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SO17 7YB",
+                            Postcode = "SW4 4CI",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1083,7 +1151,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "PL4 9MS",
+                            Postcode = "N5 2ZD",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1099,7 +1167,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "PO1 5PK",
+                            Postcode = "CT3 8WQ",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1115,7 +1183,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SO17 2TN",
+                            Postcode = "N7 8QU",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1131,7 +1199,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "TR3 9DM",
+                            Postcode = "N3 5NL",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1147,7 +1215,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "N4 5UQ",
+                            Postcode = "EX1 5VN",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1163,7 +1231,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "N6 9OR",
+                            Postcode = "SO16 7LE",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1179,7 +1247,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "N2 3JY",
+                            Postcode = "SW4 2XH",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1195,7 +1263,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "EX1 5ON",
+                            Postcode = "PO4 9TF",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1211,7 +1279,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SW6 3HM",
+                            Postcode = "E2 9QY",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1227,7 +1295,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "E10 3FG",
+                            Postcode = "BS1 3CL",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1243,7 +1311,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "CT4 7WJ",
+                            Postcode = "E5 6HZ",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1259,7 +1327,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "PL3 1IL",
+                            Postcode = "SW7 1ZH",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1275,7 +1343,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "BN1 2WG",
+                            Postcode = "EX3 8RD",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1291,7 +1359,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "EX4 6NT",
+                            Postcode = "N6 7SL",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1307,7 +1375,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "CT1 9WP",
+                            Postcode = "TN2 2RE",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1323,7 +1391,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "E8 2RW",
+                            Postcode = "TN1 4UK",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1339,7 +1407,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "N1 9UT",
+                            Postcode = "SW8 9OD",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1355,7 +1423,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "CT2 9BA",
+                            Postcode = "PL1 8NG",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1371,7 +1439,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "TR3 6TC",
+                            Postcode = "E5 8EZ",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1387,7 +1455,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "ME3 6PW",
+                            Postcode = "SW2 9SN",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1403,7 +1471,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "PO3 9NP",
+                            Postcode = "TN3 6UG",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1419,7 +1487,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "EX2 1SO",
+                            Postcode = "PL2 4GW",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1435,7 +1503,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "PO1 9TQ",
+                            Postcode = "PO2 3MT",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1451,7 +1519,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "E6 9GM",
+                            Postcode = "SW10 4WE",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1467,7 +1535,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "CT4 4UP",
+                            Postcode = "BS1 9AR",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1483,7 +1551,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "N2 3OJ",
+                            Postcode = "E9 6MT",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1499,7 +1567,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "PO4 5XF",
+                            Postcode = "N2 2TU",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1515,7 +1583,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "E10 4JN",
+                            Postcode = "SW6 1MW",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1531,7 +1599,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SW9 6JU",
+                            Postcode = "ME1 7FU",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1547,7 +1615,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "ME4 2PI",
+                            Postcode = "CT3 5HB",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1563,7 +1631,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "BN1 9LK",
+                            Postcode = "E10 4MK",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1579,7 +1647,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "PO4 8AC",
+                            Postcode = "N2 8MZ",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1595,7 +1663,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "CT1 9LP",
+                            Postcode = "PO4 1OI",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1611,7 +1679,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SO17 6WN",
+                            Postcode = "E2 7XV",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1627,7 +1695,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "PL3 8FF",
+                            Postcode = "TR2 7FE",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1643,7 +1711,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "BS2 9NP",
+                            Postcode = "SW6 8FP",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1659,7 +1727,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "N7 1MW",
+                            Postcode = "SO16 3RO",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1675,7 +1743,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "N8 8IH",
+                            Postcode = "EX2 7ZI",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1691,7 +1759,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "EX3 9HD",
+                            Postcode = "SW7 1SB",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1707,7 +1775,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SW4 7SA",
+                            Postcode = "N3 4FQ",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1723,7 +1791,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "BN2 1GT",
+                            Postcode = "N1 8KJ",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1739,7 +1807,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SW1 9MV",
+                            Postcode = "N1 2QW",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1755,7 +1823,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "EX3 5HS",
+                            Postcode = "CT2 7JF",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1771,7 +1839,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "TR1 8WK",
+                            Postcode = "PO3 5ZD",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1787,7 +1855,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SO15 6NF",
+                            Postcode = "N3 8OZ",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1803,7 +1871,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SW6 8CO",
+                            Postcode = "CT2 1RH",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1819,7 +1887,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "EX4 5VP",
+                            Postcode = "SW1 1OW",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1835,7 +1903,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "BS3 4BN",
+                            Postcode = "ME4 5UU",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1851,7 +1919,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "N10 2VG",
+                            Postcode = "ME2 6JB",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1867,7 +1935,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "E8 8OM",
+                            Postcode = "E6 6MT",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1883,7 +1951,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "BN2 1ZK",
+                            Postcode = "PL1 1NP",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1899,7 +1967,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "TN2 3TI",
+                            Postcode = "BS1 6BZ",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1915,7 +1983,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "N3 5ZS",
+                            Postcode = "TN2 5PW",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1931,7 +1999,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "SO16 5ZB",
+                            Postcode = "E3 4JE",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1947,7 +2015,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "PL1 9WV",
+                            Postcode = "SW8 1VX",
                             Telephone = "123-456-7890"
                         },
                         new
@@ -1963,7 +2031,7 @@ namespace sky_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
-                            Postcode = "N4 7RE",
+                            Postcode = "EX2 3IK",
                             Telephone = "123-456-7890"
                         });
                 });

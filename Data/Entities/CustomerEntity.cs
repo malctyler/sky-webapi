@@ -42,10 +42,10 @@ namespace sky_webapi.Data.Entities
         public string Postcode { get; set; } = string.Empty;
 
         [Required]
-        [MaxLength(20)]  // UK phone numbers with formatting
+        [MaxLength(50)]  // UK phone numbers with formatting
         public string Telephone { get; set; } = string.Empty;
 
-        [MaxLength(20)]  // UK fax numbers with formatting
+        [MaxLength(50)]  // UK fax numbers with formatting
         public string? Fax { get; set; }
 
         [MaxLength(254)]  // RFC compliant email length
