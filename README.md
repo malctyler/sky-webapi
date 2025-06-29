@@ -1,1 +1,1 @@
-# switch to app config
+# reset app config
