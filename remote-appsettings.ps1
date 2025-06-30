@@ -47,7 +47,7 @@ if ($malformedConnString) {
 }
 
 # Read local JSON file
-$localSettings = Get-Content -Path "envsettings.json" | ConvertFrom-Json
+$localSettings = Get-Content -Path "D:\workingrepos\TheTylers\envsettings.json" | ConvertFrom-Json
 
 # Create a lookup table for Azure settings
 $azureLookup = @{}
