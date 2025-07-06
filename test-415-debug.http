@@ -1,0 +1,54 @@
+### Test Plant Categories Endpoint (for troubleshooting 415 error)
+
+### 1. Get Plant Categories (GET request - should work)
+GET https://localhost:7051/api/plantcategories
+Authorization: Bearer {{auth_token}}
+
+###
+
+### 2. Get Plant Categories (alternative endpoint if the above fails)
+GET https://localhost:7051/api/PlantCategories
+Authorization: Bearer {{auth_token}}
+
+###
+
+### 3. Test Multi-Inspection Items (POST request)
+POST https://localhost:7051/api/multiinspection/items
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+    "customerId": 1,
+    "categoryIds": [1, 2]
+}
+
+###
+
+### 4. Test with minimal data to isolate the issue
+POST https://localhost:7051/api/multiinspection/items
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+    "customerId": 1,
+    "categoryIds": []
+}
+
+###
+
+### 5. Check if the API is running and accessible
+GET https://localhost:7051/api/status
+Authorization: Bearer {{auth_token}}
+
+###
+
+### 6. Test without auth (to see if it's an auth issue)
+POST https://localhost:7051/api/multiinspection/items
+Content-Type: application/json
+
+{
+    "customerId": 1,
+    "categoryIds": [1]
+}
+
+###

@@ -6,7 +6,9 @@ namespace sky_webapi.Services
     {
         Task<IEnumerable<InspectionReadDto>> GetAllInspectionsAsync();
         Task<InspectionReadDto?> GetInspectionByIdAsync(int id);
-        Task<IEnumerable<InspectionReadDto>> GetInspectionsByPlantHoldingAsync(int holdingId);        Task<InspectionReadDto> CreateInspectionAsync(CreateUpdateInspectionDto createDto);
+        Task<IEnumerable<InspectionReadDto>> GetInspectionsByPlantHoldingAsync(int holdingId);
+        Task<IEnumerable<InspectionReadDto>> GetInspectionsByCustomerAndDateAsync(int customerId, DateTime inspectionDate);
+        Task<InspectionReadDto> CreateInspectionAsync(CreateUpdateInspectionDto createDto);
         Task<InspectionReadDto> UpdateInspectionAsync(int id, CreateUpdateInspectionDto updateDto);
         Task DeleteInspectionAsync(int id);
     }

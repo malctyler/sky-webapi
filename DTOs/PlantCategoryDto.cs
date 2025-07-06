@@ -4,5 +4,6 @@ namespace sky_webapi.DTOs
     {
         public int CategoryID { get; set; }
         public string? CategoryDescription { get; set; }
+        public bool MultiInspect { get; set; }
     }
 }

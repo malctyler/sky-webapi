@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>Multi-Inspection API Test</h1>
+    
+    <div>
+        <h2>Test Plant Categories</h2>
+        <button onclick="testCategories()">Test Get Categories</button>
+        <div id="categoriesResult"></div>
+    </div>
+    
+    <div>
+        <h2>Test Multi-Inspection Items</h2>
+        <button onclick="testMultiItems()">Test Get Multi Items</button>
+        <div id="multiItemsResult"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5207';
+        const token = localStorage.getItem('auth_token') || prompt('Enter your auth token:');
+        
+        async function testCategories() {
+            const resultDiv = document.getElementById('categoriesResult');
+            try {
+                resultDiv.innerHTML = 'Testing...';
+                
+                const response = await fetch(`${API_BASE}/api/plantcategories`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+                
+                console.log('Categories Response Status:', response.status);
+                console.log('Categories Response Headers:', [...response.headers.entries()]);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `<pre>SUCCESS:\n${JSON.stringify(data, null, 2)}</pre>`;
+                
+            } catch (error) {
+                console.error('Categories Error:', error);
+                resultDiv.innerHTML = `<pre style="color: red;">ERROR: ${error.message}</pre>`;
+            }
+        }
+        
+        async function testMultiItems() {
+            const resultDiv = document.getElementById('multiItemsResult');
+            try {
+                resultDiv.innerHTML = 'Testing...';
+                
+                const requestBody = {
+                    customerId: 1,
+                    categoryIds: [1, 2]
+                };
+                
+                console.log('Sending request:', requestBody);
+                
+                const response = await fetch(`${API_BASE}/api/multiinspection/items`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(requestBody)
+                });
+                
+                console.log('Multi Items Response Status:', response.status);
+                console.log('Multi Items Response Headers:', [...response.headers.entries()]);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}\n${errorText}`);
+                }
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `<pre>SUCCESS:\n${JSON.stringify(data, null, 2)}</pre>`;
+                
+            } catch (error) {
+                console.error('Multi Items Error:', error);
+                resultDiv.innerHTML = `<pre style="color: red;">ERROR: ${error.message}</pre>`;
+            }
+        }
+    </script>
+</body>
+</html>

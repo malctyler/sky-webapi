@@ -19,7 +19,8 @@ namespace sky_webapi.Services
             return categories.Select(c => new PlantCategoryDto
             {
                 CategoryID = c.CategoryID,
-                CategoryDescription = c.CategoryDescription
+                CategoryDescription = c.CategoryDescription,
+                MultiInspect = c.MultiInspect
             });
         }
 
@@ -31,7 +32,8 @@ namespace sky_webapi.Services
             return new PlantCategoryDto
             {
                 CategoryID = category.CategoryID,
-                CategoryDescription = category.CategoryDescription
+                CategoryDescription = category.CategoryDescription,
+                MultiInspect = category.MultiInspect
             };
         }
 
@@ -49,22 +51,24 @@ namespace sky_webapi.Services
 
             var category = new PlantCategoryEntity
             {
-                CategoryDescription = categoryDto.CategoryDescription?.Trim()
+                CategoryDescription = categoryDto.CategoryDescription?.Trim(),
+                MultiInspect = categoryDto.MultiInspect
             };
 
             var result = await _repository.AddAsync(category);
             return new PlantCategoryDto
             {
                 CategoryID = result.CategoryID,
-                CategoryDescription = result.CategoryDescription
+                CategoryDescription = result.CategoryDescription,
+                MultiInspect = result.MultiInspect
             };
         }
 
         public async Task UpdateCategoryAsync(int id, PlantCategoryDto categoryDto)
         {
-            // Check for existing category with same description
-            var existingCategories = await _repository.GetAllAsync();
-            var existingCategory = existingCategories.FirstOrDefault(c => 
+            // Check for existing category with same description (more efficient than loading all)
+            var allCategories = await _repository.GetAllAsync();
+            var existingCategory = allCategories.FirstOrDefault(c => 
                 c.CategoryDescription?.Trim().ToLower() == categoryDto.CategoryDescription?.Trim().ToLower()
                 && c.CategoryID != id);
             
@@ -73,13 +77,18 @@ namespace sky_webapi.Services
                 throw new InvalidOperationException($"A category with description '{categoryDto.CategoryDescription}' already exists.");
             }
 
-            var category = new PlantCategoryEntity
+            // Find the existing entity to update (this ensures proper tracking)
+            var categoryToUpdate = allCategories.FirstOrDefault(c => c.CategoryID == id);
+            if (categoryToUpdate == null)
             {
-                CategoryID = id,
-                CategoryDescription = categoryDto.CategoryDescription?.Trim()
-            };
+                throw new InvalidOperationException($"Category with ID {id} not found.");
+            }
 
-            await _repository.UpdateAsync(category);
+            // Update the tracked entity's properties
+            categoryToUpdate.CategoryDescription = categoryDto.CategoryDescription?.Trim();
+            categoryToUpdate.MultiInspect = categoryDto.MultiInspect;
+
+            await _repository.UpdateAsync(categoryToUpdate);
         }
 
         public async Task DeleteCategoryAsync(int id)

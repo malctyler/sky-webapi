@@ -181,6 +181,7 @@ builder.Services.AddScoped<IScheduledInspectionService, ScheduledInspectionServi
 builder.Services.AddScoped<IScheduledInspectionRepository, ScheduledInspectionRepository>();
 builder.Services.AddScoped<IPasswordSecurityService, PasswordSecurityService>();
 builder.Services.AddScoped<ITokenRevocationService, TokenRevocationService>();
+builder.Services.AddScoped<IMultiInspectionService, MultiInspectionService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

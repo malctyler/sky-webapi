@@ -47,6 +47,21 @@ namespace sky_webapi.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Inspection>> GetByCustomerAndDateAsync(int customerId, DateTime inspectionDate)
+        {
+            return await _context.Inspections
+                .Include(i => i.PlantHolding!)
+                .ThenInclude(ph => ph!.Plant!)
+                .ThenInclude(p => p!.Category)
+                .Include(i => i.PlantHolding!)
+                .ThenInclude(ph => ph!.Customer)
+                .Include(i => i.Inspector)
+                .Where(i => i.PlantHolding!.Customer!.CustID == customerId && 
+                           i.InspectionDate.HasValue && 
+                           i.InspectionDate.Value.Date == inspectionDate.Date)
+                .ToListAsync();
+        }
+
         public async Task<Inspection> AddAsync(Inspection inspection)
         {
             _context.Inspections.Add(inspection);

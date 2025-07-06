@@ -11,6 +11,8 @@ namespace sky_webapi.Data.Entities
         
         [MaxLength(50)]
         public string? CategoryDescription { get; set; }
+        
+        public bool MultiInspect { get; set; } = false; // Default to false for existing categories
 
         // Navigation property
         public virtual ICollection<AllPlantEntity>? plant { get; set; }

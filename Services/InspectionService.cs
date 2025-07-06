@@ -29,7 +29,15 @@ namespace sky_webapi.Services
         {
             var inspections = await _repository.GetByPlantHoldingAsync(holdingId);
             return inspections.Select(MapToReadDto);
-        }        public async Task<InspectionReadDto> CreateInspectionAsync(CreateUpdateInspectionDto createDto)
+        }
+
+        public async Task<IEnumerable<InspectionReadDto>> GetInspectionsByCustomerAndDateAsync(int customerId, DateTime inspectionDate)
+        {
+            var inspections = await _repository.GetByCustomerAndDateAsync(customerId, inspectionDate);
+            return inspections.Select(MapToReadDto);
+        }
+
+        public async Task<InspectionReadDto> CreateInspectionAsync(CreateUpdateInspectionDto createDto)
         {
             var inspection = new Inspection
             {

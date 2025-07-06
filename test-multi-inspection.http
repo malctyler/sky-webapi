@@ -1,0 +1,50 @@
+### Test Multi-Inspection Endpoints
+
+### Get multi-inspection items for customer
+POST https://localhost:7051/api/multiinspection/items
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+    "customerId": 1,
+    "categoryIds": [1, 2, 3]
+}
+
+###
+
+### Create multi-inspection
+POST https://localhost:7051/api/multiinspection/create
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+    "customerId": 1,
+    "inspectorID": 1,
+    "inspectionDate": "2025-01-01T10:00:00",
+    "location": "Main Warehouse",
+    "latestDate": "2026-01-01T00:00:00",
+    "testDetails": "Standard safety inspection",
+    "miscNotes": "Routine multi-inspection of auxiliary equipment",
+    "items": [
+        {
+            "holdingID": 1,
+            "defects": "None found",
+            "recentCheck": "Good condition",
+            "previousCheck": "Previously satisfactory",
+            "safeWorking": "Safe for operation",
+            "rectified": "N/A",
+            "included": true
+        },
+        {
+            "holdingID": 2,
+            "defects": "Minor wear on chain links",
+            "recentCheck": "Acceptable with monitoring",
+            "previousCheck": "Previously satisfactory",
+            "safeWorking": "Safe with noted wear",
+            "rectified": "Monitoring required",
+            "included": true
+        }
+    ]
+}
+
+###

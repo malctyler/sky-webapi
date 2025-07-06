@@ -87,6 +87,45 @@ namespace sky_webapi.Services
             await _repository.DeleteAsync(id);
         }
 
+        public async Task<IEnumerable<MultiInspectionItemDto>> GetPlantHoldingsByCustomerAndCategoriesAsync(int customerId, int[] categoryIds)
+        {
+            var holdings = await _repository.GetByCustomerAndCategoriesAsync(customerId, categoryIds);
+            return holdings.Select(MapToMultiInspectionItemDto);
+        }
+
+        public async Task<IEnumerable<PlantCategoryDto>> GetCategoriesWithHoldingsByCustomerAsync(int customerId)
+        {
+            var categories = await _repository.GetCategoriesWithHoldingsByCustomerAsync(customerId);
+            return categories.Select(MapToPlantCategoryDto);
+        }
+
+        private static PlantCategoryDto MapToPlantCategoryDto(PlantCategoryEntity category)
+        {
+            return new PlantCategoryDto
+            {
+                CategoryID = category.CategoryID,
+                CategoryDescription = category.CategoryDescription,
+                MultiInspect = category.MultiInspect
+            };
+        }
+
+        private static MultiInspectionItemDto MapToMultiInspectionItemDto(PlantHolding holding)
+        {
+            return new MultiInspectionItemDto
+            {
+                HoldingID = holding.HoldingID,
+                PlantDescription = holding.Plant?.PlantDescription,
+                SerialNumber = holding.SerialNumber,
+                SWL = holding.SWL,
+                StatusDescription = holding.Status?.StatusDescription,
+                Defects = "", // Default empty, will be filled by user
+                Included = false, // Default false, user will select
+                CustID = holding.CustID,
+                CategoryDescription = holding.Plant?.Category?.CategoryDescription,
+                StatusID = holding.StatusID
+            };
+        }
+
         private static PlantHoldingReadDto MapToReadDto(PlantHolding holding)
         {
             return new PlantHoldingReadDto

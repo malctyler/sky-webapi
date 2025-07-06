@@ -11,7 +11,8 @@ namespace sky_webapi.DTOs
         public string? SafeWorking { get; set; }
         public string? Defects { get; set; }
         public string? Rectified { get; set; }
-        public DateTime? LatestDate { get; set; }        public string? TestDetails { get; set; }
+        public DateTime? LatestDate { get; set; }
+        public string? TestDetails { get; set; }
         public string? MiscNotes { get; set; }
         public int? InspectorID { get; set; }
     }

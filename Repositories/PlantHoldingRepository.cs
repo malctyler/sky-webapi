@@ -103,5 +103,35 @@ namespace sky_webapi.Repositories
         {
             return await _context.PlantHoldings.AnyAsync(p => p.HoldingID == id);
         }
+
+        public async Task<IEnumerable<PlantHolding>> GetByCustomerAndCategoriesAsync(int customerId, int[] categoryIds)
+        {
+            return await _context.PlantHoldings
+                .Include(p => p.Customer)
+                .Include(p => p.Plant)
+                    .ThenInclude(plant => plant!.Category)
+                .Include(p => p.Status)
+                .Where(p => p.CustID == customerId && 
+                           p.Plant != null && 
+                           categoryIds.Contains(p.Plant.PlantCategory.GetValueOrDefault()))
+                .OrderBy(p => p.Plant!.Category!.CategoryDescription)
+                .ThenBy(p => p.Plant!.PlantDescription)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<PlantCategoryEntity>> GetCategoriesWithHoldingsByCustomerAsync(int customerId)
+        {
+            return await _context.PlantHoldings
+                .Include(p => p.Plant)
+                    .ThenInclude(plant => plant!.Category)
+                .Where(p => p.CustID == customerId && 
+                           p.Plant != null && 
+                           p.Plant.Category != null &&
+                           p.Plant.Category.MultiInspect == true) // Only include categories marked for multi-inspection
+                .Select(p => p.Plant!.Category!)
+                .Distinct()
+                .OrderBy(c => c.CategoryDescription)
+                .ToListAsync();
+        }
     }
 }

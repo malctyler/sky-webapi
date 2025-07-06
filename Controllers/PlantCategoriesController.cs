@@ -7,7 +7,6 @@ namespace sky_webapi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")] // Only admin can manage plant categories
     public class PlantCategoriesController : ControllerBase
     {
         private readonly IPlantCategoryService _service;
@@ -18,6 +17,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Staff")] // Allow both Admin and Staff to read categories
         public async Task<ActionResult<IEnumerable<PlantCategoryDto>>> GetAllCategories()
         {
             var categories = await _service.GetAllCategoriesAsync();
@@ -25,6 +25,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin,Staff")] // Allow both Admin and Staff to read categories
         public async Task<ActionResult<PlantCategoryDto>> GetCategory(int id)
         {
             var category = await _service.GetCategoryByIdAsync(id);
@@ -36,6 +37,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")] // Only admin can create categories
         public async Task<ActionResult<PlantCategoryDto>> CreateCategory(PlantCategoryDto categoryDto)
         {
             var result = await _service.CreateCategoryAsync(categoryDto);
@@ -43,6 +45,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")] // Only admin can update categories
         public async Task<IActionResult> UpdateCategory(int id, PlantCategoryDto categoryDto)
         {
             await _service.UpdateCategoryAsync(id, categoryDto);
@@ -50,6 +53,7 @@ namespace sky_webapi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")] // Only admin can delete categories
         public async Task<IActionResult> DeleteCategory(int id)
         {
             await _service.DeleteCategoryAsync(id);

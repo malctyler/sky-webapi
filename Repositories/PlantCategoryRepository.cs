@@ -36,7 +36,8 @@ namespace sky_webapi.Repositories
 
         public async Task UpdateAsync(PlantCategoryEntity category)
         {
-            _context.Entry(category).State = EntityState.Modified;
+            // Use Update method which handles entity tracking automatically
+            _context.PlantCategories.Update(category);
             await _context.SaveChangesAsync();
         }
 
