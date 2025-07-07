@@ -11,10 +11,14 @@ namespace sky_webapi.Controllers
     public class MultiInspectionController : ControllerBase
     {
         private readonly IMultiInspectionService _service;
+        private readonly IEmailService _emailService;
+        private readonly ILogger<MultiInspectionController> _logger;
 
-        public MultiInspectionController(IMultiInspectionService service)
+        public MultiInspectionController(IMultiInspectionService service, IEmailService emailService, ILogger<MultiInspectionController> logger)
         {
             _service = service;
+            _emailService = emailService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -97,6 +101,64 @@ namespace sky_webapi.Controllers
             catch (Exception ex)
             {
                 return BadRequest($"Failed to retrieve completed multi-inspections: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Send multi-inspection certificate via email
+        /// </summary>
+        /// <param name="pdf">PDF file to send</param>
+        /// <param name="email">Optional customer email (uses development default if not provided)</param>
+        /// <returns>Success message</returns>
+        [HttpPost("email")]
+        [Authorize(Roles = "Staff")]
+        public async Task<IActionResult> EmailMultiCertificate(IFormFile pdf, [FromForm] string? email = null)
+        {
+            try
+            {
+                _logger.LogInformation("Attempting to send multi-inspection certificate email");
+
+                if (pdf == null || pdf.Length == 0)
+                {
+                    _logger.LogWarning("No PDF file received or file is empty");
+                    return BadRequest("No PDF file received or file is empty");
+                }
+
+                // Validate PDF file type
+                if (!pdf.ContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase))
+                {
+                    _logger.LogWarning("Invalid file type {ContentType}", pdf.ContentType);
+                    return BadRequest("Only PDF files are allowed");
+                }
+
+                // Limit file size (e.g., 10MB)
+                if (pdf.Length > 10 * 1024 * 1024)
+                {
+                    _logger.LogWarning("File size {FileSize} exceeds limit", pdf.Length);
+                    return BadRequest("File size exceeds the maximum limit of 10MB");
+                }
+
+                using var ms = new MemoryStream();
+                await pdf.CopyToAsync(ms);
+                var pdfBytes = ms.ToArray();
+
+                // Use the provided email or default to development email
+                var recipientEmail = email ?? "malcolm@thetylers.co.uk";
+
+                _logger.LogInformation("Sending multi-inspection certificate email, file size: {FileSize} bytes, recipient: {Email}", pdfBytes.Length, recipientEmail);
+
+                await _emailService.SendCertificateEmailAsync(pdfBytes, recipientEmail, pdf.FileName);
+                _logger.LogInformation("Multi-inspection certificate email sent successfully");
+                
+                return Ok(new { Message = "Multi-inspection certificate email sent successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sending multi-inspection certificate email");
+                return StatusCode(500, new { 
+                    Message = "An error occurred while sending the multi-inspection certificate email", 
+                    Error = ex.Message 
+                });
             }
         }
     }
