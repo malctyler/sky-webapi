@@ -18,6 +18,7 @@ namespace sky_webapi.Repositories
             return await _context.PlantHoldings
                 .Include(p => p.Customer)
                 .Include(p => p.Plant)
+                    .ThenInclude(p => p.Category)
                 .Include(p => p.Status)
                 .ToListAsync();
         }
@@ -27,6 +28,7 @@ namespace sky_webapi.Repositories
             return await _context.PlantHoldings
                 .Include(p => p.Customer)
                 .Include(p => p.Plant)
+                    .ThenInclude(p => p.Category)
                 .Include(p => p.Status)
                 .FirstOrDefaultAsync(p => p.HoldingID == id);
         }
@@ -36,6 +38,7 @@ namespace sky_webapi.Repositories
             return await _context.PlantHoldings
                 .Include(p => p.Customer)
                 .Include(p => p.Plant)
+                    .ThenInclude(p => p.Category)
                 .Include(p => p.Status)
                 .Where(p => p.CustID == customerId)
                 .ToListAsync();
@@ -46,6 +49,7 @@ namespace sky_webapi.Repositories
             return await _context.PlantHoldings
                 .Include(p => p.Customer)
                 .Include(p => p.Plant)
+                    .ThenInclude(p => p.Category)
                 .Include(p => p.Status)
                 .Where(p => p.StatusID == statusId)
                 .ToListAsync();
@@ -56,6 +60,7 @@ namespace sky_webapi.Repositories
             return await _context.PlantHoldings
                 .Include(p => p.Customer)
                 .Include(p => p.Plant)
+                    .ThenInclude(p => p.Category)
                 .Include(p => p.Status)
                 .Where(p => p.CustID == customerId && p.StatusID == statusId)
                 .ToListAsync();
