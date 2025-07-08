@@ -150,7 +150,8 @@ namespace sky_webapi.Services
                 CustomerLine4 = holding.Customer?.Line4,
                 CustomerPostcode = holding.Customer?.Postcode,
                 CustomerTelephone = holding.Customer?.Telephone,
-                CustomerEmail = holding.Customer?.Email
+                CustomerEmail = holding.Customer?.Email,
+                MultiInspect = holding.Plant?.Category?.MultiInspect ?? false
             };
         }
     }

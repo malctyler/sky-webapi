@@ -12,6 +12,7 @@ namespace sky_webapi.DTOs
         public decimal? InspectionFee { get; set; }
         public string? PlantDescription { get; set; }
         public string? StatusDescription { get; set; }
+        public bool MultiInspect { get; set; } // Flag indicating if this plant category supports multi-inspection
         // Customer fields for certificate
         public string? CustomerCompanyName { get; set; }
         public string? CustomerContactTitle { get; set; }
