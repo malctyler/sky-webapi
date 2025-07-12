@@ -13,6 +13,7 @@ namespace sky_webapi.DTOs
         public int InspectionFrequency { get; set; }
         public int ScheduledInspectionCount { get; set; }
         public string Postcode { get; set; } = string.Empty;
+        public bool MultiInspect { get; set; }
 
         // UK formatted date strings
         public string FormattedLastInspection => LastInspection.ToString("dd/MM/yyyy");
