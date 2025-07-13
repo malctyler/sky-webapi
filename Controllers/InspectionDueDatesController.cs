@@ -9,7 +9,7 @@ namespace sky_webapi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin,Staff")]
+    [Authorize(Roles = "Admin,Staff")] // Allow both Admin and Staff to access inspection due dates
     public class InspectionDueDatesController : ControllerBase
     {
         private readonly IInspectionDueDateService _service;
