@@ -217,7 +217,7 @@ namespace sky_webapi.Migrations
                         .IsUnique()
                         .HasFilter("[PlantDescription] IS NOT NULL");
 
-                    b.ToTable("AllPlant");
+                    b.ToTable("AllPlant", (string)null);
 
                     b.HasData(
                         new
@@ -417,7 +417,7 @@ namespace sky_webapi.Migrations
 
                     b.HasKey("CustID");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
 
                     b.HasData(
                         new
@@ -632,7 +632,7 @@ namespace sky_webapi.Migrations
 
                     b.HasIndex("InspectorID");
 
-                    b.ToTable("Inspections");
+                    b.ToTable("Inspections", (string)null);
 
                     b.HasData(
                         new
@@ -732,7 +732,7 @@ namespace sky_webapi.Migrations
 
                     b.HasKey("InspectorID");
 
-                    b.ToTable("Inspectors");
+                    b.ToTable("Inspectors", (string)null);
 
                     b.HasData(
                         new
@@ -794,7 +794,7 @@ namespace sky_webapi.Migrations
                     b.HasIndex("ReferenceWithoutInitials")
                         .IsUnique();
 
-                    b.ToTable("Ledgers");
+                    b.ToTable("Ledgers", (string)null);
                 });
 
             modelBuilder.Entity("sky_webapi.Data.Entities.NoteEntity", b =>
@@ -818,7 +818,7 @@ namespace sky_webapi.Migrations
 
                     b.HasIndex("CustID");
 
-                    b.ToTable("Notes");
+                    b.ToTable("Notes", (string)null);
                 });
 
             modelBuilder.Entity("sky_webapi.Data.Entities.PlantCategoryEntity", b =>
@@ -838,7 +838,7 @@ namespace sky_webapi.Migrations
 
                     b.HasKey("CategoryID");
 
-                    b.ToTable("PlantCategories");
+                    b.ToTable("PlantCategories", (string)null);
 
                     b.HasData(
                         new
@@ -910,7 +910,7 @@ namespace sky_webapi.Migrations
 
                     b.HasIndex("StatusID");
 
-                    b.ToTable("PlantHoldings");
+                    b.ToTable("PlantHoldings", (string)null);
 
                     b.HasData(
                         new
@@ -1062,7 +1062,7 @@ namespace sky_webapi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RevokedTokens");
+                    b.ToTable("RevokedTokens", (string)null);
                 });
 
             modelBuilder.Entity("sky_webapi.Data.Entities.ScheduledInspection", b =>
@@ -1097,7 +1097,7 @@ namespace sky_webapi.Migrations
 
                     b.HasIndex("InspectorID");
 
-                    b.ToTable("ScheduledInspections");
+                    b.ToTable("ScheduledInspections", (string)null);
                 });
 
             modelBuilder.Entity("sky_webapi.Data.Entities.Status", b =>
@@ -1114,7 +1114,7 @@ namespace sky_webapi.Migrations
 
                     b.HasKey("StatusID");
 
-                    b.ToTable("Status");
+                    b.ToTable("Status", (string)null);
 
                     b.HasData(
                         new
@@ -1160,7 +1160,7 @@ namespace sky_webapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Summaries");
+                    b.ToTable("Summaries", (string)null);
 
                     b.HasData(
                         new

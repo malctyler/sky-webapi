@@ -15,6 +15,23 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Environment-based database connection switching
+// Check if we should use the development database
+if (Environment.GetEnvironmentVariable("USE_DEV_DATABASE") == "true" || 
+    (builder.Environment.IsDevelopment() && Environment.GetEnvironmentVariable("USE_PROD_DATABASE") != "true"))
+{
+    var devConnection = builder.Configuration.GetConnectionString("DevelopmentConnection");
+    if (!string.IsNullOrEmpty(devConnection))
+    {
+        builder.Configuration["ConnectionStrings:DefaultConnection"] = devConnection;
+        Console.WriteLine("🔄 Using DEVELOPMENT database (sky-web-api-dev)");
+    }
+}
+else
+{
+    Console.WriteLine("🔄 Using PRODUCTION database (mt-sql-server-basic)");
+}
+
 // Configure EmailSettings
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
