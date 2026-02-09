@@ -145,6 +145,7 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
                 "https://witty-plant-0550d6403.6.azurestaticapps.net",
+                "https://lemon-bush-00e38c003.2.azurestaticapps.net", // Development frontend
                 "http://localhost:3000",
                 "https://localhost:3000",
                 "http://localhost:3001",
